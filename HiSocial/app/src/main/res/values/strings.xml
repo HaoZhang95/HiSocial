@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">MyApplication</string>
+    <string name="titleStr">Here is the title</string>
+    <string name="subTitleStr">This is the sub title</string>
+</resources>
