@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:orientation="vertical"
     android:layout_height="match_parent">
 
     <fragment
@@ -10,10 +12,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <!-- toolbar layout -->
-    <!--<include-->
-        <!--android:id="@+id/search_bar"-->
-        <!--layout="@layout/include_tool_bar" />-->
+
+    <include layout="@layout/include_tool_bar"/>
 
     <!--bottom sheet container-->
     <include layout="@layout/sheet_map" />

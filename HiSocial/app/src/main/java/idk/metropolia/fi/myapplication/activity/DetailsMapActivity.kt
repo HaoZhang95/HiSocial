@@ -4,11 +4,9 @@ import android.os.Bundle
 import android.support.design.widget.BottomSheetBehavior
 import android.support.design.widget.FloatingActionButton
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.Toolbar
 import android.transition.Explode
-import android.view.Menu
-import android.view.MenuItem
-import android.view.View
-import android.view.Window
+import android.view.*
 import android.widget.LinearLayout
 import android.widget.Toast
 import com.google.android.gms.maps.CameraUpdate
@@ -37,9 +35,18 @@ class DetailsMapActivity : AppCompatActivity() {
         lat = intent.extras["Lat"] as Double
         lng = intent.extras["Lng"] as Double
 
+        initToolbar()
         initMapFragment(lat,lng)
         initComponent()
         Toast.makeText(this, "Swipe up bottom sheet", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun initToolbar() {
+        val toolbar = findViewById(R.id.toolbar) as Toolbar
+        toolbar.setNavigationIcon(R.drawable.ic_back)
+        setSupportActionBar(toolbar)
+        supportActionBar!!.title = null
+        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
     }
 
     private fun initComponent() {
@@ -60,6 +67,8 @@ class DetailsMapActivity : AppCompatActivity() {
 
             override fun onSlide(bottomSheet: View, slideOffset: Float) {
 
+
+
             }
         })
 
@@ -71,6 +80,7 @@ class DetailsMapActivity : AppCompatActivity() {
             }
         }
     }
+
 
     private fun initMapFragment(lat: Double, lng: Double) {
         val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
