@@ -15,6 +15,15 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
+        <!-- Add Google Map Library -->
+        <uses-library android:name="com.google.android.maps" />
+
+        <!-- Google API Key -->
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="@string/google_maps_key" />
+
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -32,6 +41,10 @@
 
         <activity
             android:name=".activity.DetailsActivity"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".activity.DetailsMapActivity"
             android:screenOrientation="portrait" />
     </application>
 

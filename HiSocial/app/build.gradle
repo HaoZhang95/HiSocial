@@ -50,6 +50,10 @@ dependencies {
     implementation 'com.android.support.constraint:constraint-layout:1.1.2'
     implementation 'com.android.support:support-vector-drawable:27.1.1'
 
+    // google maps library ------------------------------------------------------------------------
+    implementation 'com.google.android.gms:play-services-maps:15.0.1'
+    implementation 'com.google.android.gms:play-services-places:15.0.1'
+
     // google gson --------------------------------------------------------------------------------
     implementation 'com.google.code.gson:gson:2.8.4'
 
@@ -70,4 +74,5 @@ dependencies {
     // RxJava -------------------------------------------------------------------
     implementation 'io.reactivex:rxjava:1.1.0'
     implementation 'io.reactivex:rxandroid:1.1.0'
+    implementation 'com.google.android.gms:play-services-maps:16.0.0'
 }

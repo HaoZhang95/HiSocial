@@ -36,15 +36,6 @@
                 android:tint="@color/grey_60"
                 app:srcCompat="@drawable/ic_stack_menu" />
 
-            <!--<TextView-->
-                <!--android:id="@+id/search_text"-->
-                <!--android:layout_width="0dp"-->
-                <!--android:layout_height="match_parent"-->
-                <!--android:layout_weight="1"-->
-                <!--android:gravity="center_vertical"-->
-                <!--android:text="Search"-->
-                <!--android:textAppearance="@style/Base.TextAppearance.AppCompat.Subhead"-->
-                <!--android:textColor="@color/grey_40" />-->
             <EditText
                 android:id="@+id/et_search"
                 android:layout_width="0dp"
