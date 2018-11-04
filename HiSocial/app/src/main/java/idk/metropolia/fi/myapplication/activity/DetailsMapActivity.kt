@@ -1,14 +1,23 @@
 package idk.metropolia.fi.myapplication.activity
 
+import android.app.Activity
+import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.support.design.widget.BottomSheetBehavior
 import android.support.design.widget.FloatingActionButton
+import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.transition.Explode
 import android.view.*
 import android.widget.LinearLayout
+import android.widget.TextView
 import android.widget.Toast
+import com.google.android.gms.common.GoogleApiAvailability
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException
+import com.google.android.gms.common.GooglePlayServicesRepairableException
+import com.google.android.gms.location.places.ui.PlaceAutocomplete
 import com.google.android.gms.maps.CameraUpdate
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -17,6 +26,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import idk.metropolia.fi.myapplication.R
 import idk.metropolia.fi.myapplication.utils.Tools
+import kotlinx.android.synthetic.main.sheet_map.*
 
 class DetailsMapActivity : AppCompatActivity() {
 
@@ -25,12 +35,18 @@ class DetailsMapActivity : AppCompatActivity() {
     private var lat: Double = 0.0
     private var lng: Double = 0.0
 
+    private lateinit var parent_view: View
+    private val REQUEST_CODE_ORIGIN = 1
+    private val REQUEST_CODE_DEST = 2
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         window.requestFeature(Window.FEATURE_CONTENT_TRANSITIONS)   // 动画的设置
         window.enterTransition = Explode()
         window.exitTransition = Explode()
         setContentView(R.layout.activity_details_map)
+
+        parent_view = findViewById(android.R.id.content)  // 自动完成的搜索框
 
         lat = intent.extras["Lat"] as Double
         lng = intent.extras["Lng"] as Double
@@ -77,6 +93,45 @@ class DetailsMapActivity : AppCompatActivity() {
             try {
                 mMap!!.animateCamera(zoomingLocation(lat, lng))
             } catch (e: Exception) {
+            }
+        }
+
+        // 添加搜索框的自动完成
+        tv_origin.setOnClickListener { openAutocompleteActivity(REQUEST_CODE_ORIGIN) }
+        tv_destination.setOnClickListener { openAutocompleteActivity(REQUEST_CODE_DEST) }
+
+    }
+
+    private fun openAutocompleteActivity(request_code: Int) {
+        try {
+            val intent = PlaceAutocomplete.IntentBuilder(PlaceAutocomplete.MODE_OVERLAY).build(this)
+            startActivityForResult(intent, request_code)
+        } catch (e: GooglePlayServicesRepairableException) {
+            GoogleApiAvailability.getInstance().getErrorDialog(this, e.connectionStatusCode, 0).show()
+        } catch (e: GooglePlayServicesNotAvailableException) {
+            val message = "Google Play Services is not available: " + GoogleApiAvailability.getInstance().getErrorString(e.errorCode)
+            Snackbar.make(parent_view, message, Snackbar.LENGTH_SHORT).show()
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == REQUEST_CODE_ORIGIN) {
+            if (resultCode == Activity.RESULT_OK) {
+                val place = PlaceAutocomplete.getPlace(this, data)
+                (findViewById<TextView>(R.id.tv_origin)).text = place.name
+            } else if (resultCode == PlaceAutocomplete.RESULT_ERROR) {
+                val status = PlaceAutocomplete.getStatus(this, data)
+                Snackbar.make(parent_view, status.toString(), Snackbar.LENGTH_SHORT).show()
+            }
+        }
+        if (requestCode == REQUEST_CODE_DEST) {
+            if (resultCode == Activity.RESULT_OK) {
+                val place = PlaceAutocomplete.getPlace(this, data)
+                (findViewById<TextView>(R.id.tv_destination)).text = place.name
+            } else if (resultCode == PlaceAutocomplete.RESULT_ERROR) {
+                val status = PlaceAutocomplete.getStatus(this, data)
+                Snackbar.make(parent_view, status.toString(), Snackbar.LENGTH_SHORT).show()
             }
         }
     }
