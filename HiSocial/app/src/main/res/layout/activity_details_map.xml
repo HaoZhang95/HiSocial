@@ -17,17 +17,19 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/overlay_dark_40"
+        android:background="@color/overlay_dark_20"
         android:fitsSystemWindows="true">
 
+        <!--app:theme="@style/AppTheme.PopupOverlay"app:theme="@style/AppTheme.PopupOverlay"-->
+        <!--android:theme="@style/ThemeOverlay.AppCompat.ActionBar"-->
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+
             app:contentInsetStartWithNavigation="0dp"
             android:fitsSystemWindows="true"
-            app:theme="@style/AppTheme.PopupOverlay"
+
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
     </FrameLayout>

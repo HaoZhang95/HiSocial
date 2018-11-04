@@ -14,6 +14,7 @@ import android.view.*
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import com.example.ahao9.socialevent.utils.MyToast
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException
 import com.google.android.gms.common.GooglePlayServicesRepairableException
@@ -100,6 +101,18 @@ class DetailsMapActivity : AppCompatActivity() {
         tv_origin.setOnClickListener { openAutocompleteActivity(REQUEST_CODE_ORIGIN) }
         tv_destination.setOnClickListener { openAutocompleteActivity(REQUEST_CODE_DEST) }
 
+        ib_swap.setOnClickListener { MyToast.show(this,"swap") }
+        ib_more.setOnClickListener { MyToast.show(this,"more") }
+        ib_addFilter.setOnClickListener { MyToast.show(this,"add filter") }
+        tv_time.setOnClickListener { MyToast.show(this,"time") }
+        tv_date.setOnClickListener { MyToast.show(this,"date") }
+
+        textView3.setOnClickListener { switchFrameLayout() }
+
+    }
+
+    private fun switchFrameLayout() {
+        MyToast.show(this,"switchFrameLayout")
     }
 
     private fun openAutocompleteActivity(request_code: Int) {
