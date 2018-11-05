@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <color name="colorPrimary">#1976D2</color>
     <color name="colorPrimaryDark">#1565C0</color>
     <color name="colorPrimaryLight">#1E88E5</color>
@@ -7,6 +8,16 @@
     <color name="colorAccentDark">#F50057</color>
     <color name="colorAccentLight">#FF80AB</color>
 
+    <!-- Transport type colors -->
+    <color name="colorBike">#FBC02D</color>
+    <color name="colorBus">#039BE5</color>
+    <color name="colorFerry">#00ACC1</color>
+    <color name="colorMetro">#FF8F00</color>
+    <color name="colorTrain">#C62828</color>
+    <color name="colorTram">#43A047</color>
+    <color name="colorWalk">#9E9E9E</color>
+
+    <!-- ====================================== -->
     <color name="overlay_dark_10">#1A000000</color>
     <color name="overlay_dark_20">#33000000</color>
     <color name="overlay_dark_30">#4D000000</color>

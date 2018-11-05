@@ -1,0 +1,53 @@
+query ItineraryPlanQuery($fromLat: Float!, $fromLong: Float!, $toLat: Float!, $toLong: Float!, $date: String, $time: String, $arriveBy: Boolean) {
+    plan(
+        from: {lat: $fromLat, lon: $fromLong}
+        to: {lat: $toLat, lon: $toLong}
+        date: $date
+        time: $time
+        arriveBy: $arriveBy
+        numItineraries: 6
+        ) {
+            itineraries {
+                startTime
+                endTime
+                walkDistance
+                duration
+                legs {
+                    startTime
+                    endTime
+                    mode
+                    duration
+                    distance
+                    transitLeg
+                    trip {
+                        tripHeadsign
+                        routeShortName
+                    }
+                    from {
+                        name
+                        departureTime
+                        stop {
+                            code
+                            platformCode
+                        }
+                    }
+                    to {
+                        name
+                        arrivalTime
+                    }
+                    legGeometry {
+                        length
+                        points
+                    }
+                    intermediatePlaces {
+                        name
+                        departureTime
+                        stop {
+                            code
+                            platformCode
+                        }
+                    }
+                }
+            }
+    }
+}

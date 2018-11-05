@@ -1,8 +1,19 @@
 apply plugin: 'com.android.application'
 
+apply plugin: 'com.apollographql.android'
+
 apply plugin: 'kotlin-android'
 
 apply plugin: 'kotlin-android-extensions'
+
+apply plugin: 'kotlin-kapt'
+
+apollo {
+    customTypeMapping = [
+            "Polyline": "java.lang.String",
+            "Long"    : "java.lang.Long"
+    ]
+}
 
 android {
     compileSdkVersion 27
@@ -19,6 +30,9 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+    }
+    dataBinding {
+        enabled = true
     }
 }
 

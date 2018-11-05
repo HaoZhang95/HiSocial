@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/recyclerItemTripStops"
+    android:layout_width="match_parent"
+    android:layout_height="50dp">
+
+    <View
+        android:id="@+id/stopProgressView"
+        android:layout_width="5dp"
+        android:layout_height="match_parent"
+        android:background="@color/colorBike" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="5dp"
+        android:src="@drawable/shape_stop_mark" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="30dp" >
+
+        <TextView
+            android:id="@+id/stopNameTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Stop name" />
+
+        <TextView
+            android:paddingStart="5dp"
+            android:paddingEnd="5dp"
+            android:layout_marginStart="20dp"
+            android:id="@+id/stopCodeTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/shape_text_view_border"
+            android:text="E1234"
+            android:textColor="@color/grey_20" />
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:text="12:34"
+        android:id="@+id/departureTimeAtStopTextView"
+        android:textColor="@color/grey_20"
+        android:layout_marginEnd="5dp"/>
+</RelativeLayout>
