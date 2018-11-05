@@ -10,7 +10,10 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
+import com.example.ahao9.socialevent.httpsService.Service
+import com.example.ahao9.socialevent.utils.LogUtils
 import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.LatLng
 import idk.metropolia.fi.myapplication.R
@@ -19,6 +22,8 @@ import idk.metropolia.fi.myapplication.utils.Tools
 import kotlinx.android.synthetic.main.activity_details.*
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.MarkerOptions
+import idk.metropolia.fi.myapplication.model.SingleEventLocationObject
+import rx.Subscriber
 
 
 /**
@@ -32,10 +37,12 @@ class DetailsActivity: AppCompatActivity(), OnMapReadyCallback {
         gmap = googleMap
         gmap?.setMinZoomPreference(12f)
 
-        val markerOptions = MarkerOptions().position(LatLng(lat, lng))
-        gmap?.addMarker(markerOptions)
-        gmap?.moveCamera(zoomingLocation(lat, lng))
-        gmap?.moveCamera(CameraUpdateFactory.newLatLng(LatLng(lat, lng)))
+//        val markerOptions = MarkerOptions().position(LatLng(lat, lng))
+//        gmap?.addMarker(markerOptions)
+//        gmap?.moveCamera(zoomingLocation(lat, lng))
+//        gmap?.moveCamera(CameraUpdateFactory.newLatLng(LatLng(lat, lng)))
+
+        loadPlaceById(obj.location.id, gmap)
 
         gmap?.setOnMarkerClickListener {
             try {
@@ -45,15 +52,59 @@ class DetailsActivity: AppCompatActivity(), OnMapReadyCallback {
 
             true
         }
-
     }
+
+    // https://api.hel.fi/linkedevents/v1/place/tprek:26429/
+    // tprek:15490 --> tprek%3A15490
+    private lateinit var mListLocationSubscriber: Subscriber<SingleEventLocationObject>
+    private fun loadPlaceById(id: String, gmap: GoogleMap?) {
+        var id = id
+
+        LogUtils.e(id)
+
+        val splits = id.split("/".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+        id = splits[splits.size - 1]/*.replace(":", "%3A")*/
+
+        mListLocationSubscriber = object : Subscriber<SingleEventLocationObject>() {
+            override fun onCompleted() {
+
+            }
+
+            override fun onError(e: Throwable) {
+                LogUtils.e(e.message.toString())
+                LogUtils.e("设置为默认地址.")
+                val markerOptions = MarkerOptions().position(LatLng(lat, lng))
+                gmap?.addMarker(markerOptions)
+                gmap?.moveCamera(zoomingLocation(lat, lng))
+                gmap?.moveCamera(CameraUpdateFactory.newLatLng(LatLng(lat, lng)))
+            }
+
+            override fun onNext(singleEventLocationObject: SingleEventLocationObject) {
+//                textView.text = singleEventLocationObject.name.fi
+                if (singleEventLocationObject.position.coordinates.isNotEmpty()) {
+                    lng = singleEventLocationObject.position.coordinates.get(0)
+                    lat = singleEventLocationObject.position.coordinates.get(1)
+                }
+
+                LogUtils.e("lat: -> $lat lng: -> $lng")
+
+                val markerOptions = MarkerOptions().position(LatLng(lat, lng))
+                gmap?.addMarker(markerOptions)
+                gmap?.moveCamera(zoomingLocation(lat, lng))
+                gmap?.moveCamera(CameraUpdateFactory.newLatLng(LatLng(lat, lng)))
+            }
+        }
+
+        Service.loadPlaceById(mListLocationSubscriber, id)
+    }
+
 
     private var mapView: MapView? = null
     private var gmap: GoogleMap? = null
     private var parent_view: View? = null
     private var iv_details: ImageView? = null
-    private var lat: Double = 37.76496792
-    private var lng: Double = -122.42206407
+    private var lat: Double = 60.170377
+    private var lng: Double = 24.952229
     private val MAP_VIEW_BUNDLE_KEY = "MapViewBundleKey"
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -74,7 +125,6 @@ class DetailsActivity: AppCompatActivity(), OnMapReadyCallback {
         mapView = findViewById(R.id.map)
         mapView?.onCreate(mapViewBundle)
         mapView?.getMapAsync(this)
-        initMapView(lat, lng)
     }
 
     override fun onSaveInstanceState(outState: Bundle?) {
@@ -96,17 +146,13 @@ class DetailsActivity: AppCompatActivity(), OnMapReadyCallback {
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
     }
 
-    private fun initMapView(lat: Double, lng: Double) {
-
-
-    }
-
     private fun zoomingLocation(lat: Double, lng: Double): CameraUpdate {
         return CameraUpdateFactory.newLatLngZoom(LatLng(lat, lng), 13f)
     }
 
+    private lateinit var obj: SingleBeanInSearch
     private fun initComponent() {
-        val obj = intent.extras.get("obj") as SingleBeanInSearch
+        obj = intent.extras.get("obj") as SingleBeanInSearch
         if (obj.images.isNotEmpty()) {
             Tools.displayImageOriginal(this, iv_details, obj.images.get(0).url)
         } else {

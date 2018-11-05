@@ -74,10 +74,12 @@ object Service {
     }
 
     fun loadPlaceById(subscriber: Subscriber<SingleEventLocationObject>, id: String){
+
+        LogUtils.e("loadPlaceById: -> $id")
+
         httpService.findPlaceById(id)
                 .onErrorReturn {
-                    LogUtils.e("findEventById --> ${it.message}")
-                    LogUtils.e("findEventById --> ${it.localizedMessage}")
+                    LogUtils.e("loadPlaceById: -> ${it.message}")
                     return@onErrorReturn null
                 }
                 .subscribeOn(Schedulers.io())
