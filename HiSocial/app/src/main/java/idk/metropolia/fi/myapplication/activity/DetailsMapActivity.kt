@@ -1,25 +1,32 @@
 package idk.metropolia.fi.myapplication.activity
 
-import android.app.Activity
+import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.location.Location
+import android.location.LocationListener
+import android.location.LocationManager
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.support.design.widget.BottomSheetBehavior
 import android.support.design.widget.FloatingActionButton
-import android.support.design.widget.Snackbar
+import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
+import android.support.v4.content.ContextCompat
+import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.transition.Explode
-import android.view.*
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
+import android.view.Window
 import android.widget.LinearLayout
-import android.widget.TextView
 import android.widget.Toast
 import com.example.ahao9.socialevent.utils.MyToast
-import com.google.android.gms.common.GoogleApiAvailability
-import com.google.android.gms.common.GooglePlayServicesNotAvailableException
-import com.google.android.gms.common.GooglePlayServicesRepairableException
-import com.google.android.gms.location.places.ui.PlaceAutocomplete
 import com.google.android.gms.maps.CameraUpdate
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -30,14 +37,18 @@ import idk.metropolia.fi.myapplication.R
 import idk.metropolia.fi.myapplication.fragment.RouteDetailsFragment
 import idk.metropolia.fi.myapplication.fragment.RouteFragment
 import idk.metropolia.fi.myapplication.utils.Tools
-import kotlinx.android.synthetic.main.sheet_map.*
+import org.jetbrains.anko.locationManager
 
 class DetailsMapActivity : AppCompatActivity(), RouteFragment.OnItemClickListener, RouteDetailsFragment.OnItemClickListener {
 
     private var mMap: GoogleMap? = null
     private var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>? = null
-    private var lat: Double = 0.0
-    private var lng: Double = 0.0
+
+    companion object {
+        var lat: Double = 0.0
+        var lng: Double = 0.0
+    }
+
     private lateinit var routeFragment: RouteFragment
     private lateinit var routeDetailsFragment: RouteDetailsFragment
     private lateinit var tempFragment: Fragment
@@ -122,8 +133,6 @@ class DetailsMapActivity : AppCompatActivity(), RouteFragment.OnItemClickListene
             }
 
             override fun onSlide(bottomSheet: View, slideOffset: Float) {
-
-
 
             }
         })
