@@ -1,22 +1,9 @@
 package idk.metropolia.fi.myapplication.activity
 
-import android.Manifest
-import android.annotation.SuppressLint
-import android.content.Intent
-import android.content.pm.PackageManager
-import android.location.Location
-import android.location.LocationListener
-import android.location.LocationManager
-import android.net.Uri
-import android.os.Build
 import android.os.Bundle
-import android.provider.Settings
 import android.support.design.widget.BottomSheetBehavior
 import android.support.design.widget.FloatingActionButton
-import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
-import android.support.v4.content.ContextCompat
-import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.transition.Explode
@@ -37,21 +24,18 @@ import idk.metropolia.fi.myapplication.R
 import idk.metropolia.fi.myapplication.fragment.RouteDetailsFragment
 import idk.metropolia.fi.myapplication.fragment.RouteFragment
 import idk.metropolia.fi.myapplication.utils.Tools
-import org.jetbrains.anko.locationManager
 
 class DetailsMapActivity : AppCompatActivity(), RouteFragment.OnItemClickListener, RouteDetailsFragment.OnItemClickListener {
-
-    private var mMap: GoogleMap? = null
-    private var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>? = null
-
     companion object {
-        var lat: Double = 0.0
-        var lng: Double = 0.0
+        var detailsMapLat: Double = 0.0
+        var detailsMapLng: Double = 0.0
     }
 
     private lateinit var routeFragment: RouteFragment
     private lateinit var routeDetailsFragment: RouteDetailsFragment
     private lateinit var tempFragment: Fragment
+    private var mMap: GoogleMap? = null
+    private var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,24 +44,26 @@ class DetailsMapActivity : AppCompatActivity(), RouteFragment.OnItemClickListene
         window.exitTransition = Explode()
         setContentView(R.layout.activity_details_map)
 
-        lat = intent.extras["Lat"] as Double
-        lng = intent.extras["Lng"] as Double
-
         initToolbar()
-        initMapFragment(lat,lng)
-        initComponent()
+        initMapFragment(detailsMapLat,detailsMapLng)
+        initComponents()
+        initListeners()
+    }
 
-        routeFragment = RouteFragment()
-        routeFragment.setOnItemClickListener(this)
+    private fun initListeners() {
+        (findViewById<View>(R.id.fab_directions) as FloatingActionButton).setOnClickListener {
+            bottomSheetBehavior!!.state = BottomSheetBehavior.STATE_COLLAPSED
+            try {
+                mMap!!.animateCamera(zoomingLocation(detailsMapLat, detailsMapLng))
+            } catch (e: Exception) {
+            }
+        }
 
-        routeDetailsFragment = RouteDetailsFragment()
-        routeDetailsFragment.setOnItemClickListener(this)
+        bottomSheetBehavior!!.setBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+            override fun onStateChanged(bottomSheet: View, newState: Int) { }
 
-        supportFragmentManager
-                .beginTransaction()
-                .add(R.id.container, routeFragment)
-                .commit()
-        tempFragment = routeFragment
+            override fun onSlide(bottomSheet: View, slideOffset: Float) { }
+        })
     }
 
     override fun onItemClick(view: View, obj: String) {
@@ -89,7 +75,6 @@ class DetailsMapActivity : AppCompatActivity(), RouteFragment.OnItemClickListene
         MyToast.show(this, obj)
         switchFragment(routeFragment)
     }
-
 
     private fun switchFragment(fragment: Fragment) {
         if (fragment != tempFragment) {
@@ -116,35 +101,22 @@ class DetailsMapActivity : AppCompatActivity(), RouteFragment.OnItemClickListene
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
     }
 
-    private fun initComponent() {
-        // get the bottom sheet view
+    private fun initComponents() {
         val llBottomSheet = findViewById<View>(R.id.bottom_sheet) as LinearLayout
-
-        // init the bottom sheet behavior
         bottomSheetBehavior = BottomSheetBehavior.from(llBottomSheet)
-
-        // change the state of the bottom sheet
         bottomSheetBehavior!!.state = BottomSheetBehavior.STATE_COLLAPSED
 
-        // set callback for changes
-        bottomSheetBehavior!!.setBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
-            override fun onStateChanged(bottomSheet: View, newState: Int) {
+        routeFragment = RouteFragment()
+        routeFragment.setOnItemClickListener(this)
 
-            }
+        routeDetailsFragment = RouteDetailsFragment()
+        routeDetailsFragment.setOnItemClickListener(this)
 
-            override fun onSlide(bottomSheet: View, slideOffset: Float) {
-
-            }
-        })
-
-        (findViewById<View>(R.id.fab_directions) as FloatingActionButton).setOnClickListener {
-            bottomSheetBehavior!!.state = BottomSheetBehavior.STATE_COLLAPSED
-            try {
-                mMap!!.animateCamera(zoomingLocation(lat, lng))
-            } catch (e: Exception) {
-            }
-        }
-
+        supportFragmentManager
+                .beginTransaction()
+                .add(R.id.container, routeFragment)
+                .commit()
+        tempFragment = routeFragment
     }
 
     private fun initMapFragment(lat: Double, lng: Double) {
@@ -160,7 +132,6 @@ class DetailsMapActivity : AppCompatActivity(), RouteFragment.OnItemClickListene
                     mMap!!.animateCamera(zoomingLocation(lat, lng))
                 } catch (e: Exception) {
                 }
-
                 true
             }
         }
@@ -183,5 +154,4 @@ class DetailsMapActivity : AppCompatActivity(), RouteFragment.OnItemClickListene
         }
         return super.onOptionsItemSelected(item)
     }
-
 }

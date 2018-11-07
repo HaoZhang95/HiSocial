@@ -1,40 +1,28 @@
 package idk.metropolia.fi.myapplication.fragment
 
 import ItineraryPlanQuery
-import android.Manifest
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.ProgressDialog
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.location.Location
-import android.location.LocationListener
-import android.location.LocationManager
-import android.net.Uri
-import android.os.Build
+import android.graphics.Paint
 import android.os.Bundle
-import android.provider.Settings
 import android.support.design.widget.Snackbar
-import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
-import android.support.v4.content.ContextCompat
-import android.support.v7.app.AlertDialog
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import android.widget.Toast
 import com.apollographql.apollo.ApolloCall
 import com.apollographql.apollo.api.Response
 import com.apollographql.apollo.exception.ApolloException
 import com.example.ahao9.socialevent.utils.LogUtils
-import com.example.ahao9.socialevent.utils.MyToast
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException
 import com.google.android.gms.common.GooglePlayServicesRepairableException
 import com.google.android.gms.location.places.ui.PlaceAutocomplete
+import com.wdullaer.materialdatetimepicker.date.DatePickerDialog
+import com.wdullaer.materialdatetimepicker.time.TimePickerDialog
 import idk.metropolia.fi.myapplication.R
-import idk.metropolia.fi.myapplication.activity.DetailsMapActivity
 import idk.metropolia.fi.myapplication.adapter.Coordinate
 import idk.metropolia.fi.myapplication.adapter.ItineraryHolder
 import idk.metropolia.fi.myapplication.adapter.ItineraryResultsRecyclerAdapter
@@ -51,10 +39,12 @@ import java.util.*
  */
 private const val REQUEST_CODE_ORIGIN = 1
 private const val REQUEST_CODE_DEST = 2
-class RouteFragment : Fragment(), ItineraryResultsRecyclerAdapter.ItineraryResultsRecyclerAdapterListener {
+
+class RouteFragment : Fragment(), ItineraryResultsRecyclerAdapter.ItineraryResultsRecyclerAdapterListener{
     companion object {
-        var destLat:Double? = null
-        var destLng:Double? = null
+        var destLat: Double? = null
+        var destLng: Double? = null
+        var destStr: String? = null
     }
 
     private lateinit var parent_view: View
@@ -67,7 +57,6 @@ class RouteFragment : Fragment(), ItineraryResultsRecyclerAdapter.ItineraryResul
     private var year = calendar.get(Calendar.YEAR)
     private var month = calendar.get(Calendar.MONTH) + 1
     private var dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH)
-    private var arriveBy: Boolean = false
     private var itineraries: MutableList<ItineraryPlanQuery.Itinerary>? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -78,7 +67,7 @@ class RouteFragment : Fragment(), ItineraryResultsRecyclerAdapter.ItineraryResul
         super.onViewCreated(view, savedInstanceState)
         parent_view = activity!!.findViewById(android.R.id.content)  // 自动完成的搜索框
 
-        initParameters()
+        initComponents()
         initListeners()
     }
 
@@ -90,10 +79,22 @@ class RouteFragment : Fragment(), ItineraryResultsRecyclerAdapter.ItineraryResul
         }
     }
 
-    private fun initParameters() {
-        if (destLat != null && destLng != null ) {
+    private fun initComponents() {
+        if (destLat != null && destLng != null) {
             toCoordinate = Coordinate(destLng!!, destLat!!)
         }
+
+        if (destStr != null) {
+            tv_destination.text = destStr
+        }
+
+        tv_time.paint.flags = Paint.UNDERLINE_TEXT_FLAG
+        tv_time.paint.isAntiAlias = true
+        tv_date.paint.flags = Paint.UNDERLINE_TEXT_FLAG
+        tv_date.paint.isAntiAlias = true
+
+        tv_time.text = "${this.hourOfDay}:${this.minute}"
+        tv_date.text = "${this.dayOfMonth}-${this.month}-${this.year}"
     }
 
     /**
@@ -104,9 +105,51 @@ class RouteFragment : Fragment(), ItineraryResultsRecyclerAdapter.ItineraryResul
         tv_destination.setOnClickListener { openAutocompleteActivity(REQUEST_CODE_DEST) }
 
         ib_locate.setOnClickListener { getCurrentLocation() }
-        ib_swap.setOnClickListener { MyToast.show(context!!,"swap in fragment") }
-        tv_time.setOnClickListener { MyToast.show(context!!,"time") }
-        tv_date.setOnClickListener { MyToast.show(context!!,"date") }
+        ib_swap.setOnClickListener { swapItinerary() }
+        tv_time.setOnClickListener { showTimePicker() }
+        fake_time.setOnClickListener { showTimePicker() }
+        tv_date.setOnClickListener { showDatePicker() }
+        fake_date.setOnClickListener { showDatePicker() }
+    }
+
+    private fun showDatePicker() {
+        val cur_calender = Calendar.getInstance()
+        val datePicker = DatePickerDialog.newInstance({ view, year, monthOfYear, dayOfMonth ->
+            this.year = year
+            this.month = monthOfYear.plus(1)
+            this.dayOfMonth = dayOfMonth
+            tv_date.text = "${this.dayOfMonth}-${this.month}-${this.year}"
+            queryItineraryPlan()
+        }, cur_calender.get(Calendar.YEAR), cur_calender.get(Calendar.MONTH), cur_calender.get(Calendar.DAY_OF_MONTH)
+        )
+        //set dark light
+        datePicker.isThemeDark = false
+        datePicker.accentColor = resources.getColor(R.color.colorPrimary)
+        datePicker.minDate = cur_calender
+        datePicker.show(activity?.fragmentManager, "datePicker")
+
+    }
+
+    private fun showTimePicker() {
+        val cur_calender = Calendar.getInstance()
+
+        val datePicker = TimePickerDialog.newInstance({ view, hourOfDay, minute, second ->
+            LogUtils.e(hourOfDay.toString() + " : " + minute)
+            this.hourOfDay = hourOfDay
+            this.minute = minute
+            tv_time.text = "${this.hourOfDay}:${this.minute}"
+            queryItineraryPlan()
+        }, cur_calender.get(Calendar.HOUR_OF_DAY), cur_calender.get(Calendar.MINUTE), true)
+        //set dark light
+        datePicker.isThemeDark = false
+        datePicker.accentColor = resources.getColor(R.color.colorPrimary)
+        datePicker.show(activity?.fragmentManager, "timePicker")
+    }
+
+    private fun swapItinerary() {
+        tv_origin.text = tv_destination.text.also { tv_destination.text = tv_origin.text }
+        fromCoordinate = toCoordinate.also { toCoordinate = fromCoordinate }
+        queryItineraryPlan()
     }
 
     private fun getCurrentLocation() {
@@ -137,7 +180,7 @@ class RouteFragment : Fragment(), ItineraryResultsRecyclerAdapter.ItineraryResul
                     .toLong(toCoordinate!!.longitude)
                     .date("$year-$month-$dayOfMonth")
                     .time("$hourOfDay:$minute")
-                    .arriveBy(arriveBy)
+//                    .arriveBy(arriveBy)
                     .build()
             ).enqueue(object : ApolloCall.Callback<ItineraryPlanQuery.Data>() {
                 override fun onFailure(e: ApolloException) {
@@ -145,6 +188,7 @@ class RouteFragment : Fragment(), ItineraryResultsRecyclerAdapter.ItineraryResul
                     errorMessageTextView.text = "Cannot get route"
                     mDialog.dismiss()
                 }
+
                 override fun onResponse(response: Response<ItineraryPlanQuery.Data>) {
                     itineraries = response.data()?.plan()?.itineraries()
 
@@ -174,7 +218,7 @@ class RouteFragment : Fragment(), ItineraryResultsRecyclerAdapter.ItineraryResul
     override fun onClickItineraryItem(position: Int) {
         val itinerary = itineraries!![position]
         ItineraryHolder.set(itinerary)
-        onItemClickListener!!.onItemClick(view!!,"啥也没传" )
+        onItemClickListener!!.onItemClick(view!!, "啥也没传")
     }
 
     private var onItemClickListener: RouteFragment.OnItemClickListener? = null

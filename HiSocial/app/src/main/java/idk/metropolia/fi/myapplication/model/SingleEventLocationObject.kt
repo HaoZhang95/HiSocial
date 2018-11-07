@@ -31,7 +31,7 @@ data class SingleEventLocationObject(
         @SerializedName("name") val name: Name = Name(),
         @SerializedName("street_address") val streetAddress: StreetAddress = StreetAddress(),
         @SerializedName("telephone") val telephone: Telephone = Telephone(),
-        @SerializedName("description") val description: String = "", // null
+        @SerializedName("description") val description: Description = Description(), // null
         @SerializedName("address_locality") val addressLocality: AddressLocality = AddressLocality(),
         @SerializedName("info_url") val infoUrl: InfoUrl = InfoUrl(),
         @SerializedName("@id") val web_id: String = "", // https://api.hel.fi/linkedevents/v1/place/tprek:26429/
@@ -51,6 +51,12 @@ data class SingleEventLocationObject(
     }
 
     data class Name(
+            @SerializedName("sv") val sv: String = "", // Sellosalen
+            @SerializedName("en") val en: String = "", // Sello Hall
+            @SerializedName("fi") val fi: String = "" // Sellosali
+    )
+
+    data class Description(
             @SerializedName("sv") val sv: String = "", // Sellosalen
             @SerializedName("en") val en: String = "", // Sello Hall
             @SerializedName("fi") val fi: String = "" // Sellosali

@@ -117,36 +117,50 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@color/overlay_dark_10"
                     android:gravity="center_vertical"
                     android:orientation="horizontal">
 
-                    <!--<ImageButton-->
-                    <!--android:layout_width="wrap_content"-->
-                    <!--android:layout_height="?attr/actionBarSize"-->
-                    <!--android:background="@android:color/transparent"-->
-                    <!--android:tint="@color/colorPrimary"-->
-                    <!--app:srcCompat="@drawable/ic_clock" />-->
-
-                    <!--<View-->
-                    <!--android:layout_width="@dimen/spacing_mxlarge"-->
-                    <!--android:layout_height="0dp" />-->
-
-
                     <TextView
-                        android:id="@+id/tv_time"
-                        android:layout_width="0dp"
+                        android:id="@+id/fake_time"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="3.5"
                         android:background="?attr/selectableItemBackground"
                         android:gravity="center_vertical"
                         android:maxLines="1"
                         android:minHeight="@dimen/spacing_xmlarge"
                         android:singleLine="true"
-                        android:text="Depart At"
+                        android:text="Depart At:"
+                        android:paddingRight="@dimen/spacing_middle"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+                        android:textColor="@color/colorPrimary" />
+
+                    <TextView
+                        android:id="@+id/tv_time"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2.5"
+                        android:background="?attr/selectableItemBackground"
+                        android:gravity="center_vertical"
+                        android:maxLines="1"
+                        android:minHeight="@dimen/spacing_xmlarge"
+                        android:singleLine="true"
+                        android:text="12:58"
                         android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
                         android:textColor="@color/grey_80" />
 
+                    <TextView
+                        android:id="@+id/fake_date"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="?attr/selectableItemBackground"
+                        android:gravity="center_vertical"
+                        android:maxLines="1"
+                        android:minHeight="@dimen/spacing_xmlarge"
+                        android:singleLine="true"
+                        android:text="Date:"
+                        android:paddingRight="@dimen/spacing_middle"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+                        android:textColor="@color/colorPrimary" />
                     <TextView
                         android:id="@+id/tv_date"
                         android:layout_width="0dp"

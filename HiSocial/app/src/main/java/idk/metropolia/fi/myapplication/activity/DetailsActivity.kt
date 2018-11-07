@@ -2,7 +2,6 @@ package idk.metropolia.fi.myapplication.activity
 
 import android.content.Intent
 import android.os.Bundle
-import android.support.design.widget.BottomSheetBehavior
 import android.support.v4.app.ActivityOptionsCompat
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
@@ -10,7 +9,6 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
-import android.widget.TextView
 import android.widget.Toast
 import com.example.ahao9.socialevent.httpsService.Service
 import com.example.ahao9.socialevent.utils.LogUtils
@@ -22,9 +20,9 @@ import idk.metropolia.fi.myapplication.utils.Tools
 import kotlinx.android.synthetic.main.activity_details.*
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.MarkerOptions
+import idk.metropolia.fi.myapplication.fragment.RouteFragment
 import idk.metropolia.fi.myapplication.model.SingleEventLocationObject
 import rx.Subscriber
-
 
 /**
  * @ Author     ：Hao Zhang.
@@ -32,99 +30,57 @@ import rx.Subscriber
  * @ Description：Build for Metropolia project
  */
 class DetailsActivity: AppCompatActivity(), OnMapReadyCallback {
-    override fun onMapReady(googleMap: GoogleMap?) {
-
-        gmap = googleMap
-        gmap?.setMinZoomPreference(12f)
-
-//        val markerOptions = MarkerOptions().position(LatLng(lat, lng))
-//        gmap?.addMarker(markerOptions)
-//        gmap?.moveCamera(zoomingLocation(lat, lng))
-//        gmap?.moveCamera(CameraUpdateFactory.newLatLng(LatLng(lat, lng)))
-
-        loadPlaceById(obj.location.id, gmap)
-
-        gmap?.setOnMarkerClickListener {
-            try {
-                gmap?.animateCamera(zoomingLocation(lat, lng))
-            } catch (e: Exception) {
-            }
-
-            true
-        }
-    }
-
-    // https://api.hel.fi/linkedevents/v1/place/tprek:26429/
-    // tprek:15490 --> tprek%3A15490
-    private lateinit var mListLocationSubscriber: Subscriber<SingleEventLocationObject>
-    private fun loadPlaceById(id: String, gmap: GoogleMap?) {
-        var id = id
-
-        LogUtils.e(id)
-
-        val splits = id.split("/".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-        id = splits[splits.size - 1]/*.replace(":", "%3A")*/
-
-        mListLocationSubscriber = object : Subscriber<SingleEventLocationObject>() {
-            override fun onCompleted() {
-
-            }
-
-            override fun onError(e: Throwable) {
-                LogUtils.e(e.message.toString())
-                LogUtils.e("设置为默认地址.")
-                val markerOptions = MarkerOptions().position(LatLng(lat, lng))
-                gmap?.addMarker(markerOptions)
-                gmap?.moveCamera(zoomingLocation(lat, lng))
-                gmap?.moveCamera(CameraUpdateFactory.newLatLng(LatLng(lat, lng)))
-            }
-
-            override fun onNext(singleEventLocationObject: SingleEventLocationObject) {
-//                textView.text = singleEventLocationObject.name.fi
-                if (singleEventLocationObject.position.coordinates.isNotEmpty()) {
-                    lng = singleEventLocationObject.position.coordinates.get(0)
-                    lat = singleEventLocationObject.position.coordinates.get(1)
-                }
-
-                LogUtils.e("lat: -> $lat lng: -> $lng")
-
-                val markerOptions = MarkerOptions().position(LatLng(lat, lng))
-                gmap?.addMarker(markerOptions)
-                gmap?.moveCamera(zoomingLocation(lat, lng))
-                gmap?.moveCamera(CameraUpdateFactory.newLatLng(LatLng(lat, lng)))
-            }
-        }
-
-        Service.loadPlaceById(mListLocationSubscriber, id)
-    }
-
 
     private var mapView: MapView? = null
     private var gmap: GoogleMap? = null
     private var parent_view: View? = null
     private var iv_details: ImageView? = null
-    private var lat: Double = 60.170377
+    private var lat: Double = 60.170377     // default coordinate is helsinki church
     private var lng: Double = 24.952229
     private val MAP_VIEW_BUNDLE_KEY = "MapViewBundleKey"
+    private lateinit var obj: SingleBeanInSearch
+    private lateinit var mListLocationSubscriber: Subscriber<SingleEventLocationObject>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_details)
-        parent_view = findViewById(R.id.parent_view)
 
-        iv_details = findViewById(R.id.iv_details)
         initToolbar()
-        initComponent()
+        initListeners()
+        initComponents(savedInstanceState)
+    }
 
-
+    private fun initComponents(savedInstanceState: Bundle?) {
         var mapViewBundle: Bundle? = null
         if (savedInstanceState != null) {
             mapViewBundle = savedInstanceState.getBundle(MAP_VIEW_BUNDLE_KEY)
         }
-
         mapView = findViewById(R.id.map)
         mapView?.onCreate(mapViewBundle)
         mapView?.getMapAsync(this)
+
+        parent_view = findViewById(R.id.parent_view)
+        iv_details = findViewById(R.id.iv_details)
+
+        obj = intent.extras.get("obj") as SingleBeanInSearch
+        tv_title.text = obj.name.fi
+        tv_price.text = "Free"
+        tv_subtitle.text = obj.shortDescription.fi
+        tv_desc.text = obj.description.toString()
+
+        if (obj.images.isNotEmpty()) {
+            Tools.displayImageOriginal(this, iv_details, obj.images.get(0).url)
+        } else {
+            Tools.displayImageOriginal(this, iv_details, R.drawable.not_found)
+        }
+
+        if (obj.score != 0.0) {
+            tv_score.text = "${obj.score.toString().slice(0..3)} / 10"
+            rb_score.rating = obj.score.toFloat() / 2
+        } else {
+            tv_score.text = "un-known"
+            rb_score.rating = 0.0f
+        }
     }
 
     override fun onSaveInstanceState(outState: Bundle?) {
@@ -134,7 +90,6 @@ class DetailsActivity: AppCompatActivity(), OnMapReadyCallback {
             mapViewBundle = Bundle()
             outState?.putBundle(MAP_VIEW_BUNDLE_KEY, mapViewBundle)
         }
-
         mapView?.onSaveInstanceState(mapViewBundle)
     }
 
@@ -146,43 +101,69 @@ class DetailsActivity: AppCompatActivity(), OnMapReadyCallback {
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
     }
 
+    override fun onMapReady(googleMap: GoogleMap?) {
+        gmap = googleMap
+        gmap?.setMinZoomPreference(12f)
+        gmap?.setOnMarkerClickListener {
+            try {
+                gmap?.animateCamera(zoomingLocation(lat, lng))
+            } catch (e: Exception) {
+                LogUtils.e("onMapReady: ${e.localizedMessage}")
+            }
+            true
+        }
+
+        loadPlaceById(obj.location.id, gmap)
+    }
+
+    /**
+     * tprek:15490 --> tprek%3A15490
+     */
+    private fun loadPlaceById(id: String, gmap: GoogleMap?) {
+        var id = id
+        val splits = id.split("/".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+        id = splits[splits.size - 1]/*.replace(":", "%3A")*/
+        mListLocationSubscriber = object : Subscriber<SingleEventLocationObject>() {
+            override fun onCompleted() { }
+
+            override fun onError(e: Throwable) {
+                LogUtils.e("loadPlaceById in DetailsActivity: ${e.localizedMessage}")
+            }
+            override fun onNext(singleEventLocationObject: SingleEventLocationObject?) {
+                singleEventLocationObject?.let {
+                    if (it.position.coordinates.isNotEmpty()) {
+                        RouteFragment.destLng = it.position.coordinates.get(0)
+                        RouteFragment.destLat = it.position.coordinates.get(1)
+                        RouteFragment.destStr = it.streetAddress.fi
+
+                        DetailsMapActivity.detailsMapLng = it.position.coordinates.get(0)
+                        DetailsMapActivity.detailsMapLat = it.position.coordinates.get(1)
+
+                        lng = it.position.coordinates.get(0)
+                        lat = it.position.coordinates.get(1)
+
+                        tv_location.text = it.addressLocality.fi
+                        val markerOptions = MarkerOptions().position(LatLng(lat, lng))
+                        gmap?.addMarker(markerOptions)
+                        gmap?.moveCamera(zoomingLocation(lat, lng))
+                        gmap?.moveCamera(CameraUpdateFactory.newLatLng(LatLng(lat, lng)))
+                    }
+                }
+            }
+        }
+
+        Service.loadPlaceById(mListLocationSubscriber, id)
+    }
+
     private fun zoomingLocation(lat: Double, lng: Double): CameraUpdate {
         return CameraUpdateFactory.newLatLngZoom(LatLng(lat, lng), 13f)
     }
 
-    private lateinit var obj: SingleBeanInSearch
-    private fun initComponent() {
-        obj = intent.extras.get("obj") as SingleBeanInSearch
-        if (obj.images.isNotEmpty()) {
-            Tools.displayImageOriginal(this, iv_details, obj.images.get(0).url)
-        } else {
-            Tools.displayImageOriginal(this, iv_details, R.drawable.not_found)
-        }
-        tv_title.text = obj.name.fi
-
-        tv_location.text = "Helsinki"
-        tv_price.text = "Free"
-
-        tv_subtitle.text = obj.shortDescription.fi
-        if (obj.score != 0.0) {
-            tv_score.text = "${obj.score.toString().slice(0..3)} / 10"
-            rb_score.rating = obj.score.toFloat() / 2
-        } else {
-            tv_score.text = "un-known"
-            rb_score.rating = 0.0f
-        }
-        tv_desc.text = obj.description.toString()
-
-        // 设置mapview
+    private fun initListeners() {
         ib_map_zoom.setOnClickListener {
-
             val intent = Intent(this, DetailsMapActivity::class.java)
-            intent.putExtra("Lat", lat)
-            intent.putExtra("Lng", lng)
             startActivity(intent,
                     ActivityOptionsCompat.makeSceneTransitionAnimation(this).toBundle());
-
-            // startActivity<DetailsMapActivity>("Lat" to 37.76496792, "Lng" to -122.42206407)
         }
     }
 
@@ -229,5 +210,4 @@ class DetailsActivity: AppCompatActivity(), OnMapReadyCallback {
         super.onLowMemory()
         mapView?.onLowMemory()
     }
-
 }
