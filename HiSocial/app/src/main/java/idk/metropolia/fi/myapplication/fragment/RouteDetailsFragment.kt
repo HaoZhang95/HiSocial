@@ -19,9 +19,6 @@ import kotlinx.android.synthetic.main.fragment_route_details.*
  */
 class RouteDetailsFragment : Fragment() {
 
-    private val REQUEST_CODE_ORIGIN = 1
-    private val REQUEST_CODE_DEST = 2
-    private lateinit var parent_view: View
     private lateinit var layoutManager: LinearLayoutManager
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -43,7 +40,7 @@ class RouteDetailsFragment : Fragment() {
     private var onItemClickListener: RouteDetailsFragment.OnItemClickListener? = null
 
     interface OnItemClickListener {
-        fun onSwapItemClick(view: View, obj: String)
+        fun onSwapItemClick()
     }
 
     fun setOnItemClickListener(onItemClickListener: RouteDetailsFragment.OnItemClickListener) {
@@ -51,9 +48,7 @@ class RouteDetailsFragment : Fragment() {
     }
 
     private fun initListeners() {
-        // 添加搜索框的自动完成
-
-        ib_back.setOnClickListener { onItemClickListener!!.onSwapItemClick(it, "go back") }
+        ib_back.setOnClickListener { onItemClickListener!!.onSwapItemClick() }
     }
 
 

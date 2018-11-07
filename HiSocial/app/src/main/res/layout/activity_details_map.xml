@@ -12,8 +12,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-
-    <!--<include layout="@layout/include_tool_bar"/>-->
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -34,7 +32,141 @@
 
     </FrameLayout>
 
-    <!--bottom sheet container-->
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/typeLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_anchor="@+id/map"
+        android:layout_marginTop="80dp"
+        android:visibility="gone"
+        android:layout_marginRight="16dp"
+        app:layout_anchorGravity="right|top">
+
+        <TextView
+            android:id="@+id/textView4"
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:background="@color/colorBike"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="Bike"
+            android:textColor="@color/colorBike"
+            app:layout_constraintBottom_toBottomOf="@+id/textView4"
+            app:layout_constraintStart_toEndOf="@+id/textView4"
+            app:layout_constraintTop_toTopOf="@+id/textView4" />
+
+        <TextView
+            android:id="@+id/textView6"
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:background="@color/colorBus"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView4" />
+
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="Bus"
+            android:textColor="@color/colorBus"
+            app:layout_constraintBottom_toBottomOf="@+id/textView6"
+            app:layout_constraintStart_toEndOf="@+id/textView6"
+            app:layout_constraintTop_toTopOf="@+id/textView6" />
+
+        <TextView
+            android:id="@+id/textViewx1"
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:background="@color/colorTrain"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView6" />
+
+        <TextView
+            android:id="@+id/textViewxx1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="Trail"
+            android:textColor="@color/colorTrain"
+            app:layout_constraintBottom_toBottomOf="@+id/textViewx1"
+            app:layout_constraintStart_toEndOf="@+id/textViewx1"
+            app:layout_constraintTop_toTopOf="@+id/textViewx1" />
+        <TextView
+            android:id="@+id/textViewx2"
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:background="@color/colorTram"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textViewx1" />
+
+        <TextView
+            android:id="@+id/textViewxx2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="Tram"
+            android:textColor="@color/colorTram"
+            app:layout_constraintBottom_toBottomOf="@+id/textViewx2"
+            app:layout_constraintStart_toEndOf="@+id/textViewx2"
+            app:layout_constraintTop_toTopOf="@+id/textViewx2" />
+
+        <TextView
+            android:id="@+id/textViewx3"
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:background="@color/colorMetro"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textViewx2" />
+
+        <TextView
+            android:id="@+id/textViewxx3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="Metro"
+            android:textColor="@color/colorMetro"
+            app:layout_constraintBottom_toBottomOf="@+id/textViewx3"
+            app:layout_constraintStart_toEndOf="@+id/textViewx3"
+            app:layout_constraintTop_toTopOf="@+id/textViewx3" />
+        <TextView
+            android:id="@+id/textViewx4"
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:background="@color/colorWalk"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textViewx3" />
+
+        <TextView
+            android:id="@+id/textViewxx4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="Walk"
+            android:textColor="@color/colorWalk"
+            app:layout_constraintBottom_toBottomOf="@+id/textViewx4"
+            app:layout_constraintStart_toEndOf="@+id/textViewx4"
+            app:layout_constraintTop_toTopOf="@+id/textViewx4" />
+    </android.support.constraint.ConstraintLayout>
+
     <include layout="@layout/sheet_map" />
 
     <android.support.design.widget.FloatingActionButton
@@ -49,6 +181,5 @@
         app:layout_anchorGravity="top|end"
         app:rippleColor="@android:color/white"
         app:srcCompat="@drawable/ic_locate" />
-
 
 </android.support.design.widget.CoordinatorLayout>

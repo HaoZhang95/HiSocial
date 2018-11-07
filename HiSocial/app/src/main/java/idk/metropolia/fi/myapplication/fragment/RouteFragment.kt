@@ -218,13 +218,13 @@ class RouteFragment : Fragment(), ItineraryResultsRecyclerAdapter.ItineraryResul
     override fun onClickItineraryItem(position: Int) {
         val itinerary = itineraries!![position]
         ItineraryHolder.set(itinerary)
-        onItemClickListener!!.onItemClick(view!!, "啥也没传")
+        onItemClickListener!!.onItemClick()
     }
 
     private var onItemClickListener: RouteFragment.OnItemClickListener? = null
 
     interface OnItemClickListener {
-        fun onItemClick(view: View, obj: String)
+        fun onItemClick()
     }
 
     fun setOnItemClickListener(onItemClickListener: RouteFragment.OnItemClickListener) {

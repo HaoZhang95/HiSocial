@@ -5,27 +5,34 @@ import android.support.design.widget.BottomSheetBehavior
 import android.support.design.widget.FloatingActionButton
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.Toolbar
 import android.transition.Explode
+import android.transition.Visibility
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.Window
 import android.widget.LinearLayout
 import android.widget.Toast
-import com.example.ahao9.socialevent.utils.MyToast
 import com.google.android.gms.maps.CameraUpdate
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.PolylineOptions
 import idk.metropolia.fi.myapplication.R
+import idk.metropolia.fi.myapplication.adapter.ItineraryHolder
 import idk.metropolia.fi.myapplication.fragment.RouteDetailsFragment
 import idk.metropolia.fi.myapplication.fragment.RouteFragment
+import idk.metropolia.fi.myapplication.utils.PolylineUtils
 import idk.metropolia.fi.myapplication.utils.Tools
+import kotlinx.android.synthetic.main.activity_details_map.*
 
-class DetailsMapActivity : AppCompatActivity(), RouteFragment.OnItemClickListener, RouteDetailsFragment.OnItemClickListener {
+class DetailsMapActivity : AppCompatActivity(), RouteFragment.OnItemClickListener,
+        RouteDetailsFragment.OnItemClickListener {
     companion object {
         var detailsMapLat: Double = 0.0
         var detailsMapLng: Double = 0.0
@@ -35,7 +42,7 @@ class DetailsMapActivity : AppCompatActivity(), RouteFragment.OnItemClickListene
     private lateinit var routeDetailsFragment: RouteDetailsFragment
     private lateinit var tempFragment: Fragment
     private var mMap: GoogleMap? = null
-    private var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>? = null
+    private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,27 +59,38 @@ class DetailsMapActivity : AppCompatActivity(), RouteFragment.OnItemClickListene
 
     private fun initListeners() {
         (findViewById<View>(R.id.fab_directions) as FloatingActionButton).setOnClickListener {
-            bottomSheetBehavior!!.state = BottomSheetBehavior.STATE_COLLAPSED
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
             try {
                 mMap!!.animateCamera(zoomingLocation(detailsMapLat, detailsMapLng))
             } catch (e: Exception) {
             }
         }
 
-        bottomSheetBehavior!!.setBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+        bottomSheetBehavior.setBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) { }
 
             override fun onSlide(bottomSheet: View, slideOffset: Float) { }
         })
     }
 
-    override fun onItemClick(view: View, obj: String) {
-        MyToast.show(this, obj)
+    /**
+     * 路线列表 -> 路线详情列表
+     * 并且显示路线在地图上
+     */
+    override fun onItemClick() {
         switchFragment(routeDetailsFragment)
+
+        bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+
+        typeLayout.visibility = View.VISIBLE
+
+        drawPolylineOnMap()
     }
 
-    override fun onSwapItemClick(view: View, obj: String) {
-        MyToast.show(this, obj)
+    /**
+     * 路线详情列表 -> 路线列表
+     */
+    override fun onSwapItemClick() {
         switchFragment(routeFragment)
     }
 
@@ -104,7 +122,7 @@ class DetailsMapActivity : AppCompatActivity(), RouteFragment.OnItemClickListene
     private fun initComponents() {
         val llBottomSheet = findViewById<View>(R.id.bottom_sheet) as LinearLayout
         bottomSheetBehavior = BottomSheetBehavior.from(llBottomSheet)
-        bottomSheetBehavior!!.state = BottomSheetBehavior.STATE_COLLAPSED
+        bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
 
         routeFragment = RouteFragment()
         routeFragment.setOnItemClickListener(this)
@@ -117,6 +135,49 @@ class DetailsMapActivity : AppCompatActivity(), RouteFragment.OnItemClickListene
                 .add(R.id.container, routeFragment)
                 .commit()
         tempFragment = routeFragment
+
+    }
+
+    private fun drawPolylineOnMap() {
+        mMap?.clear()
+        ItineraryHolder.get()?.run {
+            val boundsBuilder = LatLngBounds.Builder()
+            legs().forEach {
+                val polylineOptions = PolylineOptions()
+
+                when(it.mode().toString()) {
+                    "BICYCLE" -> { polylineOptions.color(resources.getColor(R.color.colorBike, null))
+                    }
+                    "BUS"-> { polylineOptions.color(resources.getColor(R.color.colorBus, null))
+                    }
+                    "FERRY"-> { polylineOptions.color(resources.getColor(R.color.colorFerry, null))
+                    }
+                    "RAIL"-> { polylineOptions.color(resources.getColor(R.color.colorTrain, null))
+                    }
+                    "SUBWAY"-> { polylineOptions.color(resources.getColor(R.color.colorMetro, null))
+                    }
+                    "TRAM" -> { polylineOptions.color(resources.getColor(R.color.colorTram, null))
+                    }
+                    "WALK" -> { polylineOptions.color(resources.getColor(R.color.colorWalk, null))
+                    }
+                }
+                it.legGeometry()?.points()?.run {
+                    val coordinates = PolylineUtils.decode(this)
+                    coordinates.forEach {
+                        polylineOptions.add(LatLng(it.latitude, it.longitude))
+                        boundsBuilder.include(LatLng(it.latitude, it.longitude))
+                    }
+                }
+
+                mMap?.addPolyline(polylineOptions)
+            }
+
+            val width = resources.displayMetrics.widthPixels
+            val height = resources.displayMetrics.heightPixels
+            val padding = (0.12 * width).toInt()
+            val cameraUpate = CameraUpdateFactory.newLatLngBounds(boundsBuilder.build(), width, height, padding)
+            mMap?.animateCamera(cameraUpate)
+        }
     }
 
     private fun initMapFragment(lat: Double, lng: Double) {
@@ -127,7 +188,7 @@ class DetailsMapActivity : AppCompatActivity(), RouteFragment.OnItemClickListene
             mMap!!.addMarker(markerOptions)
             mMap!!.moveCamera(zoomingLocation(lat, lng))
             mMap!!.setOnMarkerClickListener {
-                bottomSheetBehavior!!.state = BottomSheetBehavior.STATE_COLLAPSED
+                bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
                 try {
                     mMap!!.animateCamera(zoomingLocation(lat, lng))
                 } catch (e: Exception) {
