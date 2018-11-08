@@ -10,6 +10,7 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
 import android.widget.Toast
+import com.bumptech.glide.request.animation.ViewAnimation
 import com.example.ahao9.socialevent.httpsService.Service
 import com.example.ahao9.socialevent.utils.LogUtils
 import com.google.android.gms.maps.*
@@ -22,7 +23,10 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.MarkerOptions
 import idk.metropolia.fi.myapplication.fragment.RouteFragment
 import idk.metropolia.fi.myapplication.model.SingleEventLocationObject
+import idk.metropolia.fi.myapplication.utils.Tools.toggleArrow
+import idk.metropolia.fi.myapplication.utils.ViewAnimationUtils
 import rx.Subscriber
+import java.io.File
 
 /**
  * @ Author     ：Hao Zhang.
@@ -40,6 +44,7 @@ class DetailsActivity: AppCompatActivity(), OnMapReadyCallback {
     private val MAP_VIEW_BUNDLE_KEY = "MapViewBundleKey"
     private lateinit var obj: SingleBeanInSearch
     private lateinit var mListLocationSubscriber: Subscriber<SingleEventLocationObject>
+    private lateinit var lyt_expand_info: View
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,15 +66,33 @@ class DetailsActivity: AppCompatActivity(), OnMapReadyCallback {
 
         parent_view = findViewById(R.id.parent_view)
         iv_details = findViewById(R.id.iv_details)
+        lyt_expand_info = findViewById<View>(R.id.lyt_expand_info)
 
         obj = intent.extras.get("obj") as SingleBeanInSearch
-        tv_title.text = obj.name.fi
-        DetailsMapActivity.titleStr = obj.name.fi
-        LogUtils.e(obj.name.fi)
+        tv_title.text = obj.name?.fi ?: Tools.UN_KNOWN
+        DetailsMapActivity.titleStr = obj.name?.fi ?: Tools.UN_KNOWN
+        tv_publisher.text = obj.provider?.fi ?: Tools.UN_KNOWN
+        tv_info_url.text = obj.infoUrl?.fi ?: Tools.UN_KNOWN
+        tv_desc_info.text = obj.description?.fi ?: Tools.UN_KNOWN
+        tv_subtitle.text = obj.shortDescription?.fi ?: Tools.UN_KNOWN
 
-        tv_price.text = "Free"
-        tv_subtitle.text = obj.shortDescription.fi
-        tv_desc.text = obj.description.toString()
+        if (obj.offers.isNotEmpty()) {
+            tv_price.text = if(obj.offers[0].isFree) {
+                "Free"
+            } else {
+                obj.offers[0].price?.fi ?: Tools.UN_KNOWN
+            }
+        } else {
+            tv_price.text = Tools.UN_KNOWN
+        }
+        tv_price_info.text = tv_price.text
+
+        tv_date.text = Tools.getFormattedDateEvent(Tools.convertDateToLong(obj.startTime))
+        tv_time_info.text = if (obj.endTime != null) {
+            "${Tools.getFormattedTimeEvent(Tools.convertDateToLong(obj.startTime))} - ${Tools.getFormattedTimeEvent(Tools.convertDateToLong(obj.endTime))}"
+        } else {
+            "${Tools.getFormattedTimeEvent(Tools.convertDateToLong(obj.startTime))} - un-known"
+        }
 
         if (obj.images.isNotEmpty()) {
             Tools.displayImageOriginal(this, iv_details, obj.images.get(0).url)
@@ -79,11 +102,10 @@ class DetailsActivity: AppCompatActivity(), OnMapReadyCallback {
 
         if (obj.score != 0.0) {
             tv_score.text = "${obj.score.toString().slice(0..3)} / 10"
-            rb_score.rating = obj.score.toFloat() / 2
         } else {
             tv_score.text = "un-known"
-            rb_score.rating = 0.0f
         }
+        rb_score.rating = obj.score.toFloat() / 2
     }
 
     override fun onSaveInstanceState(outState: Bundle?) {
@@ -137,7 +159,7 @@ class DetailsActivity: AppCompatActivity(), OnMapReadyCallback {
                     if (it.position.coordinates.isNotEmpty()) {
                         RouteFragment.destLng = it.position.coordinates.get(0)
                         RouteFragment.destLat = it.position.coordinates.get(1)
-                        RouteFragment.destStr = it.streetAddress.fi
+                        RouteFragment.destStr = it.streetAddress?.fi ?: Tools.UN_KNOWN
 
                         DetailsMapActivity.detailsMapDestLng = it.position.coordinates.get(0)
                         DetailsMapActivity.detailsMapDestLat = it.position.coordinates.get(1)
@@ -145,7 +167,10 @@ class DetailsActivity: AppCompatActivity(), OnMapReadyCallback {
                         lng = it.position.coordinates.get(0)
                         lat = it.position.coordinates.get(1)
 
-                        tv_location.text = it.addressLocality.fi
+                        tv_location.text = it.addressLocality?.fi ?: Tools.UN_KNOWN
+                        tv_location_info.text = "${it.addressLocality?.fi ?: Tools.UN_KNOWN}.${it.streetAddress?.fi}"
+                        tv_phone.text = it.telephone?.fi ?: Tools.UN_KNOWN
+
                         val markerOptions = MarkerOptions().position(LatLng(lat, lng))
                         gmap?.addMarker(markerOptions)
                         gmap?.moveCamera(zoomingLocation(lat, lng))
@@ -167,6 +192,27 @@ class DetailsActivity: AppCompatActivity(), OnMapReadyCallback {
             val intent = Intent(this, DetailsMapActivity::class.java)
             startActivity(intent,
                     ActivityOptionsCompat.makeSceneTransitionAnimation(this).toBundle());
+        }
+
+        bt_toggle_info.setOnClickListener {
+            toggleSectionInfo(bt_toggle_info)
+        }
+
+        bt_hide_info.setOnClickListener {
+            toggleSectionInfo(bt_toggle_info)
+        }
+    }
+
+    private fun toggleSectionInfo(view: View) {
+        val show = toggleArrow(view)
+        if (show) {
+            ViewAnimationUtils.expand(lyt_expand_info, object : ViewAnimationUtils.AnimListener {
+                override fun onFinish() {
+                    Tools.nestedScrollTo(nested_scroll_view, lyt_expand_info)
+                }
+            })
+        } else {
+            ViewAnimationUtils.collapse(lyt_expand_info)
         }
     }
 

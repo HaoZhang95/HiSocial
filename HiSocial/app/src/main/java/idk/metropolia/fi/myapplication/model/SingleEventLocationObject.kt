@@ -29,11 +29,11 @@ data class SingleEventLocationObject(
         @SerializedName("replaced_by") val replacedBy: String = "", // null
         @SerializedName("position") val position: Position = Position(),
         @SerializedName("name") val name: Name = Name(),
-        @SerializedName("street_address") val streetAddress: StreetAddress = StreetAddress(),
-        @SerializedName("telephone") val telephone: Telephone = Telephone(),
+        @SerializedName("street_address") val streetAddress: StreetAddress? = null,
+        @SerializedName("telephone") val telephone: Telephone? = null,
         @SerializedName("description") val description: Description = Description(), // null
-        @SerializedName("address_locality") val addressLocality: AddressLocality = AddressLocality(),
-        @SerializedName("info_url") val infoUrl: InfoUrl = InfoUrl(),
+        @SerializedName("address_locality") val addressLocality: AddressLocality? = null,
+        @SerializedName("info_url") val infoUrl: InfoUrl? = null,
         @SerializedName("@id") val web_id: String = "", // https://api.hel.fi/linkedevents/v1/place/tprek:26429/
         @SerializedName("@context") val context: String = "", // http://schema.org
         @SerializedName("@type") val type: String = "" // Place

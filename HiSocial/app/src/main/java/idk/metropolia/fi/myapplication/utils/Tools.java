@@ -136,6 +136,8 @@ public class Tools {
 //        datePicker.show(act.getFragmentManager(), "Datepickerdialog");
 //    }
 
+    public static String UN_KNOWN = "Un-known";
+
     public static String convertToYYYYMMDD(String dateStr) {
         SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:SSS'Z'", Locale.US);
         SimpleDateFormat outputFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.US);
@@ -145,6 +147,18 @@ public class Tools {
             e.printStackTrace();
         }
         return "";
+    }
+
+    public static Long convertDateToLong(String dateStr) {
+        SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:SSS'Z'", Locale.US);
+        SimpleDateFormat outputFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.US);
+
+        try {
+            return inputFormat.parse(dateStr).getTime();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return 0L;
     }
     public static String convertToHHMM(String dateStr) {
         SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:SSS'Z'", Locale.US);
@@ -261,6 +275,11 @@ public class Tools {
         return newFormat.format(new Date(dateTime));
     }
 
+    public static String getFormattedDateInText(Long dateTime) {
+        SimpleDateFormat format = new SimpleDateFormat( "E, dd MM yyyy",Locale.US);
+        return format.format(new Date(dateTime));
+    }
+
     public static String getFormattedToday() {
         SimpleDateFormat newFormat = new SimpleDateFormat("yyyy-MM-dd");
         return newFormat.format(new Date());
@@ -272,7 +291,7 @@ public class Tools {
     }
 
     public static String getFormattedDateEvent(Long dateTime) {
-        SimpleDateFormat newFormat = new SimpleDateFormat("EEE, MMM dd yyyy");
+        SimpleDateFormat newFormat = new SimpleDateFormat("EEE, dd MMM yyyy");
         return newFormat.format(new Date(dateTime));
     }
 

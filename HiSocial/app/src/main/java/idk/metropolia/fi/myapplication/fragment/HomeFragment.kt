@@ -80,12 +80,12 @@ class HomeFragment : Fragment(), MyImageSliderAdapter.OnItemClickListener {
                     // displaying selected image first
                     viewPager.currentItem = 0
                     addBottomDots(layout_dots, imageSliderAdapter.count, 0)
-                    (view!!.findViewById<View>(R.id.title) as TextView).setText(sliderDataList[0].name.fi)
+                    (view!!.findViewById<View>(R.id.title) as TextView).setText(sliderDataList[0].name?.fi ?: Tools.UN_KNOWN)
                     (view!!.findViewById<View>(R.id.brief) as TextView).setText(sliderDataList[0].startTime)
 
                     viewPager.onPageChangeListener {
                         onPageSelected {
-                            (view!!.findViewById<View>(R.id.title) as TextView).setText(sliderDataList[it].name.fi)
+                            (view!!.findViewById<View>(R.id.title) as TextView).setText(sliderDataList[it].name?.fi ?: Tools.UN_KNOWN)
                             (view!!.findViewById<View>(R.id.brief) as TextView).setText(Tools.convertToYYYYMMDD(sliderDataList[it].startTime))
                             addBottomDots(layout_dots, imageSliderAdapter.count, it)
                         }

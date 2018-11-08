@@ -38,15 +38,15 @@ data class SearchEventsResultObject(
             @SerializedName("last_modified_time") val lastModifiedTime: String = "", // 2018-08-28T08:27:32.800401Z
             @SerializedName("date_published") val datePublished: Any? = Any(), // null
             @SerializedName("start_time") val startTime: String = "", // 2018-11-01T17:00:00Z
-            @SerializedName("end_time") val endTime: Any? = Any(), // null
+            @SerializedName("end_time") val endTime: String? = "", // null
             @SerializedName("custom_data") val customData: Any? = Any(), // null
             @SerializedName("super_event_type") val superEventType: Any? = Any(), // null
-            @SerializedName("name") val name: Name = Name(),
+            @SerializedName("name") val name: Name? = null,
             @SerializedName("location_extra_info") val locationExtraInfo: LocationExtraInfo = LocationExtraInfo(), // null
-            @SerializedName("provider") val provider: Provider = Provider(),
-            @SerializedName("short_description") val shortDescription: ShortDescription = ShortDescription(),
-            @SerializedName("description") val description: Description = Description(),
-            @SerializedName("info_url") val infoUrl: InfoUrl = InfoUrl(),
+            @SerializedName("provider") val provider: Provider? = null,
+            @SerializedName("short_description") val shortDescription: ShortDescription? = null,
+            @SerializedName("description") val description: Description? = null,
+            @SerializedName("info_url") val infoUrl: InfoUrl? = null,
             @SerializedName("@id") val web_id: String = "", // https://api.hel.fi/linkedevents/v1/event/helsinki:afsx7jjahq/
             @SerializedName("@context") val context: String = "", // http://schema.org
             @SerializedName("@type") val type: String = "", // Event/LinkedEvent
@@ -70,7 +70,7 @@ data class SearchEventsResultObject(
 
         data class Offer(
                 @SerializedName("is_free") val isFree: Boolean = false, // false
-                @SerializedName("price") val price: Price = Price(),
+                @SerializedName("price") val price: Price? = null,
                 @SerializedName("description") val description: Description = Description(),
                 @SerializedName("info_url") val infoUrl: InfoUrl = InfoUrl()
         ) : Serializable{
