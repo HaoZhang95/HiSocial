@@ -4,10 +4,7 @@ import ItineraryPlanQuery
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.View
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.RelativeLayout
-import android.widget.TextView
+import android.widget.*
 import idk.metropolia.fi.myapplication.R
 import java.util.concurrent.TimeUnit
 import kotlin.math.roundToInt

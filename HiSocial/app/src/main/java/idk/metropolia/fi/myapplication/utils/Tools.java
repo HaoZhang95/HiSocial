@@ -41,6 +41,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.example.ahao9.socialevent.utils.LogUtils;
+import com.example.ahao9.socialevent.utils.MyToast;
 import com.google.android.gms.maps.GoogleMap;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 
@@ -336,7 +337,7 @@ public class Tools {
         ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
         ClipData clip = ClipData.newPlainText("clipboard", data);
         clipboard.setPrimaryClip(clip);
-        Toast.makeText(context, "Text copied to clipboard", Toast.LENGTH_SHORT).show();
+        MyToast.INSTANCE.show(context, "Text copied to clipboard");
     }
 
     public static void nestedScrollTo(final NestedScrollView nested, final View targetView) {

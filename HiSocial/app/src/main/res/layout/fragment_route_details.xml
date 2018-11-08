@@ -18,13 +18,13 @@
             android:layout_height="1dp"
             android:background="@color/grey_10" />
 
-        <ImageButton
-            android:id="@+id/ib_back"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:src="@drawable/ic_back" />
+        <!--<ImageButton-->
+            <!--android:id="@+id/ib_back"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginStart="8dp"-->
+            <!--android:layout_marginTop="8dp"-->
+            <!--android:src="@drawable/ic_back" />-->
     </LinearLayout>
 
     <android.support.v4.widget.NestedScrollView
@@ -42,19 +42,31 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
+            <ImageButton
+                android:id="@+id/ib_back"
+                android:layout_width="@dimen/spacing_xlarge"
+                android:layout_height="@dimen/spacing_xlarge"
+                android:layout_marginStart="16dp"
+                android:background="@drawable/shape_rounded_orange"
+                android:src="@drawable/ic_back"
+                android:tint="@color/grey_40"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/itineraryDetailView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/overlay_light_90"
+                android:clickable="true"
+                android:focusable="true"
                 android:orientation="vertical"
                 android:padding="20dp"
                 app:layoutManager="android.support.v7.widget.LinearLayoutManager"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                android:clickable="true"
-                android:focusable="true"
+                app:layout_constraintTop_toBottomOf="@+id/ib_back"
                 tools:listitem="@layout/recycler_item_leg" />
 
 

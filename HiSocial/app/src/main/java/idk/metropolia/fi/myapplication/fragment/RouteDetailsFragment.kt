@@ -6,6 +6,7 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.example.ahao9.socialevent.utils.LogUtils
 import com.example.ahao9.socialevent.utils.MyToast
 import idk.metropolia.fi.myapplication.R
 import idk.metropolia.fi.myapplication.adapter.ItineraryHolder
@@ -20,6 +21,7 @@ import kotlinx.android.synthetic.main.fragment_route_details.*
 class RouteDetailsFragment : Fragment() {
 
     private lateinit var layoutManager: LinearLayoutManager
+    private lateinit var adapter: LegsRecyclerAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_route_details, container, false)
@@ -29,12 +31,25 @@ class RouteDetailsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         initListeners()
 
+        initItinerary()
+    }
+
+    private fun initItinerary() {
         val itinerary = ItineraryHolder.get()
-        val adapter = LegsRecyclerAdapter(itinerary!!.legs())
+        adapter = LegsRecyclerAdapter(itinerary!!.legs())
 
         layoutManager = LinearLayoutManager(context)
         itineraryDetailView.layoutManager = layoutManager
         itineraryDetailView.adapter = adapter
+    }
+
+    /**
+     * 解决路线切换不更新的问题
+     */
+    override fun onHiddenChanged(hidden: Boolean) {
+        if (!hidden) {
+            initItinerary()
+        }
     }
 
     private var onItemClickListener: RouteDetailsFragment.OnItemClickListener? = null

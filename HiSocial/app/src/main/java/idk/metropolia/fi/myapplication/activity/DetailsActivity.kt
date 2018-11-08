@@ -201,6 +201,10 @@ class DetailsActivity: AppCompatActivity(), OnMapReadyCallback {
         bt_hide_info.setOnClickListener {
             toggleSectionInfo(bt_toggle_info)
         }
+
+        bt_copy_code.setOnClickListener {
+            Tools.copyToClipboard(applicationContext, tv_phone.text.toString())
+        }
     }
 
     private fun toggleSectionInfo(view: View) {

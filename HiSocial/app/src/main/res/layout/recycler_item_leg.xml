@@ -51,69 +51,125 @@
             android:textColor="@color/grey_20"/>
     </RelativeLayout>
 
-    <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="120dp"
-        android:layout_marginStart="9dp" >
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
 
-        <View
-            android:id="@+id/progress"
-            android:layout_width="5dp"
+        <RelativeLayout
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:background="@color/colorPrimary"/>
+            android:layout_marginLeft="1dp"
+            android:layout_marginStart="1dp"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
+
+            <View
+                android:id="@+id/progress"
+                android:layout_width="5dp"
+                android:layout_height="match_parent"
+                android:layout_centerHorizontal="true"
+                android:background="@color/colorPrimary" />
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_mlarge">
+
+                <ImageView
+                    android:layout_width="@dimen/spacing_mlarge"
+                    android:layout_height="@dimen/spacing_mlarge"
+                    android:tint="@color/colorAccent"
+                    app:srcCompat="@drawable/shape_round_solid" />
+
+                <ImageView
+                    android:layout_width="@dimen/spacing_middle"
+                    android:layout_height="@dimen/spacing_middle"
+                    android:layout_centerInParent="true"
+                    app:srcCompat="@drawable/ic_arrow_downward" />
+
+            </RelativeLayout>
+
+        </RelativeLayout>
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginStart="15dp">
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="@dimen/spacing_large">
 
             <ImageView
                 android:id="@+id/mode"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="@dimen/spacing_xlarge"
                 android:src="@drawable/ic_bus"
-                android:layout_marginRight="10dp"/>
+                android:layout_height="@dimen/spacing_xlarge" />
+
+            <View
+                android:layout_width="@dimen/spacing_large"
+                android:layout_height="0dp" />
 
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="6"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <TextView
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Bus 550"
-                    android:id="@+id/routeShortNameTextView"
-                    android:textColor="@color/grey_20" />
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/routeShortNameTextView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:text="Bus 553 "
+                        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/durationOrDistanceTextView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:layout_marginLeft="8dp"
+                        android:text=" 11 min "
+                        android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
+
+                </LinearLayout>
 
                 <TextView
                     android:id="@+id/tripHeadsignTextView"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Kamppi"/>
+                    android:layout_marginTop="@dimen/spacing_small"
+                    android:gravity="center_vertical"
+                    android:text="Kamppi"
+                    android:textStyle="bold"
+                    android:textColor="@color/grey_40"
+                    android:textSize="@dimen/spacing_middle" />
 
-                <TextView
-                    android:id="@+id/durationOrDistanceTextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="11 min" />
             </LinearLayout>
+
+            <Button
+                android:id="@+id/buttonShowStops"
+                android:layout_width="50dp"
+                android:layout_height="25dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_weight="1"
+                android:background="@drawable/shape_rounded_orange"
+                android:text="3 Stops"
+                android:textAllCaps="false"
+                android:textColor="@color/grey_40"
+                android:visibility="gone" />
         </LinearLayout>
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:text="Stops"
-            android:textAllCaps="false"
-            android:background="@android:color/transparent"
-            android:id="@+id/buttonShowStops"
-            android:visibility="gone"/>
+    </LinearLayout>
 
-    </RelativeLayout>
-
+    <!-- 一系列的中间的停靠站 -->
     <android.support.v7.widget.RecyclerView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -121,9 +177,10 @@
         app:layoutManager="android.support.v7.widget.LinearLayoutManager"
         tools:listitem="@layout/recycler_item_trip_stops"
         android:layout_marginStart="9dp"
-        android:visibility="gone"
+        android:visibility="visible"
         android:id="@+id/recyclerItemStop"/>
 
+    <!-- 每一阶段的最后一站和到达时间-->
     <RelativeLayout
         android:id="@+id/lastLocation"
         android:layout_width="wrap_content"

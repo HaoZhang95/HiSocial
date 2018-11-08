@@ -361,7 +361,7 @@
                             android:layout_height="@dimen/spacing_xmlarge"
                             android:background="@android:color/transparent"
                             android:clickable="true"
-                            android:tint="@color/grey_40"
+                            android:tint="@color/colorPrimary"
                             app:srcCompat="@drawable/ic_expand_arrow" />
 
                     </LinearLayout>
@@ -472,6 +472,15 @@
                             android:textAppearance="@style/Base.TextAppearance.AppCompat.Body2"
                             android:textColor="@color/grey_60" />
 
+                        <ImageButton
+                            android:id="@+id/bt_copy_code"
+                            android:layout_width="@dimen/spacing_xmlarge"
+                            android:layout_height="@dimen/spacing_xmlarge"
+                            android:background="@android:color/transparent"
+                            android:clickable="true"
+                            android:tint="@color/colorPrimary"
+                            app:srcCompat="@drawable/ic_description" />
+
                     </LinearLayout>
 
                     <LinearLayout
@@ -506,7 +515,7 @@
                             android:layout_height="@dimen/spacing_xmlarge"
                             android:background="@android:color/transparent"
                             android:clickable="true"
-                            android:tint="@color/grey_40"
+                            android:tint="@color/colorPrimary"
                             app:srcCompat="@drawable/ic_keyboard_arrow_right" />
 
                     </LinearLayout>
@@ -554,6 +563,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:text=" Plan Route ?"
+                        android:textColor="@color/colorPrimary"
                         android:layout_marginRight="@dimen/spacing_mlarge"
                         android:layout_gravity="bottom|right"
                         android:layout_height="wrap_content" />
