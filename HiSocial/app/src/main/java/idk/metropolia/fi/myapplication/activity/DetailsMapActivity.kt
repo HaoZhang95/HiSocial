@@ -5,10 +5,8 @@ import android.support.design.widget.BottomSheetBehavior
 import android.support.design.widget.FloatingActionButton
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.Toolbar
 import android.transition.Explode
-import android.transition.Visibility
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -19,10 +17,7 @@ import com.google.android.gms.maps.CameraUpdate
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.LatLngBounds
-import com.google.android.gms.maps.model.MarkerOptions
-import com.google.android.gms.maps.model.PolylineOptions
+import com.google.android.gms.maps.model.*
 import idk.metropolia.fi.myapplication.R
 import idk.metropolia.fi.myapplication.adapter.ItineraryHolder
 import idk.metropolia.fi.myapplication.fragment.RouteDetailsFragment
@@ -30,12 +25,16 @@ import idk.metropolia.fi.myapplication.fragment.RouteFragment
 import idk.metropolia.fi.myapplication.utils.PolylineUtils
 import idk.metropolia.fi.myapplication.utils.Tools
 import kotlinx.android.synthetic.main.activity_details_map.*
+import kotlinx.android.synthetic.main.sheet_map.*
 
 class DetailsMapActivity : AppCompatActivity(), RouteFragment.OnItemClickListener,
         RouteDetailsFragment.OnItemClickListener {
     companion object {
-        var detailsMapLat: Double = 0.0
-        var detailsMapLng: Double = 0.0
+        var detailsMapDestLat: Double = 0.0
+        var detailsMapDestLng: Double = 0.0
+        var detailsMapFromLng: Double = 0.0
+        var detailsMapFromLat: Double = 0.0
+        var titleStr: String? = null
     }
 
     private lateinit var routeFragment: RouteFragment
@@ -52,7 +51,7 @@ class DetailsMapActivity : AppCompatActivity(), RouteFragment.OnItemClickListene
         setContentView(R.layout.activity_details_map)
 
         initToolbar()
-        initMapFragment(detailsMapLat,detailsMapLng)
+        initMapFragment(detailsMapDestLat,detailsMapDestLng)
         initComponents()
         initListeners()
     }
@@ -61,7 +60,7 @@ class DetailsMapActivity : AppCompatActivity(), RouteFragment.OnItemClickListene
         (findViewById<View>(R.id.fab_directions) as FloatingActionButton).setOnClickListener {
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
             try {
-                mMap!!.animateCamera(zoomingLocation(detailsMapLat, detailsMapLng))
+                mMap!!.animateCamera(zoomingLocation(detailsMapDestLat, detailsMapDestLng))
             } catch (e: Exception) {
             }
         }
@@ -112,7 +111,7 @@ class DetailsMapActivity : AppCompatActivity(), RouteFragment.OnItemClickListene
     }
 
     private fun initToolbar() {
-        val toolbar = findViewById(R.id.toolbar) as Toolbar
+        val toolbar = findViewById<Toolbar>(R.id.toolbar)
         toolbar.setNavigationIcon(R.drawable.ic_back)
         setSupportActionBar(toolbar)
         supportActionBar!!.title = null
@@ -136,6 +135,9 @@ class DetailsMapActivity : AppCompatActivity(), RouteFragment.OnItemClickListene
                 .commit()
         tempFragment = routeFragment
 
+        if (titleStr != null) {
+            tv_sheet_map_title.text = titleStr
+        }
     }
 
     private fun drawPolylineOnMap() {
@@ -168,7 +170,6 @@ class DetailsMapActivity : AppCompatActivity(), RouteFragment.OnItemClickListene
                         boundsBuilder.include(LatLng(it.latitude, it.longitude))
                     }
                 }
-
                 mMap?.addPolyline(polylineOptions)
             }
 
@@ -178,6 +179,12 @@ class DetailsMapActivity : AppCompatActivity(), RouteFragment.OnItemClickListene
             val cameraUpate = CameraUpdateFactory.newLatLngBounds(boundsBuilder.build(), width, height, padding)
             mMap?.animateCamera(cameraUpate)
         }
+        val destMarker = MarkerOptions().position(LatLng(detailsMapDestLat, detailsMapDestLng))
+        val fromMarker = MarkerOptions().position(LatLng(detailsMapFromLat, detailsMapFromLng))
+        destMarker.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_dest))
+        fromMarker.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_my_location))
+        mMap?.addMarker(destMarker)
+        mMap?.addMarker(fromMarker)
     }
 
     private fun initMapFragment(lat: Double, lng: Double) {

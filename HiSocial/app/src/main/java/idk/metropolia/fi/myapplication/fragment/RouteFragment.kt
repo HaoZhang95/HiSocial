@@ -16,13 +16,19 @@ import com.apollographql.apollo.ApolloCall
 import com.apollographql.apollo.api.Response
 import com.apollographql.apollo.exception.ApolloException
 import com.example.ahao9.socialevent.utils.LogUtils
+import com.example.ahao9.socialevent.utils.MyToast
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException
 import com.google.android.gms.common.GooglePlayServicesRepairableException
 import com.google.android.gms.location.places.ui.PlaceAutocomplete
+import com.hjq.permissions.OnPermission
+import com.hjq.permissions.Permission
+import com.hjq.permissions.XXPermissions
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog
 import com.wdullaer.materialdatetimepicker.time.TimePickerDialog
+import idk.metropolia.fi.myapplication.MainActivity
 import idk.metropolia.fi.myapplication.R
+import idk.metropolia.fi.myapplication.activity.DetailsMapActivity
 import idk.metropolia.fi.myapplication.adapter.Coordinate
 import idk.metropolia.fi.myapplication.adapter.ItineraryHolder
 import idk.metropolia.fi.myapplication.adapter.ItineraryResultsRecyclerAdapter
@@ -40,7 +46,8 @@ import java.util.*
 private const val REQUEST_CODE_ORIGIN = 1
 private const val REQUEST_CODE_DEST = 2
 
-class RouteFragment : Fragment(), ItineraryResultsRecyclerAdapter.ItineraryResultsRecyclerAdapterListener{
+class RouteFragment : Fragment(), ItineraryResultsRecyclerAdapter.ItineraryResultsRecyclerAdapterListener,
+                        OnPermission{
     companion object {
         var destLat: Double? = null
         var destLng: Double? = null
@@ -69,6 +76,7 @@ class RouteFragment : Fragment(), ItineraryResultsRecyclerAdapter.ItineraryResul
 
         initComponents()
         initListeners()
+        requestPermission()
     }
 
     private fun showItinerary() {
@@ -76,6 +84,38 @@ class RouteFragment : Fragment(), ItineraryResultsRecyclerAdapter.ItineraryResul
         LogUtils.e("toCoordinate: ${toCoordinate?.longitude} --> ${toCoordinate?.latitude}")
         if (fromCoordinate != null && toCoordinate != null) {
             queryItineraryPlan()
+        }
+    }
+
+    private fun requestPermission() {
+        if (XXPermissions.isHasPermission(context, Permission.Group.LOCATION)) {
+            // MyToast.show(context!!,"已经获取到权限，不需要再次申请了")
+        }else {
+            XXPermissions.with(activity)
+                    //.constantRequest() //可设置被拒绝后继续申请，直到用户授权或者永久拒绝
+                    //.permission(Permission.SYSTEM_ALERT_WINDOW, Permission.REQUEST_INSTALL_PACKAGES) //支持请求6.0悬浮窗权限8.0请求安装权限
+                    .permission(Permission.Group.LOCATION/*, Permission.Group.CALENDAR*/) //不指定权限则自动获取清单中的危险权限
+                    .request(this)
+        }
+    }
+
+    /**
+     * 如果是被永久拒绝就跳转到应用权限系统设置页面
+     */
+    override fun noPermission(denied: MutableList<String>?, quick: Boolean) {
+        if(quick) {
+            MyToast.show(context!!,"Authorized to be denied permanently, please grant permission manually");
+            XXPermissions.gotoPermissionSettings(context);
+        }else {
+            MyToast.show(context!!,"Failed to get permission");
+        }
+    }
+
+    override fun hasPermission(granted: MutableList<String>?, isAll: Boolean) {
+        if (isAll) {
+            MyToast.show(context!!,"Get permission successfully");
+        }else {
+            MyToast.show(context!!,"The permission is successfully obtained, and some permissions are not granted normally.");
         }
     }
 
@@ -156,6 +196,8 @@ class RouteFragment : Fragment(), ItineraryResultsRecyclerAdapter.ItineraryResul
         val location = LocationUtils.getInstance(context).location
         if (location != null) {
             fromCoordinate = Coordinate(location.longitude, location.latitude)
+            DetailsMapActivity.detailsMapFromLat = location.latitude
+            DetailsMapActivity.detailsMapFromLng = location.longitude
             tv_origin.text = "My Location √"
             showItinerary()
         } else {
@@ -251,6 +293,8 @@ class RouteFragment : Fragment(), ItineraryResultsRecyclerAdapter.ItineraryResul
                 (view!!.findViewById<TextView>(R.id.tv_origin)).text = place.name
 
                 fromCoordinate = Coordinate(place.latLng.longitude, place.latLng.latitude)
+                DetailsMapActivity.detailsMapFromLat = place.latLng.latitude
+                DetailsMapActivity.detailsMapFromLng = place.latLng.longitude
             } else if (resultCode == PlaceAutocomplete.RESULT_ERROR) {
                 val status = PlaceAutocomplete.getStatus(context, data)
                 Snackbar.make(parent_view, status.toString(), Snackbar.LENGTH_SHORT).show()

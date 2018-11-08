@@ -64,6 +64,9 @@ class DetailsActivity: AppCompatActivity(), OnMapReadyCallback {
 
         obj = intent.extras.get("obj") as SingleBeanInSearch
         tv_title.text = obj.name.fi
+        DetailsMapActivity.titleStr = obj.name.fi
+        LogUtils.e(obj.name.fi)
+
         tv_price.text = "Free"
         tv_subtitle.text = obj.shortDescription.fi
         tv_desc.text = obj.description.toString()
@@ -136,8 +139,8 @@ class DetailsActivity: AppCompatActivity(), OnMapReadyCallback {
                         RouteFragment.destLat = it.position.coordinates.get(1)
                         RouteFragment.destStr = it.streetAddress.fi
 
-                        DetailsMapActivity.detailsMapLng = it.position.coordinates.get(0)
-                        DetailsMapActivity.detailsMapLat = it.position.coordinates.get(1)
+                        DetailsMapActivity.detailsMapDestLng = it.position.coordinates.get(0)
+                        DetailsMapActivity.detailsMapDestLat = it.position.coordinates.get(1)
 
                         lng = it.position.coordinates.get(0)
                         lat = it.position.coordinates.get(1)
