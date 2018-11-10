@@ -16,6 +16,7 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
+            android:id="@+id/lyt_screenshot"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
@@ -348,6 +349,7 @@
                             app:srcCompat="@drawable/ic_announcement" />
 
                         <TextView
+                            android:id="@+id/tv_desc"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
@@ -511,6 +513,7 @@
                             android:textColor="@color/grey_60" />
 
                         <ImageButton
+                            android:id="@+id/bt_go_info_url"
                             android:layout_width="@dimen/spacing_xmlarge"
                             android:layout_height="@dimen/spacing_xmlarge"
                             android:background="@android:color/transparent"

@@ -180,6 +180,6 @@
         app:layout_anchor="@id/bottom_sheet"
         app:layout_anchorGravity="top|end"
         app:rippleColor="@android:color/white"
-        app:srcCompat="@drawable/ic_locate" />
+        app:srcCompat="@drawable/ic_location" />
 
 </android.support.design.widget.CoordinatorLayout>

@@ -1,18 +1,27 @@
 package idk.metropolia.fi.myapplication.activity
 
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.Canvas
+import android.graphics.Color
+import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
 import android.support.v4.app.ActivityOptionsCompat
+import android.support.v4.content.FileProvider
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
+import android.text.Html
+import android.text.method.ScrollingMovementMethod
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
-import android.widget.Toast
-import com.bumptech.glide.request.animation.ViewAnimation
+import android.widget.LinearLayout
 import com.example.ahao9.socialevent.httpsService.Service
 import com.example.ahao9.socialevent.utils.LogUtils
+import com.example.ahao9.socialevent.utils.MyToast
 import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.LatLng
 import idk.metropolia.fi.myapplication.R
@@ -25,15 +34,18 @@ import idk.metropolia.fi.myapplication.fragment.RouteFragment
 import idk.metropolia.fi.myapplication.model.SingleEventLocationObject
 import idk.metropolia.fi.myapplication.utils.Tools.toggleArrow
 import idk.metropolia.fi.myapplication.utils.ViewAnimationUtils
+import org.jetbrains.anko.*
 import rx.Subscriber
 import java.io.File
+import java.io.FileOutputStream
+import java.io.FilterOutputStream
 
 /**
  * @ Author     ：Hao Zhang.
  * @ Date       ：Created in 22:21 2018/10/30
  * @ Description：Build for Metropolia project
  */
-class DetailsActivity: AppCompatActivity(), OnMapReadyCallback {
+class DetailsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private var mapView: MapView? = null
     private var gmap: GoogleMap? = null
@@ -69,15 +81,22 @@ class DetailsActivity: AppCompatActivity(), OnMapReadyCallback {
         lyt_expand_info = findViewById<View>(R.id.lyt_expand_info)
 
         obj = intent.extras.get("obj") as SingleBeanInSearch
+
+        LogUtils.e("点击的活动id: -> ${obj.id}")
+
         tv_title.text = obj.name?.fi ?: Tools.UN_KNOWN
         DetailsMapActivity.titleStr = obj.name?.fi ?: Tools.UN_KNOWN
         tv_publisher.text = obj.provider?.fi ?: Tools.UN_KNOWN
         tv_info_url.text = obj.infoUrl?.fi ?: Tools.UN_KNOWN
-        tv_desc_info.text = obj.description?.fi ?: Tools.UN_KNOWN
         tv_subtitle.text = obj.shortDescription?.fi ?: Tools.UN_KNOWN
 
+        // convert html to normal text format
+        var description = obj.description?.fi ?: Tools.UN_KNOWN
+        tv_desc_info.movementMethod = ScrollingMovementMethod.getInstance()
+        tv_desc_info.text = Html.fromHtml(description)
+
         if (obj.offers.isNotEmpty()) {
-            tv_price.text = if(obj.offers[0].isFree) {
+            tv_price.text = if (obj.offers[0].isFree) {
                 "Free"
             } else {
                 obj.offers[0].price?.fi ?: Tools.UN_KNOWN
@@ -119,7 +138,7 @@ class DetailsActivity: AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun initToolbar() {
-        val toolbar = findViewById(R.id.toolbar) as Toolbar
+        val toolbar = findViewById<Toolbar>(R.id.toolbar)
         toolbar.setNavigationIcon(R.drawable.ic_back)
         setSupportActionBar(toolbar)
         supportActionBar!!.title = null
@@ -149,11 +168,12 @@ class DetailsActivity: AppCompatActivity(), OnMapReadyCallback {
         val splits = id.split("/".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
         id = splits[splits.size - 1]/*.replace(":", "%3A")*/
         mListLocationSubscriber = object : Subscriber<SingleEventLocationObject>() {
-            override fun onCompleted() { }
+            override fun onCompleted() {}
 
             override fun onError(e: Throwable) {
                 LogUtils.e("loadPlaceById in DetailsActivity: ${e.localizedMessage}")
             }
+
             override fun onNext(singleEventLocationObject: SingleEventLocationObject?) {
                 singleEventLocationObject?.let {
                     if (it.position.coordinates.isNotEmpty()) {
@@ -168,7 +188,8 @@ class DetailsActivity: AppCompatActivity(), OnMapReadyCallback {
                         lat = it.position.coordinates.get(1)
 
                         tv_location.text = it.addressLocality?.fi ?: Tools.UN_KNOWN
-                        tv_location_info.text = "${it.addressLocality?.fi ?: Tools.UN_KNOWN}.${it.streetAddress?.fi}"
+                        tv_location_info.text = "${it.addressLocality?.fi
+                                ?: Tools.UN_KNOWN}.${it.streetAddress?.fi}"
                         tv_phone.text = it.telephone?.fi ?: Tools.UN_KNOWN
 
                         val markerOptions = MarkerOptions().position(LatLng(lat, lng))
@@ -194,16 +215,35 @@ class DetailsActivity: AppCompatActivity(), OnMapReadyCallback {
                     ActivityOptionsCompat.makeSceneTransitionAnimation(this).toBundle());
         }
 
-        bt_toggle_info.setOnClickListener {
-            toggleSectionInfo(bt_toggle_info)
-        }
+        bt_toggle_info.setOnClickListener { toggleSectionInfo(bt_toggle_info) }
 
-        bt_hide_info.setOnClickListener {
-            toggleSectionInfo(bt_toggle_info)
-        }
+        bt_hide_info.setOnClickListener { toggleSectionInfo(bt_toggle_info) }
 
-        bt_copy_code.setOnClickListener {
-            Tools.copyToClipboard(applicationContext, tv_phone.text.toString())
+        bt_copy_code.setOnClickListener { Tools.copyToClipboard(applicationContext, tv_phone.text.toString()) }
+
+        tv_desc.setOnClickListener { toggleSectionInfo(bt_toggle_info) }
+
+        tv_phone.setOnClickListener { openCallPage(tv_phone.text.toString()) }
+
+        bt_go_info_url.setOnClickListener { openWebPage(tv_info_url.text.toString()) }
+
+        tv_info_url.setOnClickListener { openWebPage(tv_info_url.text.toString()) }
+
+    }
+
+    private fun openWebPage(url: String) {
+        if (url == Tools.UN_KNOWN) {
+            MyToast.show(this, "Link is not provided")
+        } else {
+            browse(url)
+        }
+    }
+
+    private fun openCallPage(number: String) {
+        if (number == Tools.UN_KNOWN) {
+            MyToast.show(this, "Phone number is not provided")
+        } else {
+            makeCall(number)
         }
     }
 
@@ -229,9 +269,51 @@ class DetailsActivity: AppCompatActivity(), OnMapReadyCallback {
         if (item.itemId == android.R.id.home) {
             finish()
         } else {
-            Toast.makeText(applicationContext, item.title, Toast.LENGTH_SHORT).show()
+            // share("test", "share content?")
+            // email("hello@makery.co", "Great app idea", "potato")
+
+            shareContent()
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    private fun shareContent() {
+
+        val lyt = findViewById<LinearLayout>(R.id.lyt_screenshot)
+        val imageView = findViewById<ImageView>(R.id.iv_details)
+        val bitmap = getBitmapFromView(imageView)
+
+        try {
+            val file = File(this.externalCacheDir, "test.png")
+            val fout = FileOutputStream(file)
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fout)
+            fout.flush()
+            fout.close()
+            file.setReadable(true, false)
+
+            val intent = Intent(android.content.Intent.ACTION_SEND_MULTIPLE)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            intent.putExtra(Intent.EXTRA_TEXT, "EXTRA_TEXT")
+            intent.putExtra(Intent.EXTRA_SUBJECT, "Hello, this is the subject line")
+            intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(file))
+            intent.type = "image/*"
+            startActivity(Intent.createChooser(intent, "share image via"))
+        } catch (e: Exception) {
+            LogUtils.e(e.localizedMessage)
+        }
+    }
+
+    private fun getBitmapFromView(view: View): Bitmap {
+        val returnedBitmap = Bitmap.createBitmap(view.width, view.height, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(returnedBitmap)
+        val bgDrawable = view.background
+        if (bgDrawable != null) {
+            bgDrawable.draw(canvas)
+        } else {
+            canvas.drawColor(Color.WHITE)
+        }
+        view.draw(canvas)
+        return returnedBitmap
     }
 
     override fun onResume() {
