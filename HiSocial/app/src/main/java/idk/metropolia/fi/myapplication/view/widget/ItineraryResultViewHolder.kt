@@ -1,10 +1,11 @@
-package idk.metropolia.fi.myapplication.adapter
+package idk.metropolia.fi.myapplication.view.widget
 
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.widget.TextView
 import idk.metropolia.fi.myapplication.R
+import idk.metropolia.fi.myapplication.adapter.MyLegsModeRecyclerAdapter
 import java.util.concurrent.TimeUnit
 import kotlin.math.roundToInt
 
@@ -33,7 +34,7 @@ class ItineraryResultViewHolder(val view: View): RecyclerView.ViewHolder(view) {
     var itinerary: ItineraryPlanQuery.Itinerary? = null
 
         set(itinerary) {
-            recyclerItemLegModeView.adapter = LegsModeRecyclerAdapter(itinerary!!.legs())
+            recyclerItemLegModeView.adapter = MyLegsModeRecyclerAdapter(itinerary!!.legs())
             departTimeTextView.text = "${getTime(itinerary.startTime()!!)}"
             arriveTimeTextView.text = "${getTime(itinerary.endTime()!!)}"
 

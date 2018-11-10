@@ -26,14 +26,13 @@ import com.hjq.permissions.Permission
 import com.hjq.permissions.XXPermissions
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog
 import com.wdullaer.materialdatetimepicker.time.TimePickerDialog
-import idk.metropolia.fi.myapplication.MainActivity
 import idk.metropolia.fi.myapplication.R
-import idk.metropolia.fi.myapplication.activity.DetailsMapActivity
-import idk.metropolia.fi.myapplication.adapter.Coordinate
-import idk.metropolia.fi.myapplication.adapter.ItineraryHolder
-import idk.metropolia.fi.myapplication.adapter.ItineraryResultsRecyclerAdapter
+import idk.metropolia.fi.myapplication.view.activity.DetailsMapActivity
+import idk.metropolia.fi.myapplication.adapter.MyItineraryResultsRecyclerAdapter
 import idk.metropolia.fi.myapplication.httpsService.Apollo
+import idk.metropolia.fi.myapplication.model.Coordinate
 import idk.metropolia.fi.myapplication.utils.LocationUtils
+import idk.metropolia.fi.myapplication.view.widget.ItineraryHolder
 import kotlinx.android.synthetic.main.fragment_route.*
 import org.jetbrains.anko.support.v4.toast
 import java.util.*
@@ -46,7 +45,7 @@ import java.util.*
 private const val REQUEST_CODE_ORIGIN = 1
 private const val REQUEST_CODE_DEST = 2
 
-class RouteFragment : Fragment(), ItineraryResultsRecyclerAdapter.ItineraryResultsRecyclerAdapterListener,
+class RouteFragment : Fragment(), MyItineraryResultsRecyclerAdapter.ItineraryResultsRecyclerAdapterListener,
                         OnPermission{
     companion object {
         var destLat: Double? = null
@@ -238,7 +237,7 @@ class RouteFragment : Fragment(), ItineraryResultsRecyclerAdapter.ItineraryResul
                         this@RouteFragment.activity?.runOnUiThread {
                             errorMessageTextView.visibility = View.GONE
                             itineraryResultView.visibility = View.VISIBLE
-                            val adapter = ItineraryResultsRecyclerAdapter(itineraries!!)
+                            val adapter = MyItineraryResultsRecyclerAdapter(itineraries!!)
                             adapter.listener = this@RouteFragment
                             itineraryResultView.adapter = adapter
                             mDialog.dismiss()

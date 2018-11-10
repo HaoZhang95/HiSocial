@@ -4,9 +4,10 @@ import android.support.v7.widget.RecyclerView
 import android.view.ViewGroup
 import idk.metropolia.fi.myapplication.R
 import idk.metropolia.fi.myapplication.extensions.inflate
+import idk.metropolia.fi.myapplication.view.widget.TripStopViewHolder
 import type.Mode
 
-class TripStopsRecyclerAdapter(val intermediatePlaces: MutableList<ItineraryPlanQuery.IntermediatePlace>, val mode: Mode) : RecyclerView.Adapter<TripStopViewHolder>() {
+class MyTripStopsRecyclerAdapter(val intermediatePlaces: MutableList<ItineraryPlanQuery.IntermediatePlace>, val mode: Mode) : RecyclerView.Adapter<TripStopViewHolder>() {
 
     var listener: TripStopsRecyclerAdapterListener? = null
 

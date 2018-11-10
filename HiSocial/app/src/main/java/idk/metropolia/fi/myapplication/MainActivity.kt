@@ -1,242 +1,123 @@
 package idk.metropolia.fi.myapplication
 
-import android.app.Dialog
-import android.content.Context
-import android.os.Build
-import android.support.v7.app.AppCompatActivity
+import android.graphics.PorterDuff
 import android.os.Bundle
-import android.support.design.widget.BottomSheetBehavior
-import android.support.design.widget.BottomSheetDialog
-import android.support.v4.app.Fragment
-import android.view.View
-import android.view.Window
-import android.view.WindowManager
-import android.view.inputmethod.EditorInfo
-import android.view.inputmethod.InputMethodManager
-import android.widget.*
-import com.example.ahao9.socialevent.utils.LogUtils
+import android.support.design.widget.TabLayout
+import android.support.v4.view.GravityCompat
+import android.support.v4.view.ViewPager
+import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.Toolbar
+import android.view.KeyEvent
+import android.view.Menu
+import android.view.MenuItem
+import android.widget.Toast
 import com.example.ahao9.socialevent.utils.MyToast
-import com.wdullaer.materialdatetimepicker.date.DatePickerDialog
-import idk.metropolia.fi.myapplication.fragment.HomeFragment
-import idk.metropolia.fi.myapplication.fragment.MapFragment
-import idk.metropolia.fi.myapplication.fragment.SettingsFragment
+import idk.metropolia.fi.myapplication.adapter.MyViewPagerAdapter
+import idk.metropolia.fi.myapplication.view.fragment.HomeFragment
 import idk.metropolia.fi.myapplication.utils.Tools
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.include_search_bar.*
-import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var search_bar: View
-    private lateinit var bottom_sheet: View
-    private lateinit var mBehavior: BottomSheetBehavior<View>
-    private var mBottomSheetDialog: BottomSheetDialog? = null
-
-    private lateinit var homeFragment: HomeFragment
-    private lateinit var settingsFragment: SettingsFragment
-    private lateinit var mapFragment: MapFragment
-    private lateinit var tempFragment: Fragment
-    private var currentIndex = 0
+    private lateinit var view_pager: ViewPager
+    private lateinit var viewPagerAdapter: MyViewPagerAdapter
+    private lateinit var tab_layout: TabLayout
+    private var mExitTime: Long = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        homeFragment = HomeFragment()
-        mapFragment = MapFragment()
-        settingsFragment = SettingsFragment()
-
-        supportFragmentManager
-                .beginTransaction()
-                .add(R.id.central_content, homeFragment)
-                .commit()
-        tempFragment = homeFragment
-
-        initComponent()
+        initToolbar()
+        initComponents()
+        initListeners()
     }
 
-    private fun switchFragment(fragment: Fragment) {
-        if (fragment != tempFragment) {
-            if (!fragment.isAdded) {
-                supportFragmentManager
-                        .beginTransaction()
-                        .hide(tempFragment)
-                        .add(R.id.central_content, fragment).commit();
-            } else {
-                supportFragmentManager
-                        .beginTransaction()
-                        .hide(tempFragment)
-                        .show(fragment).commit();
-            }
-            tempFragment = fragment;
-        }
-    }
-
-    private fun initComponent() {
-
-        search_bar = findViewById(R.id.search_bar)
-        bottom_sheet = findViewById(R.id.bottom_sheet)
-        mBehavior = BottomSheetBehavior.from<View>(bottom_sheet)
-
-        nested_scroll_view.setOnScrollChangeListener { v: View?, scrollX: Int, scrollY: Int, oldScrollX: Int, oldScrollY: Int ->
-            if (scrollY < oldScrollY) { // up
-                animateSearchBar(false)
-            }
-            if (scrollY > oldScrollY) { // down
-                animateSearchBar(true)
-            }
-        }
-
-        bt_menu.setOnClickListener {
-            showBottomSheetDialog()
-        }
-
-        et_search.setOnEditorActionListener { textView, actionId, keyEvent ->
-            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                hideKeyboard()
-                val text = textView.text.trim()
-                searchAction(text)
-                return@setOnEditorActionListener true
-            }
-            return@setOnEditorActionListener false
-        }
-
+    private fun initToolbar() {
+        val toolbar = findViewById<Toolbar>(R.id.toolbar)
+        toolbar.setNavigationIcon(R.drawable.ic_menu)
+        toolbar.navigationIcon?.setColorFilter(resources.getColor(R.color.grey_60), PorterDuff.Mode.SRC_ATOP)
+        setSupportActionBar(toolbar)
+        supportActionBar?.title = "Music"
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
         Tools.setSystemBarColor(this, R.color.grey_5)
         Tools.setSystemBarLight(this)
-
-        addFilterBtn.setOnClickListener { showFilterDialog() }
     }
 
-    private fun showFilterDialog() {
-        val dialog = Dialog(this)
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE) // before
-        dialog.setContentView(R.layout.dialog_event)
-        dialog.setCancelable(true)
+    private fun initComponents() {
+        view_pager = findViewById(R.id.view_pager)
+        view_pager.offscreenPageLimit = 4  // 解决viewpager滑动卡顿
 
-        val lp = WindowManager.LayoutParams()
-        lp.copyFrom(dialog.window!!.attributes)
-        lp.width = WindowManager.LayoutParams.MATCH_PARENT
-        lp.height = WindowManager.LayoutParams.WRAP_CONTENT
+        tab_layout = findViewById(R.id.tab_layout)
+        setupViewPager(view_pager)
+        tab_layout.setupWithViewPager(view_pager)
 
-        val startDateBtn = dialog.findViewById<Button>(R.id.startDateBtn)
-        val endDateBtn = dialog.findViewById<Button>(R.id.endDateBtn)
+        tab_layout.getTabAt(0)?.setIcon(R.drawable.ic_music)
+        tab_layout.getTabAt(1)?.setIcon(R.drawable.ic_movie)
+        tab_layout.getTabAt(2)?.setIcon(R.drawable.ic_book)
+        tab_layout.getTabAt(3)?.setIcon(R.drawable.ic_games)
 
-        startDateBtn.text = startDateStr
-        endDateBtn.text = endDateStr
-
-        startDateBtn.setOnClickListener { showDatePicker(startDateBtn, 1) }
-        endDateBtn.setOnClickListener { showDatePicker(endDateBtn, 2) }
-
-        (dialog.findViewById(R.id.bt_close) as ImageButton).setOnClickListener { dialog.dismiss() }
-        (dialog.findViewById(R.id.bt_save) as Button).setOnClickListener {
-            LogUtils.e("$startDateStr --> $endDateStr")
-            dialog.dismiss()
-        }
-
-        dialog.show()
-        dialog.window!!.attributes = lp
+        // set icon color pre-selected
+        tab_layout.getTabAt(0)?.icon?.setColorFilter(resources.getColor(R.color.colorPrimary), PorterDuff.Mode.SRC_IN)
+        tab_layout.getTabAt(1)?.icon?.setColorFilter(resources.getColor(R.color.grey_60), PorterDuff.Mode.SRC_IN)
+        tab_layout.getTabAt(2)?.icon?.setColorFilter(resources.getColor(R.color.grey_60), PorterDuff.Mode.SRC_IN)
+        tab_layout.getTabAt(3)?.icon?.setColorFilter(resources.getColor(R.color.grey_60), PorterDuff.Mode.SRC_IN)
     }
 
-    private var startDateStr: String = Tools.getFormattedDateSimple2(Date().time)
-    private var endDateStr: String = ""
+    private fun initListeners() {
 
-    private fun showDatePicker(button: Button, flag: Int) {
-        val cur_calender = Calendar.getInstance()
-        val datePicker = DatePickerDialog.newInstance(
-                { view, year, monthOfYear, dayOfMonth ->
-                    val calendar = Calendar.getInstance()
-                    calendar.set(Calendar.YEAR, year)
-                    calendar.set(Calendar.MONTH, monthOfYear)
-                    calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
-                    val date_ship_millis = calendar.timeInMillis
+        tab_layout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+            override fun onTabSelected(tab: TabLayout.Tab) {
+                supportActionBar?.title = viewPagerAdapter.getTitle(tab.position)
+                tab.icon?.setColorFilter(resources.getColor(R.color.colorPrimary), PorterDuff.Mode.SRC_IN)
+            }
 
-                    button.text = Tools.getFormattedDateSimple(date_ship_millis)
-                    if (flag == 1) {
-                        startDateStr = Tools.getFormattedDateSimple2(date_ship_millis)
-                    } else {
-                        endDateStr = Tools.getFormattedDateSimple2(date_ship_millis)
-                    }
-                },
-                cur_calender.get(Calendar.YEAR),
-                cur_calender.get(Calendar.MONTH),
-                cur_calender.get(Calendar.DAY_OF_MONTH)
-        )
-        //set dark light
-        datePicker.isThemeDark = false
-        datePicker.accentColor = resources.getColor(R.color.colorPrimary)
-        datePicker.minDate = cur_calender
-        datePicker.show(fragmentManager, "Datepickerdialog")
+            override fun onTabUnselected(tab: TabLayout.Tab) {
+                tab.icon?.setColorFilter(resources.getColor(R.color.grey_60), PorterDuff.Mode.SRC_IN)
+            }
+
+            override fun onTabReselected(tab: TabLayout.Tab) {}
+        })
     }
 
-
-    private fun searchAction(text: CharSequence) {
-        MyToast.show(this, "Begin search: $text")
-        et_search.text.clear()
-        et_search.clearFocus()
+    private fun setupViewPager(viewPager: ViewPager) {
+        viewPagerAdapter = MyViewPagerAdapter(supportFragmentManager)
+        viewPagerAdapter.addFragment(HomeFragment(), "Music")    // index 0
+        viewPagerAdapter.addFragment(HomeFragment(), "Movies")   // index 1
+        viewPagerAdapter.addFragment(HomeFragment(), "Books")    // index 2
+        viewPagerAdapter.addFragment(HomeFragment(), "Games")    // index 3
+        viewPager.adapter = viewPagerAdapter
     }
 
-    // 设置搜索
-    private fun hideKeyboard() {
-        val view = this.currentFocus
-        if (view != null) {
-            val imm = this.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
-            imm!!.hideSoftInputFromWindow(view.getWindowToken(), 0)
-        }
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.menu_search_setting, menu)
+        Tools.changeMenuIconColor(menu, resources.getColor(R.color.grey_60))
+        return true
     }
 
-    internal var isSearchBarHide = false
-    private fun animateSearchBar(hide: Boolean) {
-        if (isSearchBarHide && hide || !isSearchBarHide && !hide) return
-        isSearchBarHide = hide
-        val moveY = if (hide) -(2 * search_bar.height) else 0
-        search_bar.animate().translationY(moveY.toFloat()).setStartDelay(100).setDuration(300).start()
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == android.R.id.home) {
+            finish()
+        } else {
+            Toast.makeText(applicationContext, item.title, Toast.LENGTH_SHORT).show()
+        }
+        return super.onOptionsItemSelected(item)
     }
 
-    private fun showBottomSheetDialog() {
-        if (mBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
-            mBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+    /**
+     * 按返回键不退出应用。
+     */
+    override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if (System.currentTimeMillis() - mExitTime > 2000) {
+                MyToast.show(this@MainActivity, "Press again to exit")
+                mExitTime = System.currentTimeMillis()
+            } else {
+                MyToast.cancel()
+                moveTaskToBack(true)
+                // finish()
+            }
+            return true
         }
-
-        val view = layoutInflater.inflate(R.layout.sheet_floating, null)
-
-        mBottomSheetDialog = BottomSheetDialog(this)
-        mBottomSheetDialog?.setContentView(view)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            mBottomSheetDialog?.window!!.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
-        }
-        // set background transparent
-        (view.parent as View).setBackgroundColor(resources.getColor(android.R.color.transparent))
-        mBottomSheetDialog?.show()
-        mBottomSheetDialog?.setOnDismissListener { mBottomSheetDialog = null }
-
-        view.findViewById<LinearLayout>(R.id.lyt_home).setOnClickListener {
-            currentIndex = 0
-            switchFragment(homeFragment)
-            mBottomSheetDialog?.hide()
-        }
-        view.findViewById<ImageView>(R.id.iv_home).setOnClickListener {
-            currentIndex = 0
-            switchFragment(homeFragment)
-            mBottomSheetDialog?.hide()
-        }
-        view.findViewById<ImageButton>(R.id.bt_close).setOnClickListener {
-            mBottomSheetDialog?.hide()
-        }
-        view.findViewById<View>(R.id.lyt_map).setOnClickListener {
-            currentIndex = 1
-            switchFragment(settingsFragment)
-            mBottomSheetDialog?.hide()
-        }
-        view.findViewById<View>(R.id.lyt_share).setOnClickListener {
-            currentIndex = 2
-            switchFragment(mapFragment)
-            mBottomSheetDialog?.hide()
-        }
-        view.findViewById<View>(R.id.lyt_settings).setOnClickListener {
-            Toast.makeText(applicationContext, "Settings not implemented yet", Toast.LENGTH_SHORT).show()
-        }
-        view.findViewById<View>(R.id.lyt_about_us).setOnClickListener {
-            Toast.makeText(applicationContext, "About not implemented yet", Toast.LENGTH_SHORT).show()
-        }
+        return super.onKeyDown(keyCode, event)
     }
 }

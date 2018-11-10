@@ -4,7 +4,7 @@ import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentStatePagerAdapter
 
-import idk.metropolia.fi.myapplication.fragment.SettingsFragment
+import idk.metropolia.fi.myapplication.view.fragment.SettingsFragment
 
 /**
  * @ Author     ：Hao Zhang.

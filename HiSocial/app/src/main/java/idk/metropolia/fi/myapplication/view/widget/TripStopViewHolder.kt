@@ -1,4 +1,4 @@
-package idk.metropolia.fi.myapplication.adapter
+package idk.metropolia.fi.myapplication.view.widget
 
 import android.support.v7.widget.RecyclerView
 import android.view.View

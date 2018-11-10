@@ -1,4 +1,4 @@
-package idk.metropolia.fi.myapplication.activity
+package idk.metropolia.fi.myapplication.view.activity
 
 import android.os.Bundle
 import android.support.design.widget.BottomSheetBehavior
@@ -19,11 +19,11 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
 import idk.metropolia.fi.myapplication.R
-import idk.metropolia.fi.myapplication.adapter.ItineraryHolder
 import idk.metropolia.fi.myapplication.fragment.RouteDetailsFragment
 import idk.metropolia.fi.myapplication.fragment.RouteFragment
 import idk.metropolia.fi.myapplication.utils.PolylineUtils
 import idk.metropolia.fi.myapplication.utils.Tools
+import idk.metropolia.fi.myapplication.view.widget.ItineraryHolder
 import kotlinx.android.synthetic.main.activity_details_map.*
 import kotlinx.android.synthetic.main.sheet_map.*
 
@@ -51,7 +51,7 @@ class DetailsMapActivity : AppCompatActivity(), RouteFragment.OnItemClickListene
         setContentView(R.layout.activity_details_map)
 
         initToolbar()
-        initMapFragment(detailsMapDestLat,detailsMapDestLng)
+        initMapFragment(detailsMapDestLat, detailsMapDestLng)
         initComponents()
         initListeners()
     }

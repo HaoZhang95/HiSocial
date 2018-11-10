@@ -6,11 +6,9 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.example.ahao9.socialevent.utils.LogUtils
-import com.example.ahao9.socialevent.utils.MyToast
 import idk.metropolia.fi.myapplication.R
-import idk.metropolia.fi.myapplication.adapter.ItineraryHolder
-import idk.metropolia.fi.myapplication.adapter.LegsRecyclerAdapter
+import idk.metropolia.fi.myapplication.adapter.MyLegsRecyclerAdapter
+import idk.metropolia.fi.myapplication.view.widget.ItineraryHolder
 import kotlinx.android.synthetic.main.fragment_route_details.*
 
 /**
@@ -21,7 +19,7 @@ import kotlinx.android.synthetic.main.fragment_route_details.*
 class RouteDetailsFragment : Fragment() {
 
     private lateinit var layoutManager: LinearLayoutManager
-    private lateinit var adapter: LegsRecyclerAdapter
+    private lateinit var adapter: MyLegsRecyclerAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_route_details, container, false)
@@ -36,7 +34,7 @@ class RouteDetailsFragment : Fragment() {
 
     private fun initItinerary() {
         val itinerary = ItineraryHolder.get()
-        adapter = LegsRecyclerAdapter(itinerary!!.legs())
+        adapter = MyLegsRecyclerAdapter(itinerary!!.legs())
 
         layoutManager = LinearLayoutManager(context)
         itineraryDetailView.layoutManager = layoutManager

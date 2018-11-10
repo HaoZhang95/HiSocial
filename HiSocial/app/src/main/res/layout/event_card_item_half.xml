@@ -21,6 +21,7 @@
                 android:id="@+id/iv_event"
                 android:layout_width="match_parent"
                 android:layout_height="180dp"
+                android:foreground="?android:attr/selectableItemBackground"
                 android:background="@color/grey_40"
                 android:scaleType="centerCrop" />
 
@@ -75,18 +76,6 @@
                             android:textColor="@color/grey_60" />
 
                     </LinearLayout>
-
-                    <View
-                        android:layout_width="0dp"
-                        android:layout_height="0dp"
-                        android:layout_weight="1" />
-
-                    <LinearLayout
-                        android:id="@+id/layout_dots"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:orientation="horizontal" />
 
                 </LinearLayout>
 

@@ -4,8 +4,9 @@ import android.support.v7.widget.RecyclerView
 import android.view.ViewGroup
 import idk.metropolia.fi.myapplication.extensions.inflate
 import idk.metropolia.fi.myapplication.R
+import idk.metropolia.fi.myapplication.view.widget.LegModeViewHolder
 
-class LegsModeRecyclerAdapter(val legs: List<ItineraryPlanQuery.Leg>): RecyclerView.Adapter<LegModeViewHolder>() {
+class MyLegsModeRecyclerAdapter(val legs: List<ItineraryPlanQuery.Leg>): RecyclerView.Adapter<LegModeViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, position: Int): LegModeViewHolder {
         val view = parent.inflate(R.layout.recycler_item_leg_mode)
         return LegModeViewHolder(view)

@@ -1,4 +1,4 @@
-package idk.metropolia.fi.myapplication.activity
+package idk.metropolia.fi.myapplication.view.activity
 
 import android.os.Bundle
 import android.support.v4.widget.NestedScrollView
@@ -9,8 +9,6 @@ import android.widget.LinearLayout
 import com.example.ahao9.socialevent.httpsService.Service
 import com.example.ahao9.socialevent.utils.LogUtils
 import idk.metropolia.fi.myapplication.R
-import idk.metropolia.fi.myapplication.R.id.nested_scroll_view
-import idk.metropolia.fi.myapplication.R.id.rvListOfEvents
 import idk.metropolia.fi.myapplication.adapter.MyCommingSoonRVAdapter
 import idk.metropolia.fi.myapplication.model.SearchEventsResultObject
 import idk.metropolia.fi.myapplication.model.SearchEventsResultObject.SingleBeanInSearch

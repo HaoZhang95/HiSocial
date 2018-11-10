@@ -35,18 +35,18 @@
         </activity>
 
         <activity
-            android:name=".activity.CategoriesActivity"
+            android:name="idk.metropolia.fi.myapplication.view.activity.CategoriesActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.ListOfEventActivity"
-            android:screenOrientation="portrait" />
-
-        <activity
-            android:name=".activity.DetailsActivity"
+            android:name="idk.metropolia.fi.myapplication.view.activity.ListOfEventActivity"
             android:screenOrientation="portrait" />
 
         <activity
-            android:name=".activity.DetailsMapActivity"
+            android:name="idk.metropolia.fi.myapplication.view.activity.DetailsActivity"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name="idk.metropolia.fi.myapplication.view.activity.DetailsMapActivity"
             android:screenOrientation="portrait" />
     </application>
 

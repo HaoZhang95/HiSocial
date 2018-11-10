@@ -1,15 +1,12 @@
-package idk.metropolia.fi.myapplication.activity
+package idk.metropolia.fi.myapplication.view.activity
 
 import android.content.Intent
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
-import android.provider.MediaStore
 import android.support.v4.app.ActivityOptionsCompat
-import android.support.v4.content.FileProvider
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.text.Html
@@ -30,6 +27,7 @@ import idk.metropolia.fi.myapplication.utils.Tools
 import kotlinx.android.synthetic.main.activity_details.*
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.MarkerOptions
+import idk.metropolia.fi.myapplication.view.activity.DetailsMapActivity
 import idk.metropolia.fi.myapplication.fragment.RouteFragment
 import idk.metropolia.fi.myapplication.model.SingleEventLocationObject
 import idk.metropolia.fi.myapplication.utils.Tools.toggleArrow
@@ -38,7 +36,6 @@ import org.jetbrains.anko.*
 import rx.Subscriber
 import java.io.File
 import java.io.FileOutputStream
-import java.io.FilterOutputStream
 
 /**
  * @ Author     ：Hao Zhang.
@@ -81,9 +78,6 @@ class DetailsActivity : AppCompatActivity(), OnMapReadyCallback {
         lyt_expand_info = findViewById<View>(R.id.lyt_expand_info)
 
         obj = intent.extras.get("obj") as SingleBeanInSearch
-
-        LogUtils.e("点击的活动id: -> ${obj.id}")
-
         tv_title.text = obj.name?.fi ?: Tools.UN_KNOWN
         DetailsMapActivity.titleStr = obj.name?.fi ?: Tools.UN_KNOWN
         tv_publisher.text = obj.provider?.fi ?: Tools.UN_KNOWN
@@ -209,11 +203,9 @@ class DetailsActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun initListeners() {
-        ib_map_zoom.setOnClickListener {
-            val intent = Intent(this, DetailsMapActivity::class.java)
-            startActivity(intent,
-                    ActivityOptionsCompat.makeSceneTransitionAnimation(this).toBundle());
-        }
+        ib_hsl.setOnClickListener { goToMapDetailsActivity() }
+
+        iv_hsl.setOnClickListener { goToMapDetailsActivity() }
 
         bt_toggle_info.setOnClickListener { toggleSectionInfo(bt_toggle_info) }
 
@@ -229,6 +221,12 @@ class DetailsActivity : AppCompatActivity(), OnMapReadyCallback {
 
         tv_info_url.setOnClickListener { openWebPage(tv_info_url.text.toString()) }
 
+    }
+
+    private fun goToMapDetailsActivity() {
+        val intent = Intent(this, DetailsMapActivity::class.java)
+        startActivity(intent,
+                ActivityOptionsCompat.makeSceneTransitionAnimation(this).toBundle())
     }
 
     private fun openWebPage(url: String) {

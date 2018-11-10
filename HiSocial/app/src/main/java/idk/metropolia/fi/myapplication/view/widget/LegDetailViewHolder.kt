@@ -1,4 +1,4 @@
-package idk.metropolia.fi.myapplication.adapter
+package idk.metropolia.fi.myapplication.view.widget
 
 import ItineraryPlanQuery
 import android.support.v7.widget.LinearLayoutManager
@@ -6,6 +6,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.widget.*
 import idk.metropolia.fi.myapplication.R
+import idk.metropolia.fi.myapplication.adapter.MyTripStopsRecyclerAdapter
 import java.util.concurrent.TimeUnit
 import kotlin.math.roundToInt
 
@@ -151,7 +152,7 @@ class LegDetailViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
                         buttonShowStops.text = "${leg.intermediatePlaces()!!.size} stops"
                     } else {
                         recyclerItemStop.visibility = View.VISIBLE
-                        recyclerItemStop.adapter = TripStopsRecyclerAdapter(leg.intermediatePlaces()!!, leg.mode()!!)
+                        recyclerItemStop.adapter = MyTripStopsRecyclerAdapter(leg.intermediatePlaces()!!, leg.mode()!!)
                         buttonShowStops.text = "Hide"
                     }
                 }

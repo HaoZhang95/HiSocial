@@ -1,4 +1,4 @@
-package idk.metropolia.fi.myapplication.adapter
+package idk.metropolia.fi.myapplication.view.widget
 
 object ItineraryHolder {
     private var itinerary: ItineraryPlanQuery.Itinerary? = null

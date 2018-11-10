@@ -1,4 +1,4 @@
-package idk.metropolia.fi.myapplication.activity
+package idk.metropolia.fi.myapplication.view.activity
 
 import android.app.Dialog
 import android.content.Context

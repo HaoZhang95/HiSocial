@@ -1,6 +1,6 @@
 package idk.metropolia.fi.myapplication.utils
 
-import idk.metropolia.fi.myapplication.adapter.Coordinate
+import idk.metropolia.fi.myapplication.model.Coordinate
 
 object PolylineUtils {
     /**

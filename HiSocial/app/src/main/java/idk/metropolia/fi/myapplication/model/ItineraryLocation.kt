@@ -1,4 +1,4 @@
-package idk.metropolia.fi.myapplication.adapter
+package idk.metropolia.fi.myapplication.model
 
 data class Coordinate(val longitude: Double, val latitude: Double)
 data class Geometry(val type: String, val coordinates: List<Double>){}

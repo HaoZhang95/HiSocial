@@ -4,8 +4,9 @@ import android.support.v7.widget.RecyclerView
 import android.view.ViewGroup
 import idk.metropolia.fi.myapplication.extensions.inflate
 import idk.metropolia.fi.myapplication.R
+import idk.metropolia.fi.myapplication.view.widget.ItineraryResultViewHolder
 
-class ItineraryResultsRecyclerAdapter(val itineraries: List<ItineraryPlanQuery.Itinerary>): RecyclerView.Adapter<ItineraryResultViewHolder>() {
+class MyItineraryResultsRecyclerAdapter(val itineraries: List<ItineraryPlanQuery.Itinerary>): RecyclerView.Adapter<ItineraryResultViewHolder>() {
 
     var listener: ItineraryResultsRecyclerAdapterListener? = null
 

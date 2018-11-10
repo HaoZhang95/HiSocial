@@ -1,4 +1,4 @@
-package idk.metropolia.fi.myapplication.fragment
+package idk.metropolia.fi.myapplication.view.fragment
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
