@@ -24,6 +24,11 @@ class MainActivity : AppCompatActivity() {
     private lateinit var tab_layout: TabLayout
     private var mExitTime: Long = 0
 
+    private lateinit var homeFragment: HomeFragment
+    private lateinit var nearByFragment: NearByFragment
+    private lateinit var newEventFragment: NewEventFragment
+    private lateinit var homeFragment2: HomeFragment
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -45,6 +50,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initComponents() {
+        homeFragment = HomeFragment()
+        nearByFragment = NearByFragment()
+        newEventFragment = NewEventFragment()
+        homeFragment2 = HomeFragment()
+
         view_pager = findViewById(R.id.view_pager)
         view_pager.offscreenPageLimit = 4  // 解决viewpager滑动卡顿
 
@@ -82,10 +92,10 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupViewPager(viewPager: ViewPager) {
         viewPagerAdapter = MyViewPagerAdapter(supportFragmentManager)
-        viewPagerAdapter.addFragment(HomeFragment(), "Music")    // index 0
-        viewPagerAdapter.addFragment(NearByFragment(), "Movies")   // index 1
-        viewPagerAdapter.addFragment(NewEventFragment(), "Books")    // index 2
-        viewPagerAdapter.addFragment(HomeFragment(), "Games")    // index 3
+        viewPagerAdapter.addFragment(homeFragment, "Music")    // index 0
+        viewPagerAdapter.addFragment(nearByFragment, "Movies")   // index 1
+        viewPagerAdapter.addFragment(newEventFragment, "Books")    // index 2
+        viewPagerAdapter.addFragment(homeFragment2, "Games")    // index 3
         viewPager.adapter = viewPagerAdapter
     }
 

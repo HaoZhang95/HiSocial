@@ -1,7 +1,10 @@
 package idk.metropolia.fi.myapplication.view.fragment
 
 import android.os.Bundle
+import android.support.design.widget.FloatingActionButton
 import android.support.v4.app.Fragment
+import android.support.v4.app.FragmentTransaction
+import android.support.v4.widget.NestedScrollView
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.StaggeredGridLayoutManager
 import android.view.LayoutInflater
@@ -9,6 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.GridLayout
 import android.widget.TextView
+import com.bumptech.glide.request.animation.ViewAnimation
 import com.example.ahao9.socialevent.httpsService.Service
 import com.example.ahao9.socialevent.utils.LogUtils
 import idk.metropolia.fi.myapplication.R
@@ -20,9 +24,11 @@ import idk.metropolia.fi.myapplication.model.SearchEventsResultObject
 import idk.metropolia.fi.myapplication.model.SearchEventsResultObject.SingleBeanInSearch
 import idk.metropolia.fi.myapplication.model.SingleEventLocationObject
 import idk.metropolia.fi.myapplication.utils.Tools
+import idk.metropolia.fi.myapplication.utils.ViewAnimationUtils
 import kotlinx.android.synthetic.main.event_card_item.*
 import kotlinx.android.synthetic.main.fragment_home.*
 import org.jetbrains.anko.support.v4.startActivity
+import org.jetbrains.anko.support.v4.toast
 import rx.Subscriber
 import java.io.Serializable
 import java.util.*
@@ -40,9 +46,14 @@ class HomeFragment : Fragment() {
     private val recommendDataList = ArrayList<SingleBeanInSearch>()
     private val mLocationDatas = ArrayList<SingleEventLocationObject>()
 
-    private var singleBeanInSearch:SingleBeanInSearch? = null
+    private var singleBeanInSearch: SingleBeanInSearch? = null
     private lateinit var mListSubscriber: Subscriber<SearchEventsResultObject>
     private lateinit var mListLocationSubscriber: Subscriber<SingleEventLocationObject>
+
+    private lateinit var fab: FloatingActionButton
+    private var hide = false
+    private lateinit var mapFragment: MapFragment
+    private lateinit var fragmentTransaction: FragmentTransaction
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_home, container, false)
@@ -55,6 +66,7 @@ class HomeFragment : Fragment() {
         initGridAdapterV()
         initStaggerAdapterV()
 
+        // 属性的初始化方法一定要在设置监听器之前
         initComponent()
         initListeners()
     }
@@ -157,6 +169,58 @@ class HomeFragment : Fragment() {
         recommendAdapter?.setOnItemClickListener { _, position ->
             startActivity<DetailsActivity>("obj" to (recommendDataList[position] as Serializable))
         }
+
+        fabInHome.setOnClickListener {
+            fragmentTransaction = activity!!.supportFragmentManager.beginTransaction()
+            fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+
+            if (!mapFragment.isHidden) {
+//                if (supportFragmentManager.findFragmentByTag(fragmentTagsArray[0]) == null) {
+//                    fragmentTransaction.add(R.id.container, fragmentArray[0], fragmentTagsArray[0])
+//                }
+//                for (i in 0 until fragmentArray.size) {
+//                    if (i == 0) {
+//                        fragmentTransaction.show(fragmentArray[i])
+//                    } else {
+//                        if (supportFragmentManager.findFragmentByTag(fragmentTagsArray[i]) != null) {
+//                            fragmentTransaction.hide(fragmentArray[i])
+//                        }
+//                    }
+//                }
+//                fragmentTransaction.commit()
+
+                fabInHome.setImageDrawable(resources.getDrawable(R.drawable.ic_map));
+
+            } else {
+//                if (supportFragmentManager.findFragmentByTag(fragmentTagsArray[3]) == null) {
+//                    fragmentTransaction.add(R.id.container, fragmentArray[3], fragmentTagsArray[3])
+//                }
+//                for (i in 0 until fragmentArray.size) {
+//                    if (i == 3) {
+//                        fragmentTransaction.show(fragmentArray[i])
+//                    } else {
+//                        if (supportFragmentManager.findFragmentByTag(fragmentTagsArray[i]) != null) {
+//                            fragmentTransaction.hide(fragmentArray[i])
+//                        }
+//                    }
+//                }
+//                fragmentTransaction.commit()
+
+                fabInHome.setImageDrawable(resources.getDrawable(R.drawable.ic_dialog_dialer));
+            }
+        }
+
+//        nested_scroll_view.setOnScrollChangeListener { v: NestedScrollView?, scrollX: Int, scrollY: Int, oldScrollX: Int, oldScrollY: Int ->
+//            if (scrollY >= oldScrollY) { // down
+//                if (hide) return@setOnScrollChangeListener
+//                ViewAnimationUtils.hideFab(fab)
+//                hide = true
+//            } else {
+//                if (!hide) return@setOnScrollChangeListener
+//                ViewAnimationUtils.showFab(fab)
+//                hide = false
+//            }
+//        }
     }
 
     //纵向的网格布局
@@ -176,6 +240,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun initComponent() {
-
+        mapFragment = MapFragment()
+        fab = view!!.findViewById<FloatingActionButton>(R.id.fabInHome)
     }
 }
