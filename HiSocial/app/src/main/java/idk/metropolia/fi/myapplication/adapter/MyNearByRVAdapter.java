@@ -10,31 +10,30 @@ import android.widget.TextView;
 import com.example.ahao9.socialevent.httpsService.Service;
 import com.example.ahao9.socialevent.utils.LogUtils;
 
-import idk.metropolia.fi.myapplication.model.SearchEventsResultObject.*;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import idk.metropolia.fi.myapplication.R;
+import idk.metropolia.fi.myapplication.model.SearchEventsResultObject.SingleBeanInSearch;
 import idk.metropolia.fi.myapplication.model.SingleEventLocationObject;
 import idk.metropolia.fi.myapplication.utils.Tools;
 import rx.Subscriber;
 
-public class MyCommingSoonRVAdapter extends RecyclerView.Adapter<MyCommingSoonRVAdapter.MyHolder> {
+public class MyNearByRVAdapter extends RecyclerView.Adapter<MyNearByRVAdapter.MyHolder> {
 
     private List<SingleBeanInSearch> list;
     private Context context;
     private List mLocationDatas = new ArrayList<SingleEventLocationObject>();
     private Subscriber<SingleEventLocationObject> mListLocationSubscriber;
 
-    public MyCommingSoonRVAdapter(Context context, List<SingleBeanInSearch> list) {
+    public MyNearByRVAdapter(Context context, List<SingleBeanInSearch> list) {
         this.list = list;
         this.context = context;
     }
 
     @Override
     public MyHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = View.inflate(context, R.layout.event_card_item_half, null);
+        View view = View.inflate(context, R.layout.event_card_item, null);
         return new MyHolder(view);
     }
 
@@ -49,17 +48,19 @@ public class MyCommingSoonRVAdapter extends RecyclerView.Adapter<MyCommingSoonRV
     }
 
     public class MyHolder extends RecyclerView.ViewHolder{
-        private ImageView iv_event;
-        private TextView tv_place_title;
-        private TextView tv_place_brief;
+        private ImageView iv_single_event;
+        private TextView tv_single_date;
+        private TextView tv_single_location;
+        private TextView tv_single_title;
 
         public MyHolder(View itemView) {
             super(itemView);
-            iv_event = itemView.findViewById(R.id.iv_event);
-            tv_place_title = itemView.findViewById(R.id.tv_place_title);
-            tv_place_brief = itemView.findViewById(R.id.tv_place_brief);
+            iv_single_event = itemView.findViewById(R.id.iv_single_event);
+            tv_single_date = itemView.findViewById(R.id.tv_single_date);
+            tv_single_location = itemView.findViewById(R.id.tv_single_location);
+            tv_single_title = itemView.findViewById(R.id.tv_single_title);
 
-            iv_event.setOnClickListener(new View.OnClickListener() {
+            iv_single_event.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if (mOnItemClickListener != null){
@@ -71,13 +72,15 @@ public class MyCommingSoonRVAdapter extends RecyclerView.Adapter<MyCommingSoonRV
 
         public void setDataAndRefreshUI(SingleBeanInSearch dataBean){
             if (dataBean.getImages().size() > 0) {
-                Tools.displayImageOriginal(context, iv_event, dataBean.getImages().get(0).getUrl());
+                Tools.displayImageOriginal(context, iv_single_event, dataBean.getImages().get(0).getUrl());
             } else {
-                Tools.displayImageOriginal(context, iv_event, R.drawable.not_found);
+                Tools.displayImageOriginal(context, iv_single_event, R.drawable.not_found);
             }
-            tv_place_title.setText(dataBean.getName().getFi());
+            tv_single_title.setText(dataBean.getName().getFi());
 
-            tv_place_brief.setText(Tools.convertToYYYYMMDD(dataBean.getStartTime()));
+            tv_single_date.setText(Tools.getFormattedDateEvent(Tools.convertDateToLong(dataBean.getStartTime())));
+
+            tv_single_location.setText("Helsinki");
 
             // loadPlaceById(dataBean.getLocation().getId(), tv_place_brief);
         }

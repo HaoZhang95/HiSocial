@@ -15,6 +15,7 @@ import com.example.ahao9.socialevent.utils.MyToast
 import idk.metropolia.fi.myapplication.adapter.MyViewPagerAdapter
 import idk.metropolia.fi.myapplication.view.fragment.HomeFragment
 import idk.metropolia.fi.myapplication.utils.Tools
+import idk.metropolia.fi.myapplication.view.fragment.NearByFragment
 
 class MainActivity : AppCompatActivity() {
 
@@ -82,7 +83,7 @@ class MainActivity : AppCompatActivity() {
     private fun setupViewPager(viewPager: ViewPager) {
         viewPagerAdapter = MyViewPagerAdapter(supportFragmentManager)
         viewPagerAdapter.addFragment(HomeFragment(), "Music")    // index 0
-        viewPagerAdapter.addFragment(HomeFragment(), "Movies")   // index 1
+        viewPagerAdapter.addFragment(NearByFragment(), "Movies")   // index 1
         viewPagerAdapter.addFragment(HomeFragment(), "Books")    // index 2
         viewPagerAdapter.addFragment(HomeFragment(), "Games")    // index 3
         viewPager.adapter = viewPagerAdapter
