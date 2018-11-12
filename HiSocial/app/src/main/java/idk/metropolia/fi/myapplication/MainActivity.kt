@@ -3,7 +3,6 @@ package idk.metropolia.fi.myapplication
 import android.graphics.PorterDuff
 import android.os.Bundle
 import android.support.design.widget.TabLayout
-import android.support.v4.view.GravityCompat
 import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
@@ -13,9 +12,10 @@ import android.view.MenuItem
 import android.widget.Toast
 import com.example.ahao9.socialevent.utils.MyToast
 import idk.metropolia.fi.myapplication.adapter.MyViewPagerAdapter
-import idk.metropolia.fi.myapplication.view.fragment.HomeFragment
 import idk.metropolia.fi.myapplication.utils.Tools
+import idk.metropolia.fi.myapplication.view.fragment.HomeFragment
 import idk.metropolia.fi.myapplication.view.fragment.NearByFragment
+import idk.metropolia.fi.myapplication.view.fragment.NewEventFragment
 
 class MainActivity : AppCompatActivity() {
 
@@ -84,7 +84,7 @@ class MainActivity : AppCompatActivity() {
         viewPagerAdapter = MyViewPagerAdapter(supportFragmentManager)
         viewPagerAdapter.addFragment(HomeFragment(), "Music")    // index 0
         viewPagerAdapter.addFragment(NearByFragment(), "Movies")   // index 1
-        viewPagerAdapter.addFragment(HomeFragment(), "Books")    // index 2
+        viewPagerAdapter.addFragment(NewEventFragment(), "Books")    // index 2
         viewPagerAdapter.addFragment(HomeFragment(), "Games")    // index 3
         viewPager.adapter = viewPagerAdapter
     }

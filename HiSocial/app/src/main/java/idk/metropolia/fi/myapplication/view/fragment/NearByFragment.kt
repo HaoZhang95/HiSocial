@@ -12,6 +12,7 @@ import android.widget.TextView
 import com.example.ahao9.socialevent.httpsService.Service
 import com.example.ahao9.socialevent.utils.LogUtils
 import idk.metropolia.fi.myapplication.R
+import idk.metropolia.fi.myapplication.R.id.*
 import idk.metropolia.fi.myapplication.view.activity.CategoriesActivity
 import idk.metropolia.fi.myapplication.view.activity.DetailsActivity
 import idk.metropolia.fi.myapplication.adapter.MyCommingSoonRVAdapter
@@ -40,7 +41,6 @@ class NearByFragment : Fragment() {
     private val nearByDataList = ArrayList<SingleBeanInSearch>()
 
     private val mLocationDatas = ArrayList<SingleEventLocationObject>()
-    private var nearByBeanInSearch: SingleBeanInSearch? = null
     private lateinit var mListSubscriber: Subscriber<SearchEventsResultObject>
     private lateinit var mListLocationSubscriber: Subscriber<SingleEventLocationObject>
 
@@ -60,7 +60,7 @@ class NearByFragment : Fragment() {
 
     private fun initData() {
 
-        loadSearchResultByKeyword(0, "1", "1", "art")
+        loadSearchResultByKeyword(1, "1", "1", "art")
         loadSearchResultByKeyword(1, "1", "1", "dance")
         loadSearchResultByKeyword(1, "1", "1", "music")
         loadSearchResultByKeyword(1, "1", "1", "design")
@@ -116,17 +116,6 @@ class NearByFragment : Fragment() {
                 if (flag == 1) {
                     nearByDataList.addAll(httpsResponse.data)
                     nearByAdapter?.notifyDataSetChanged()
-                } else if (flag == 0) {
-                    val dataBean = httpsResponse.data.get(0)
-                    nearByBeanInSearch = dataBean
-                    if (dataBean.images.isNotEmpty()) {
-                        Tools.displayImageOriginal(context, iv_top_event, dataBean.images.get(0).url)
-                    } else {
-                        Tools.displayImageOriginal(context, iv_top_event, R.drawable.not_found)
-                    }
-                    tv_top_title.text = dataBean.name!!.fi
-                    tv_top_date.text = Tools.getFormattedDateEvent(Tools.convertDateToLong(dataBean.startTime))
-                    tv_top_location.text = "Helsinki"
                 }
             }
         }
@@ -139,12 +128,6 @@ class NearByFragment : Fragment() {
         nearByAdapter?.setOnItemClickListener { _, position ->
             // data class中的每一个属性必须实现Serializable,否则整个obj编译不通过
             startActivity<DetailsActivity>("obj" to (nearByDataList[position] as Serializable))
-        }
-
-        iv_top_event.setOnClickListener {
-            nearByBeanInSearch?.let {
-                startActivity<DetailsActivity>("obj" to (it as Serializable))
-            }
         }
     }
 

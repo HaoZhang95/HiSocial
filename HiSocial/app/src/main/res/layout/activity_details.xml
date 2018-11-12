@@ -501,7 +501,7 @@
                             android:background="@android:color/transparent"
                             android:clickable="true"
                             android:tint="@color/grey_40"
-                            app:srcCompat="@drawable/ic_explore" />
+                            app:srcCompat="@drawable/ic_public" />
 
                         <TextView
                             android:layout_width="0dp"
