@@ -2,8 +2,11 @@ package idk.metropolia.fi.myapplication
 
 import android.graphics.PorterDuff
 import android.os.Bundle
+import android.support.design.widget.FloatingActionButton
 import android.support.design.widget.TabLayout
+import android.support.v4.app.FragmentTransaction
 import android.support.v4.view.ViewPager
+import android.support.v4.widget.NestedScrollView
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.view.KeyEvent
@@ -13,13 +16,10 @@ import android.widget.Toast
 import com.example.ahao9.socialevent.utils.MyToast
 import idk.metropolia.fi.myapplication.adapter.MyViewPagerAdapter
 import idk.metropolia.fi.myapplication.utils.Tools
-import idk.metropolia.fi.myapplication.view.fragment.HomeFragment
-import idk.metropolia.fi.myapplication.view.fragment.NearByFragment
-import idk.metropolia.fi.myapplication.view.fragment.NewEventFragment
-import idk.metropolia.fi.myapplication.view.fragment.ProfileFragment
+import idk.metropolia.fi.myapplication.utils.ViewAnimationUtils
+import idk.metropolia.fi.myapplication.view.fragment.*
 
-class MainActivity : AppCompatActivity() {
-
+class MainActivity : AppCompatActivity(), HomeFragment.MyOnScrollChangeListener {
     private lateinit var view_pager: ViewPager
     private lateinit var viewPagerAdapter: MyViewPagerAdapter
     private lateinit var tab_layout: TabLayout
@@ -29,6 +29,11 @@ class MainActivity : AppCompatActivity() {
     private lateinit var nearByFragment: NearByFragment
     private lateinit var newEventFragment: NewEventFragment
     private lateinit var profileFragment: ProfileFragment
+
+    private lateinit var fab: FloatingActionButton
+    private var hide = false
+    private lateinit var fragmentTransaction: FragmentTransaction
+    private lateinit var mapFragment: MapFragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,6 +60,7 @@ class MainActivity : AppCompatActivity() {
         nearByFragment = NearByFragment()
         newEventFragment = NewEventFragment()
         profileFragment = ProfileFragment()
+        mapFragment = MapFragment()
 
         view_pager = findViewById(R.id.view_pager)
         view_pager.offscreenPageLimit = 4  // 解决viewpager滑动卡顿
@@ -73,9 +79,56 @@ class MainActivity : AppCompatActivity() {
         tab_layout.getTabAt(1)?.icon?.setColorFilter(resources.getColor(R.color.grey_60), PorterDuff.Mode.SRC_IN)
         tab_layout.getTabAt(2)?.icon?.setColorFilter(resources.getColor(R.color.grey_60), PorterDuff.Mode.SRC_IN)
         tab_layout.getTabAt(3)?.icon?.setColorFilter(resources.getColor(R.color.grey_60), PorterDuff.Mode.SRC_IN)
+
+
+        fab = findViewById(R.id.fabInMain)
+        fab.setOnClickListener {
+            fragmentTransaction = supportFragmentManager.beginTransaction()
+            fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+
+            if (!mapFragment.isHidden) {
+                MyToast.show(this, "step 1")
+//                if (supportFragmentManager.findFragmentByTag(fragmentTagsArray[0]) == null) {
+//                    fragmentTransaction.add(R.id.container, fragmentArray[0], fragmentTagsArray[0])
+//                }
+//                for (i in 0 until fragmentArray.size) {
+//                    if (i == 0) {
+//                        fragmentTransaction.show(fragmentArray[i])
+//                    } else {
+//                        if (supportFragmentManager.findFragmentByTag(fragmentTagsArray[i]) != null) {
+//                            fragmentTransaction.hide(fragmentArray[i])
+//                        }
+//                    }
+//                }
+//                fragmentTransaction.commit()
+
+//                fab.setImageDrawable(resources.getDrawable(R.drawable.ic_map))
+
+            } else {
+                MyToast.show(this, "step 2")
+//                if (supportFragmentManager.findFragmentByTag(fragmentTagsArray[3]) == null) {
+//                    fragmentTransaction.add(R.id.container, fragmentArray[3], fragmentTagsArray[3])
+//                }
+//                for (i in 0 until fragmentArray.size) {
+//                    if (i == 3) {
+//                        fragmentTransaction.show(fragmentArray[i])
+//                    } else {
+//                        if (supportFragmentManager.findFragmentByTag(fragmentTagsArray[i]) != null) {
+//                            fragmentTransaction.hide(fragmentArray[i])
+//                        }
+//                    }
+//                }
+//                fragmentTransaction.commit()
+
+//                fabInHome.setImageDrawable(resources.getDrawable(R.drawable.ic_dialog_dialer));
+            }
+        }
+
     }
 
     private fun initListeners() {
+
+        homeFragment.setOnScrollChangeListener(this)
 
         tab_layout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) {
@@ -89,6 +142,18 @@ class MainActivity : AppCompatActivity() {
 
             override fun onTabReselected(tab: TabLayout.Tab) {}
         })
+    }
+
+    override fun onScrollChangeListener(v: NestedScrollView?, scrollX: Int, scrollY: Int, oldScrollX: Int, oldScrollY: Int) {
+        if (scrollY >= oldScrollY) { // down
+            if (hide) return
+            ViewAnimationUtils.hideFab(fab)
+            hide = true
+        } else {    // up
+            if (!hide) return
+            ViewAnimationUtils.showFab(fab)
+            hide = false
+        }
     }
 
     private fun setupViewPager(viewPager: ViewPager) {
@@ -107,11 +172,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-//        if (item.itemId == android.R.id.home) {
-//            finish()
-//        } else {
-//            Toast.makeText(applicationContext, item.title, Toast.LENGTH_SHORT).show()
-//        }
         Toast.makeText(applicationContext, item.title, Toast.LENGTH_SHORT).show()
         return super.onOptionsItemSelected(item)
     }

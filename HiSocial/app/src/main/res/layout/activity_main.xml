@@ -43,4 +43,18 @@
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fabInMain"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="@dimen/spacing_smlarge"
+        android:tint="@color/colorPrimary"
+        app:backgroundTint="@color/mdtp_white"
+        android:clickable="true"
+        android:focusable="true"
+        app:fabSize="normal"
+        app:rippleColor="@color/colorPrimary"
+        app:srcCompat="@drawable/ic_map" />
+
 </android.support.design.widget.CoordinatorLayout>

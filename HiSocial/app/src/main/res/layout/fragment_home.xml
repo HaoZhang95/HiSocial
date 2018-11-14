@@ -102,18 +102,5 @@
 
     </android.support.v4.widget.NestedScrollView>
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fabInHome"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="@dimen/spacing_smlarge"
-        android:clickable="true"
-        android:tint="@color/colorPrimary"
-        app:backgroundTint="@android:color/white"
-        app:fabSize="normal"
-        app:rippleColor="@color/colorPrimary"
-        app:srcCompat="@drawable/ic_map" />
-
 </android.support.design.widget.CoordinatorLayout>
 

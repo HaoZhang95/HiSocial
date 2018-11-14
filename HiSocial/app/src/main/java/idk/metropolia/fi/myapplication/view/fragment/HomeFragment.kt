@@ -50,11 +50,6 @@ class HomeFragment : Fragment() {
     private lateinit var mListSubscriber: Subscriber<SearchEventsResultObject>
     private lateinit var mListLocationSubscriber: Subscriber<SingleEventLocationObject>
 
-    private lateinit var fab: FloatingActionButton
-    private var hide = false
-    private lateinit var mapFragment: MapFragment
-    private lateinit var fragmentTransaction: FragmentTransaction
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_home, container, false)
     }
@@ -151,6 +146,15 @@ class HomeFragment : Fragment() {
                 "event", keyword, Tools.getFormattedToday())
     }
 
+    private var myOnScrollChangeListener: MyOnScrollChangeListener? = null
+    interface MyOnScrollChangeListener {
+        fun onScrollChangeListener(v: NestedScrollView?, scrollX: Int, scrollY: Int, oldScrollX: Int, oldScrollY: Int)
+    }
+
+    fun setOnScrollChangeListener(myOnScrollChangeListener: MyOnScrollChangeListener) {
+        this.myOnScrollChangeListener = myOnScrollChangeListener
+    }
+
     private fun initListeners() {
         commingSoonMoreBtn.setOnClickListener { startActivity<CategoriesActivity>() }
         recommendMoreBtn.setOnClickListener { startActivity<CategoriesActivity>() }
@@ -170,57 +174,9 @@ class HomeFragment : Fragment() {
             startActivity<DetailsActivity>("obj" to (recommendDataList[position] as Serializable))
         }
 
-        fabInHome.setOnClickListener {
-            fragmentTransaction = activity!!.supportFragmentManager.beginTransaction()
-            fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-
-            if (!mapFragment.isHidden) {
-//                if (supportFragmentManager.findFragmentByTag(fragmentTagsArray[0]) == null) {
-//                    fragmentTransaction.add(R.id.container, fragmentArray[0], fragmentTagsArray[0])
-//                }
-//                for (i in 0 until fragmentArray.size) {
-//                    if (i == 0) {
-//                        fragmentTransaction.show(fragmentArray[i])
-//                    } else {
-//                        if (supportFragmentManager.findFragmentByTag(fragmentTagsArray[i]) != null) {
-//                            fragmentTransaction.hide(fragmentArray[i])
-//                        }
-//                    }
-//                }
-//                fragmentTransaction.commit()
-
-                fabInHome.setImageDrawable(resources.getDrawable(R.drawable.ic_map));
-
-            } else {
-//                if (supportFragmentManager.findFragmentByTag(fragmentTagsArray[3]) == null) {
-//                    fragmentTransaction.add(R.id.container, fragmentArray[3], fragmentTagsArray[3])
-//                }
-//                for (i in 0 until fragmentArray.size) {
-//                    if (i == 3) {
-//                        fragmentTransaction.show(fragmentArray[i])
-//                    } else {
-//                        if (supportFragmentManager.findFragmentByTag(fragmentTagsArray[i]) != null) {
-//                            fragmentTransaction.hide(fragmentArray[i])
-//                        }
-//                    }
-//                }
-//                fragmentTransaction.commit()
-
-                fabInHome.setImageDrawable(resources.getDrawable(R.drawable.ic_dialog_dialer));
-            }
+        nested_scroll_view.setOnScrollChangeListener { v: NestedScrollView?, scrollX: Int, scrollY: Int, oldScrollX: Int, oldScrollY: Int ->
+            myOnScrollChangeListener?.onScrollChangeListener(v,scrollX,scrollY,oldScrollX,oldScrollY)
         }
-
-//        nested_scroll_view.setOnScrollChangeListener { v: NestedScrollView?, scrollX: Int, scrollY: Int, oldScrollX: Int, oldScrollY: Int ->
-//            if (scrollY >= oldScrollY) { // down
-//                if (hide) return@setOnScrollChangeListener
-//                ViewAnimationUtils.hideFab(fab)
-//                hide = true
-//            } else {
-//                if (!hide) return@setOnScrollChangeListener
-//                ViewAnimationUtils.showFab(fab)
-//                hide = false
-//            }
-//        }
     }
 
     //纵向的网格布局
@@ -240,7 +196,6 @@ class HomeFragment : Fragment() {
     }
 
     private fun initComponent() {
-        mapFragment = MapFragment()
-        fab = view!!.findViewById<FloatingActionButton>(R.id.fabInHome)
+
     }
 }
