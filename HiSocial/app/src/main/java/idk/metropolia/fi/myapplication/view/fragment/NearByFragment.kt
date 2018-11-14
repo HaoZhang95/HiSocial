@@ -2,8 +2,8 @@ package idk.metropolia.fi.myapplication.view.fragment
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v4.widget.NestedScrollView
 import android.support.v7.widget.GridLayoutManager
-import android.support.v7.widget.StaggeredGridLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,18 +12,13 @@ import android.widget.TextView
 import com.example.ahao9.socialevent.httpsService.Service
 import com.example.ahao9.socialevent.utils.LogUtils
 import idk.metropolia.fi.myapplication.R
-import idk.metropolia.fi.myapplication.R.id.*
-import idk.metropolia.fi.myapplication.view.activity.CategoriesActivity
-import idk.metropolia.fi.myapplication.view.activity.DetailsActivity
-import idk.metropolia.fi.myapplication.adapter.MyCommingSoonRVAdapter
 import idk.metropolia.fi.myapplication.adapter.MyNearByRVAdapter
-import idk.metropolia.fi.myapplication.adapter.MyRecommendRVAdapter
 import idk.metropolia.fi.myapplication.model.SearchEventsResultObject
 import idk.metropolia.fi.myapplication.model.SearchEventsResultObject.SingleBeanInSearch
 import idk.metropolia.fi.myapplication.model.SingleEventLocationObject
 import idk.metropolia.fi.myapplication.utils.Tools
+import idk.metropolia.fi.myapplication.view.activity.DetailsActivity
 import kotlinx.android.synthetic.main.event_card_item.*
-import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.android.synthetic.main.fragment_nearby.*
 import org.jetbrains.anko.support.v4.startActivity
 import rx.Subscriber
@@ -123,11 +118,24 @@ class NearByFragment : Fragment() {
                 "event", keyword, Tools.getFormattedToday())
     }
 
+    private var myOnScrollChangeListener: MyOnScrollChangeListener? = null
+    interface MyOnScrollChangeListener {
+        fun onScrollChangeListener(v: NestedScrollView?, scrollX: Int, scrollY: Int, oldScrollX: Int, oldScrollY: Int)
+    }
+
+    fun setOnScrollChangeListener(myOnScrollChangeListener: MyOnScrollChangeListener) {
+        this.myOnScrollChangeListener = myOnScrollChangeListener
+    }
+
     private fun initListeners() {
 
         nearByAdapter?.setOnItemClickListener { _, position ->
             // data class中的每一个属性必须实现Serializable,否则整个obj编译不通过
             startActivity<DetailsActivity>("obj" to (nearByDataList[position] as Serializable))
+        }
+
+        nested_content_nearby.setOnScrollChangeListener { v: NestedScrollView?, scrollX: Int, scrollY: Int, oldScrollX: Int, oldScrollY: Int ->
+            myOnScrollChangeListener?.onScrollChangeListener(v,scrollX,scrollY,oldScrollX,oldScrollY)
         }
     }
 

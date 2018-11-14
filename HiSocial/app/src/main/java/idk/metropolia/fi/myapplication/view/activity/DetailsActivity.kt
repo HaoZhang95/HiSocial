@@ -60,8 +60,8 @@ class DetailsActivity : AppCompatActivity(), OnMapReadyCallback {
         setContentView(R.layout.activity_details)
 
         initToolbar()
-        initListeners()
         initComponents(savedInstanceState)
+        initListeners()
     }
 
     private fun initComponents(savedInstanceState: Bundle?) {

@@ -1,9 +1,11 @@
 package idk.metropolia.fi.myapplication
 
+import android.content.Intent
 import android.graphics.PorterDuff
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
 import android.support.design.widget.TabLayout
+import android.support.v4.app.ActivityOptionsCompat
 import android.support.v4.app.FragmentTransaction
 import android.support.v4.view.ViewPager
 import android.support.v4.widget.NestedScrollView
@@ -12,14 +14,20 @@ import android.support.v7.widget.Toolbar
 import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.Toast
+import com.example.ahao9.socialevent.utils.LogUtils
 import com.example.ahao9.socialevent.utils.MyToast
+import idk.metropolia.fi.myapplication.R.id.tab_layout
 import idk.metropolia.fi.myapplication.adapter.MyViewPagerAdapter
 import idk.metropolia.fi.myapplication.utils.Tools
 import idk.metropolia.fi.myapplication.utils.ViewAnimationUtils
+import idk.metropolia.fi.myapplication.view.activity.DetailsMapActivity
+import idk.metropolia.fi.myapplication.view.activity.MapActivity
 import idk.metropolia.fi.myapplication.view.fragment.*
+import org.jetbrains.anko.startActivity
 
-class MainActivity : AppCompatActivity(), HomeFragment.MyOnScrollChangeListener {
+class MainActivity : AppCompatActivity(), HomeFragment.MyOnScrollChangeListener, NearByFragment.MyOnScrollChangeListener {
     private lateinit var view_pager: ViewPager
     private lateinit var viewPagerAdapter: MyViewPagerAdapter
     private lateinit var tab_layout: TabLayout
@@ -80,50 +88,7 @@ class MainActivity : AppCompatActivity(), HomeFragment.MyOnScrollChangeListener 
         tab_layout.getTabAt(2)?.icon?.setColorFilter(resources.getColor(R.color.grey_60), PorterDuff.Mode.SRC_IN)
         tab_layout.getTabAt(3)?.icon?.setColorFilter(resources.getColor(R.color.grey_60), PorterDuff.Mode.SRC_IN)
 
-
         fab = findViewById(R.id.fabInMain)
-        fab.setOnClickListener {
-            fragmentTransaction = supportFragmentManager.beginTransaction()
-            fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-
-            if (!mapFragment.isHidden) {
-                MyToast.show(this, "step 1")
-//                if (supportFragmentManager.findFragmentByTag(fragmentTagsArray[0]) == null) {
-//                    fragmentTransaction.add(R.id.container, fragmentArray[0], fragmentTagsArray[0])
-//                }
-//                for (i in 0 until fragmentArray.size) {
-//                    if (i == 0) {
-//                        fragmentTransaction.show(fragmentArray[i])
-//                    } else {
-//                        if (supportFragmentManager.findFragmentByTag(fragmentTagsArray[i]) != null) {
-//                            fragmentTransaction.hide(fragmentArray[i])
-//                        }
-//                    }
-//                }
-//                fragmentTransaction.commit()
-
-//                fab.setImageDrawable(resources.getDrawable(R.drawable.ic_map))
-
-            } else {
-                MyToast.show(this, "step 2")
-//                if (supportFragmentManager.findFragmentByTag(fragmentTagsArray[3]) == null) {
-//                    fragmentTransaction.add(R.id.container, fragmentArray[3], fragmentTagsArray[3])
-//                }
-//                for (i in 0 until fragmentArray.size) {
-//                    if (i == 3) {
-//                        fragmentTransaction.show(fragmentArray[i])
-//                    } else {
-//                        if (supportFragmentManager.findFragmentByTag(fragmentTagsArray[i]) != null) {
-//                            fragmentTransaction.hide(fragmentArray[i])
-//                        }
-//                    }
-//                }
-//                fragmentTransaction.commit()
-
-//                fabInHome.setImageDrawable(resources.getDrawable(R.drawable.ic_dialog_dialer));
-            }
-        }
-
     }
 
     private fun initListeners() {
@@ -134,6 +99,8 @@ class MainActivity : AppCompatActivity(), HomeFragment.MyOnScrollChangeListener 
             override fun onTabSelected(tab: TabLayout.Tab) {
                 supportActionBar?.title = viewPagerAdapter.getTitle(tab.position)
                 tab.icon?.setColorFilter(resources.getColor(R.color.colorPrimary), PorterDuff.Mode.SRC_IN)
+
+                updateFabButton(tab.position)
             }
 
             override fun onTabUnselected(tab: TabLayout.Tab) {
@@ -142,6 +109,38 @@ class MainActivity : AppCompatActivity(), HomeFragment.MyOnScrollChangeListener 
 
             override fun onTabReselected(tab: TabLayout.Tab) {}
         })
+
+        fab.setOnClickListener {
+            fragmentTransaction = supportFragmentManager.beginTransaction()
+            fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+            goToMapActivity()
+        }
+    }
+
+    private fun goToMapActivity() {
+        val intent = Intent(this, MapActivity::class.java)
+        intent.putExtra("index", tab_layout.selectedTabPosition)
+        startActivity(intent,
+                ActivityOptionsCompat.makeSceneTransitionAnimation(this).toBundle())
+    }
+
+    private fun updateFabButton(tabPosition: Int) {
+        when (tabPosition) {
+            0 -> {
+                fab.visibility = View.VISIBLE
+                fab.setImageDrawable(resources.getDrawable(R.drawable.ic_map))
+            }
+            1 -> {
+                fab.visibility = View.VISIBLE
+                fab.setImageDrawable(resources.getDrawable(R.drawable.ic_near_me))
+            }
+            2 -> {
+                fab.visibility = View.GONE
+            }
+            3 -> {
+                fab.visibility = View.GONE
+            }
+        }
     }
 
     override fun onScrollChangeListener(v: NestedScrollView?, scrollX: Int, scrollY: Int, oldScrollX: Int, oldScrollY: Int) {
