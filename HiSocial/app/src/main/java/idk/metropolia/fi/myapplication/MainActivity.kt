@@ -16,6 +16,7 @@ import idk.metropolia.fi.myapplication.utils.Tools
 import idk.metropolia.fi.myapplication.view.fragment.HomeFragment
 import idk.metropolia.fi.myapplication.view.fragment.NearByFragment
 import idk.metropolia.fi.myapplication.view.fragment.NewEventFragment
+import idk.metropolia.fi.myapplication.view.fragment.ProfileFragment
 
 class MainActivity : AppCompatActivity() {
 
@@ -27,7 +28,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var homeFragment: HomeFragment
     private lateinit var nearByFragment: NearByFragment
     private lateinit var newEventFragment: NewEventFragment
-    private lateinit var homeFragment2: HomeFragment
+    private lateinit var profileFragment: ProfileFragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,11 +41,11 @@ class MainActivity : AppCompatActivity() {
 
     private fun initToolbar() {
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
-        toolbar.setNavigationIcon(R.drawable.ic_menu)
-        toolbar.navigationIcon?.setColorFilter(resources.getColor(R.color.grey_60), PorterDuff.Mode.SRC_ATOP)
+        toolbar.setNavigationIcon(R.drawable.ic_logo_sized)
+        // toolbar.navigationIcon?.setColorFilter(resources.getColor(R.color.grey_60), PorterDuff.Mode.SRC_ATOP)
         setSupportActionBar(toolbar)
-        supportActionBar?.title = "Music"
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.title = "Home"
+        // supportActionBar?.setDisplayHomeAsUpEnabled(true)
         Tools.setSystemBarColor(this, R.color.grey_5)
         Tools.setSystemBarLight(this)
     }
@@ -53,7 +54,7 @@ class MainActivity : AppCompatActivity() {
         homeFragment = HomeFragment()
         nearByFragment = NearByFragment()
         newEventFragment = NewEventFragment()
-        homeFragment2 = HomeFragment()
+        profileFragment = ProfileFragment()
 
         view_pager = findViewById(R.id.view_pager)
         view_pager.offscreenPageLimit = 4  // 解决viewpager滑动卡顿
@@ -62,10 +63,10 @@ class MainActivity : AppCompatActivity() {
         setupViewPager(view_pager)
         tab_layout.setupWithViewPager(view_pager)
 
-        tab_layout.getTabAt(0)?.setIcon(R.drawable.ic_music)
-        tab_layout.getTabAt(1)?.setIcon(R.drawable.ic_movie)
-        tab_layout.getTabAt(2)?.setIcon(R.drawable.ic_book)
-        tab_layout.getTabAt(3)?.setIcon(R.drawable.ic_games)
+        tab_layout.getTabAt(0)?.setIcon(R.drawable.ic_filter_list)
+        tab_layout.getTabAt(1)?.setIcon(R.drawable.ic_near_me)
+        tab_layout.getTabAt(2)?.setIcon(R.drawable.ic_add)
+        tab_layout.getTabAt(3)?.setIcon(R.drawable.ic_person)
 
         // set icon color pre-selected
         tab_layout.getTabAt(0)?.icon?.setColorFilter(resources.getColor(R.color.colorPrimary), PorterDuff.Mode.SRC_IN)
@@ -92,10 +93,10 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupViewPager(viewPager: ViewPager) {
         viewPagerAdapter = MyViewPagerAdapter(supportFragmentManager)
-        viewPagerAdapter.addFragment(homeFragment, "Music")    // index 0
-        viewPagerAdapter.addFragment(nearByFragment, "Movies")   // index 1
-        viewPagerAdapter.addFragment(newEventFragment, "Books")    // index 2
-        viewPagerAdapter.addFragment(homeFragment2, "Games")    // index 3
+        viewPagerAdapter.addFragment(homeFragment, "Home")    // index 0
+        viewPagerAdapter.addFragment(nearByFragment, "Near By")   // index 1
+        viewPagerAdapter.addFragment(newEventFragment, "Add Event")    // index 2
+        viewPagerAdapter.addFragment(profileFragment, "Profile")    // index 3
         viewPager.adapter = viewPagerAdapter
     }
 
@@ -106,11 +107,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == android.R.id.home) {
-            finish()
-        } else {
-            Toast.makeText(applicationContext, item.title, Toast.LENGTH_SHORT).show()
-        }
+//        if (item.itemId == android.R.id.home) {
+//            finish()
+//        } else {
+//            Toast.makeText(applicationContext, item.title, Toast.LENGTH_SHORT).show()
+//        }
+        Toast.makeText(applicationContext, item.title, Toast.LENGTH_SHORT).show()
         return super.onOptionsItemSelected(item)
     }
 

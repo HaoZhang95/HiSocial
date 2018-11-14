@@ -4,14 +4,14 @@ import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentStatePagerAdapter
 
-import idk.metropolia.fi.myapplication.view.fragment.SettingsFragment
+import idk.metropolia.fi.myapplication.view.fragment.ProfileFragment
 
 /**
  * @ Author     ：Hao Zhang.
  * @ Date       ：Created in 20:18 2018/10/31
  * @ Description：Build for Metropolia project
  */
-class MyTabAdapter(fm: FragmentManager, private val mFragments: List<SettingsFragment>, private val mTitles: Array<String>)
+class MyTabAdapter(fm: FragmentManager, private val mFragments: List<ProfileFragment>, private val mTitles: Array<String>)
     : FragmentStatePagerAdapter(fm) {
 
     override fun getItem(position: Int): Fragment {

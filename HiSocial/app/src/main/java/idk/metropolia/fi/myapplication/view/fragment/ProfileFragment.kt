@@ -12,10 +12,10 @@ import idk.metropolia.fi.myapplication.R
  * @ Date       ：Created in 16:20 2018/10/29
  * @ Description：Build for Metropolia project
  */
-class SettingsFragment: Fragment(){
+class ProfileFragment: Fragment(){
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_settings, container, false)
+        return inflater.inflate(R.layout.fragment_profile, container, false)
     }
 
 }
