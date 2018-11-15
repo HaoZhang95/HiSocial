@@ -23,7 +23,7 @@ public class MyNearByRVAdapter extends RecyclerView.Adapter<MyNearByRVAdapter.My
 
     private List<SingleBeanInSearch> list;
     private Context context;
-    private List mLocationDatas = new ArrayList<SingleEventLocationObject>();
+    public static List<SingleEventLocationObject> LOCATION_DATA_LIST = new ArrayList<>();
     private Subscriber<SingleEventLocationObject> mListLocationSubscriber;
 
     public MyNearByRVAdapter(Context context, List<SingleBeanInSearch> list) {
@@ -80,9 +80,9 @@ public class MyNearByRVAdapter extends RecyclerView.Adapter<MyNearByRVAdapter.My
 
             tv_single_date.setText(Tools.getFormattedDateEvent(Tools.convertDateToLong(dataBean.getStartTime())));
 
-            tv_single_location.setText("Helsinki");
+            // tv_single_location.setText("Helsinki");
 
-            // loadPlaceById(dataBean.getLocation().getId(), tv_place_brief);
+            loadPlaceById(dataBean.getLocation().getId(), tv_single_location);
         }
     }
 
@@ -95,9 +95,7 @@ public class MyNearByRVAdapter extends RecyclerView.Adapter<MyNearByRVAdapter.My
 
         mListLocationSubscriber = new Subscriber<SingleEventLocationObject>() {
             @Override
-            public void onCompleted() {
-
-            }
+            public void onCompleted() { }
 
             @Override
             public void onError(Throwable e) {
@@ -106,7 +104,14 @@ public class MyNearByRVAdapter extends RecyclerView.Adapter<MyNearByRVAdapter.My
 
             @Override
             public void onNext(SingleEventLocationObject singleEventLocationObject) {
-                textView.setText(singleEventLocationObject.getName().getFi());
+
+                LOCATION_DATA_LIST.add(singleEventLocationObject);
+
+                if (! singleEventLocationObject.getDivisions().isEmpty()) {
+                    textView.setText(singleEventLocationObject.getDivisions().get(0).getName().getFi());
+                } else {
+                    textView.setText(singleEventLocationObject.getName().getFi());
+                }
             }
         };
 

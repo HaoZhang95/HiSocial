@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -32,6 +32,7 @@
                     android:orientation="vertical">
 
                     <ImageView
+                        android:id="@+id/iv_event"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:padding="@dimen/spacing_large"
@@ -515,6 +516,7 @@
         </android.support.v4.widget.NestedScrollView>
 
         <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fab_take_photo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/spacing_smlarge"
@@ -528,4 +530,12 @@
             app:srcCompat="@drawable/ic_photo_camera" />
 
     </android.support.design.widget.CoordinatorLayout>
-</LinearLayout>
+
+    <!--bottom sheet container-->
+    <FrameLayout
+        android:id="@+id/bottom_sheet_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_behavior="@string/bottom_sheet_behavior" />
+
+</android.support.design.widget.CoordinatorLayout>

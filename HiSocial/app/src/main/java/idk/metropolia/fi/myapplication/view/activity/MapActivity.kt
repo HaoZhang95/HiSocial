@@ -20,6 +20,8 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import idk.metropolia.fi.myapplication.R
+import idk.metropolia.fi.myapplication.adapter.MyNearByRVAdapter
+import idk.metropolia.fi.myapplication.model.SingleEventLocationObject
 import idk.metropolia.fi.myapplication.utils.Tools
 
 private const val HOME_FRAGMENT = 0
@@ -45,22 +47,23 @@ class MapActivity : AppCompatActivity() {
 
         initComponents()
         initListeners()
-        initMapFragment(lat, lng)
     }
 
     private fun initComponents() {
         index = intent.extras["index"] as Int
         if (index == HOME_FRAGMENT) {
             // MyToast.show(this,"显示Home相关的地图")
-        } else {
+            initMapFragmentBasedOnHomeFragment(lat, lng)
+        } else if (index == NEAR_BY_FRAGMENT){
             // MyToast.show(this,"显示nearby相关的地图")
+            initMapFragmentBasedOnNearByFragment()
         }
 
         bottom_sheet = findViewById(R.id.bottom_sheet)
         mBehavior = BottomSheetBehavior.from<View>(bottom_sheet)
     }
 
-    private fun initMapFragment(lat: Double, lng: Double) {
+    private fun initMapFragmentBasedOnHomeFragment(lat: Double, lng: Double) {
         val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync { googleMap ->
             mMap = Tools.configActivityMaps(googleMap)
@@ -70,7 +73,32 @@ class MapActivity : AppCompatActivity() {
             mMap!!.setOnMarkerClickListener {
                 try {
                     // mMap!!.animateCamera(zoomingLocation(lat, lng))
-                    showBottomSheetDialog()
+                    showBottomSheetDialog(null)
+                } catch (e: Exception) {
+                }
+                true
+            }
+        }
+    }
+
+    private fun initMapFragmentBasedOnNearByFragment() {
+        val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
+        mapFragment.getMapAsync { googleMap ->
+            mMap = Tools.configActivityMaps(googleMap)
+
+            for (temp in MyNearByRVAdapter.LOCATION_DATA_LIST) {
+                val lat = temp.position.coordinates[1]
+                val lng = temp.position.coordinates[0]
+                val markerOptions = MarkerOptions().position(LatLng(lat, lng)).title(temp.name.fi)
+                val marker = mMap!!.addMarker(markerOptions)
+                marker.tag = temp
+            }
+
+            mMap!!.moveCamera(zoomingLocation(lat, lng))        // 应当移动到用户的
+            mMap!!.setOnMarkerClickListener {
+                try {
+                    // mMap!!.animateCamera(zoomingLocation(lat, lng))
+                    showBottomSheetDialog(it.tag as SingleEventLocationObject)
                 } catch (e: Exception) {
                 }
                 true
@@ -82,13 +110,13 @@ class MapActivity : AppCompatActivity() {
         return CameraUpdateFactory.newLatLngZoom(LatLng(lat, lng), 13f)
     }
 
-    private fun showBottomSheetDialog(/*obj: Image*/) {
+    private fun showBottomSheetDialog(obj: SingleEventLocationObject?) {
         if (mBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
             mBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
         }
 
         val view = layoutInflater.inflate(R.layout.sheet_event_info_floating, null)
-        (view.findViewById(R.id.name) as TextView).text = "Name"
+        (view.findViewById(R.id.name) as TextView).text = obj?.streetAddress?.fi
         (view.findViewById(R.id.brief) as TextView).text = "Subtitle is here"
         (view.findViewById(R.id.description) as TextView).setText(R.string.lorem_ipsum)
 

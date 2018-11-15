@@ -117,6 +117,15 @@ class MainActivity : AppCompatActivity(), HomeFragment.MyOnScrollChangeListener,
         }
     }
 
+    /**
+     * 这里有一个坑, 必须在这里传递onActivityResult给newEventFragment否则
+     * 直接在newEventFragment中的onActivityResult被拦截,获取不到!
+     */
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        newEventFragment.onActivityResult(requestCode, resultCode, data)
+    }
+
     private fun goToMapActivity() {
         val intent = Intent(this, MapActivity::class.java)
         intent.putExtra("index", tab_layout.selectedTabPosition)

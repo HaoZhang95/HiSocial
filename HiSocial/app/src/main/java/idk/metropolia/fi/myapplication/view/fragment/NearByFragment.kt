@@ -95,7 +95,7 @@ class NearByFragment : Fragment() {
             }
         }
 
-        // Service.loadPlaceById(mListLocationSubscriber, id)
+        Service.loadPlaceById(mListLocationSubscriber, id)
     }
 
     private fun loadSearchResultByKeyword(flag: Int, page: String, page_size: String = "1", keyword: String) {
@@ -148,6 +148,5 @@ class NearByFragment : Fragment() {
     }
 
     private fun initComponent() {
-
     }
 }
