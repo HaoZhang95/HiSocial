@@ -1,12 +1,8 @@
 package idk.metropolia.fi.myapplication.view.fragment
 
 import android.Manifest
-import android.app.Activity
 import android.app.Activity.RESULT_OK
-import android.app.AlertDialog
-import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.PorterDuff
@@ -14,13 +10,9 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
-import android.provider.Settings
 import android.support.design.widget.BottomSheetBehavior
 import android.support.design.widget.BottomSheetDialog
 import android.support.design.widget.Snackbar
-import android.support.v4.app.ActivityCompat
-import android.support.v4.app.Fragment
-import android.support.v4.content.ContextCompat
 import android.support.v4.content.FileProvider
 import android.view.LayoutInflater
 import android.view.View
@@ -30,6 +22,7 @@ import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.RelativeLayout
 import android.widget.TextView
+import com.example.ahao9.socialevent.utils.LogUtils
 import com.example.ahao9.socialevent.utils.MyToast
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog
 import com.wdullaer.materialdatetimepicker.time.TimePickerDialog
@@ -38,6 +31,7 @@ import idk.metropolia.fi.myapplication.utils.PhotoUtils
 import idk.metropolia.fi.myapplication.utils.PhotoUtils.hasSdcard
 import idk.metropolia.fi.myapplication.utils.Tools
 import idk.metropolia.fi.myapplication.utils.ViewAnimationUtils
+import idk.metropolia.fi.myapplication.view.activity.BaseFragment
 import kotlinx.android.synthetic.main.fragment_new_event.*
 import java.io.File
 import java.util.*
@@ -48,9 +42,13 @@ import java.util.*
  * @ Description：Build for Metropolia project
  */
 
-class NewEventFragment : Fragment() {
+class NewEventFragment : BaseFragment() {
 
     private val fileProviderPath = "idk.metropolia.fi.myapplication.fileprovider"
+    private val requestPermissionsList = arrayOf(
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.CAMERA)
+
     private val step_view_list = ArrayList<RelativeLayout>()
     private val view_list = ArrayList<View>()
     private var success_step = 0
@@ -61,6 +59,7 @@ class NewEventFragment : Fragment() {
     private lateinit var mBehavior: BottomSheetBehavior<View>
     private var mBottomSheetDialog: BottomSheetDialog? = null
     private lateinit var bottom_sheet: View
+    private var hasImage = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_new_event, container, false)
@@ -97,10 +96,6 @@ class NewEventFragment : Fragment() {
 
         view_list[0].visibility = View.VISIBLE
         hideSoftKeyboard()
-
-        (view.findViewById(R.id.tv_time) as TextView).setOnClickListener { v -> dialogTimePickerLight(v as TextView) }
-
-        (view.findViewById(R.id.tv_date) as TextView).setOnClickListener { v -> dialogDatePickerLight(v as TextView) }
     }
 
     private fun initListeners() {
@@ -142,7 +137,7 @@ class NewEventFragment : Fragment() {
         }
 
         bt_add_event.setOnClickListener {
-            MyToast.show(context!!, "添加活动.")
+            createMyEvent()
         }
 
         // ==========================================
@@ -186,30 +181,47 @@ class NewEventFragment : Fragment() {
             }
         }
 
-        fab_take_photo.setOnClickListener {
-            showBottomSheetDialog()
+        fab_take_photo.setOnClickListener { showBottomSheetDialog() }
+
+        tv_time.setOnClickListener { dialogTimePickerLight(it as TextView) }
+
+        tv_date.setOnClickListener { dialogDatePickerLight(it as TextView) }
+    }
+
+    private fun createMyEvent() {
+
+        val title = et_title.text.trim().toString()
+        val desc = et_description.text.trim().toString()
+        val time = tv_time.text.trim().toString()
+        val date = tv_date.text.trim().toString()
+
+        if (hasImage) {
+            val image = iv_event.drawable
+            LogUtils.e("$image $title --> $desc --> $time --> $date")
+        } else {
+            LogUtils.e("$title --> $desc --> $time --> $date")
         }
+
     }
 
     private fun takePhoto() {
-        requestPermissions(context!!, arrayOf(Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE),
-                object : RequestPermissionCallBack {
-                    override fun granted() {
-                        if (hasSdcard()) {
-                            imageUri = Uri.fromFile(fileUri)
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
-                            //通过FileProvider创建一个content类型的Uri
-                                imageUri = FileProvider.getUriForFile(context!!, fileProviderPath, fileUri)
-                            PhotoUtils.takePicture(activity, imageUri, CODE_CAMERA_REQUEST)
-                        } else {
-                            MyToast.show(context!!, "No sdcard on the device！")
-                        }
-                    }
+        myRequestPermissions(context!!, requestPermissionsList, object : RequestPermissionCallBack {
+            override fun granted() {
+                if (hasSdcard()) {
+                    imageUri = Uri.fromFile(fileUri)
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
+                    //通过FileProvider创建一个content类型的Uri
+                        imageUri = FileProvider.getUriForFile(context!!, fileProviderPath, fileUri)
+                    PhotoUtils.takePicture(activity, imageUri, CODE_CAMERA_REQUEST)
+                } else {
+                    MyToast.show(context!!, "No sdcard on the device！")
+                }
+            }
 
-                    override fun denied() {
-                        MyToast.show(context!!, "Some permission acquisition failed, normal function is affected！")
-                    }
-                })
+            override fun denied() {
+                MyToast.show(context!!, "Some permission acquisition failed, normal function is affected！")
+            }
+        })
     }
 
     private fun showBottomSheetDialog() {
@@ -232,7 +244,7 @@ class NewEventFragment : Fragment() {
         mBottomSheetDialog = BottomSheetDialog(context!!)
         mBottomSheetDialog?.setContentView(view)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            mBottomSheetDialog?.getWindow()!!.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+            mBottomSheetDialog?.window!!.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
         }
 
         mBottomSheetDialog?.show()
@@ -242,7 +254,8 @@ class NewEventFragment : Fragment() {
     }
 
     private fun openGallery() {
-        requestPermissions(context!!, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), object : RequestPermissionCallBack {
+
+        myRequestPermissions(context!!, requestPermissionsList, object : RequestPermissionCallBack {
             override fun granted() {
                 PhotoUtils.openPic(activity, CODE_GALLERY_REQUEST)
             }
@@ -253,9 +266,6 @@ class NewEventFragment : Fragment() {
         })
     }
 
-
-    private val mRequestCode = 1024
-    private lateinit var mRequestPermissionCallBack: RequestPermissionCallBack
     private val CODE_GALLERY_REQUEST = 0xa0
     private val CODE_CAMERA_REQUEST = 0xa1
     private val CODE_RESULT_REQUEST = 0xa2
@@ -263,126 +273,26 @@ class NewEventFragment : Fragment() {
     private val fileCropUri = File(Environment.getExternalStorageDirectory().path + "/crop_photo.jpg")
     private var imageUri: Uri? = null
     private var cropImageUri: Uri? = null
-
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        var hasAllGranted = true
-        var permissionName = StringBuilder()
-        for (s in permissions) {
-            permissionName = permissionName.append(s + "\r\n")
-        }
-        when (requestCode) {
-            mRequestCode -> {
-                for (i in grantResults.indices) {
-                    if (grantResults[i] == PackageManager.PERMISSION_DENIED) {
-                        hasAllGranted = false
-                        //在用户已经拒绝授权的情况下，如果shouldShowRequestPermissionRationale返回false则
-                        // 可以推断出用户选择了“不在提示”选项，在这种情况下需要引导用户至设置页手动授权
-                        if (!ActivityCompat.shouldShowRequestPermissionRationale(activity!!, permissions[i])) {
-                            AlertDialog.Builder(context).setTitle("PermissionTest")//设置对话框标题
-                                    .setMessage(("Some permission acquisition failed, normal function is affected, Please grant the needed permission"))//设置显示的内容
-                                    .setPositiveButton("Go to grant") { dialog, _ ->
-                                        //添加确定按钮
-                                        //确定按钮的响应事件
-                                        //TODO Auto-generated method stub
-                                        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
-                                        val uri = Uri.fromParts("package", activity!!.applicationContext.packageName, null)
-                                        intent.data = uri
-                                        startActivity(intent)
-                                        dialog.dismiss()
-                                    }.setNegativeButton("Cancel") { dialog, which ->
-                                        //添加返回按钮
-                                        //响应事件
-                                        // TODO Auto-generated method stub
-                                        dialog.dismiss()
-                                    }.setOnCancelListener { mRequestPermissionCallBack.denied() }.show()//在按键响应事件中显示此对话框
-                        } else {
-                            //用户拒绝权限请求，但未选中“不再提示”选项
-                            mRequestPermissionCallBack.denied()
-                        }
-                        break
-                    }
-                }
-                if (hasAllGranted) {
-                    mRequestPermissionCallBack.granted()
-                }
-            }
-        }
-    }
-
-    /**
-     * 发起权限请求
-     */
-    private fun requestPermissions(context: Context, permissions: Array<String>,
-                           callback: RequestPermissionCallBack) {
-        this.mRequestPermissionCallBack = callback
-        var permissionNames = StringBuilder()
-        for (s in permissions) {
-            permissionNames = permissionNames.append(s + "\r\n")
-        }
-        //如果所有权限都已授权，则直接返回授权成功,只要有一项未授权，则发起权限请求
-        var isAllGranted = true
-        for (permission in permissions) {
-            if (ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_DENIED) {
-                isAllGranted = false
-                if (ActivityCompat.shouldShowRequestPermissionRationale(context as Activity, permission)) {
-                    AlertDialog.Builder(context).setTitle("PermissionTest")//设置对话框标题
-                            .setMessage("Hi there，You need this permission：" + permissionNames +
-                                    " Please allow, otherwise normal function will be affected。")//设置显示的内容
-                            .setPositiveButton("Allow") { dialog, which ->
-                                //添加确定按钮
-                                //确定按钮的响应事件
-                                //TODO Auto-generated method stub
-                                ActivityCompat.requestPermissions(context, permissions, mRequestCode)
-                            }.show()//在按键响应事件中显示此对话框
-                } else {
-                    ActivityCompat.requestPermissions(context, permissions, mRequestCode)
-                }
-                break
-            }
-        }
-        if (isAllGranted) {
-            mRequestPermissionCallBack.granted()
-            return
-        }
-    }
-
-    /**
-     * 权限请求结果回调接口
-     */
-    interface RequestPermissionCallBack {
-        /**
-         * 同意授权
-         */
-        fun granted()
-
-        /**
-         * 取消授权
-         */
-        fun denied()
-    }
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
         if (resultCode == RESULT_OK) {
             when (requestCode) {
-                CODE_CAMERA_REQUEST//拍照完成回调
-                -> {
+                CODE_CAMERA_REQUEST -> {     //拍照完成回调
                     cropImageUri = Uri.fromFile(fileCropUri)
                     // PhotoUtils.cropImageUri(activity, imageUri, cropImageUri, 1, 1, output_X, output_Y, CODE_RESULT_REQUEST)
                     PhotoUtils.notCropImageUri(activity, imageUri, cropImageUri, CODE_RESULT_REQUEST)
                 }
-                CODE_GALLERY_REQUEST//访问相册完成回调
-                -> if (hasSdcard()) {
-                    cropImageUri = Uri.fromFile(fileCropUri)
-                    var newUri = Uri.parse(PhotoUtils.getPath(context!!, data?.data))
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
-                        newUri = FileProvider.getUriForFile(context!!, fileProviderPath, File(newUri.path!!))
-                    PhotoUtils.notCropImageUri(activity, newUri, cropImageUri, CODE_RESULT_REQUEST)
-                } else {
-                    MyToast.show(context!!, "No sdcard on the device！")
-                }
+                CODE_GALLERY_REQUEST -> //访问相册完成回调
+                    if (hasSdcard()) {
+                        cropImageUri = Uri.fromFile(fileCropUri)
+                        var newUri = Uri.parse(PhotoUtils.getPath(context!!, data?.data))
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
+                            newUri = FileProvider.getUriForFile(context!!, fileProviderPath, File(newUri.path!!))
+                        PhotoUtils.notCropImageUri(activity, newUri, cropImageUri, CODE_RESULT_REQUEST)
+                    } else {
+                        MyToast.show(context!!, "No sdcard on the device！")
+                    }
                 CODE_RESULT_REQUEST -> {
                     val bitmap = PhotoUtils.getBitmapFromUri(cropImageUri, context)
                     if (bitmap != null) {
@@ -395,6 +305,7 @@ class NewEventFragment : Fragment() {
 
     private fun showImages(bitmap: Bitmap) {
         iv_event.setImageBitmap(bitmap)
+        hasImage = true
     }
 
     private fun collapseAndContinue(index: Int) {
@@ -426,7 +337,7 @@ class NewEventFragment : Fragment() {
     private fun dialogDatePickerLight(textView: TextView) {
         val cur_calender = Calendar.getInstance()
         val datePicker = DatePickerDialog.newInstance(
-                { view, year, monthOfYear, dayOfMonth ->
+                { _, year, monthOfYear, dayOfMonth ->
                     val calendar = Calendar.getInstance()
                     calendar.set(Calendar.YEAR, year)
                     calendar.set(Calendar.MONTH, monthOfYear)

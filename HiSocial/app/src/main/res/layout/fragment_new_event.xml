@@ -130,6 +130,7 @@
 
                                 <android.support.v7.widget.AppCompatEditText
                                     android:id="@+id/et_title"
+                                    android:text="title"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:hint="Event title" />
@@ -218,6 +219,7 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:gravity="top"
+                                    android:text="desc"
                                     android:hint="Event description"
                                     android:lines="4" />
 

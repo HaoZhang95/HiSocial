@@ -39,7 +39,8 @@ interface EventHttpService {
     @GET("place/{id}")
     fun findPlaceById(@Path(value = "id", encoded = true) id: String): Observable<SingleEventLocationObject>
 
-    // https://api.hel.fi/linkedevents/v1/search/?page=1&page_size=4&type=event&input=dance&start=2018-11-01
+    // https://api.hel.fi/linkedevents/v1/search/
+    // ?page=1&page_size=4&type=event&input=dance&start=2018-11-01
     @GET("search/")
     fun loadCommingSoonEvents(@Query("page") page: String,
                            @Query("page_size") page_size: String,
