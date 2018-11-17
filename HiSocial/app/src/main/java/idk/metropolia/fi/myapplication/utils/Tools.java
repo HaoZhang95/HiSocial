@@ -61,89 +61,13 @@ import idk.metropolia.fi.myapplication.R;
 
 public class Tools {
 
-//    public static void showFilterDialog(final Activity act, final String startDateStr, final String endDateStr) {
-//
-//        final Dialog dialog = new Dialog(act);
-//        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE); // before
-//        dialog.setContentView(R.layout.dialog_event);
-//        dialog.setCancelable(true);
-//
-//        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
-//        lp.copyFrom(dialog.getWindow().getAttributes());
-//        lp.width = WindowManager.LayoutParams.MATCH_PARENT;
-//        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
-//
-//        final Button startDateBtn = dialog.findViewById(R.id.startDateBtn);
-//        final Button endDateBtn = dialog.findViewById(R.id.endDateBtn);
-//
-//        startDateBtn.setText(startDateStr);
-//        endDateBtn.setText(endDateStr);
-//
-//        startDateBtn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                showDatePicker(act,startDateBtn, 1, startDateStr, endDateStr);
-//            }
-//        });
-//
-//        endDateBtn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                showDatePicker(act,endDateBtn, 2, startDateStr,endDateStr);
-//            }
-//        });
-//
-//        ((ImageButton) dialog.findViewById(R.id.bt_close)).setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                dialog.dismiss();
-//            }
-//        });
-//        ((Button) dialog.findViewById(R.id.bt_save)).setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                LogUtils.INSTANCE.e("$startDateStr --> $endDateStr");
-//                dialog.dismiss();
-//            }
-//        });
-//
-//        dialog.show();
-//        dialog.getWindow().setAttributes(lp);
-//    }
-//
-//    private static void showDatePicker(final Activity act,final Button button,
-//                                       final int flag, String startDateStr, String endDateStr) {
-//        Calendar cur_calender = Calendar.getInstance();
-//        DatePickerDialog datePicker = DatePickerDialog.newInstance(
-//                new DatePickerDialog.OnDateSetListener() {
-//                    @Override
-//                    public void onDateSet(DatePickerDialog view, int year, int monthOfYear, int dayOfMonth) {
-//                        Calendar calendar = Calendar.getInstance();
-//                        calendar.set(Calendar.YEAR, year);
-//                        calendar.set(Calendar.MONTH, monthOfYear);
-//                        calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-//                        long date_ship_millis = calendar.getTimeInMillis();
-//
-//                        button.setText(Tools.getFormattedDateSimple(date_ship_millis));
-//                        if (flag == 1) {
-//                            startDateStr = Tools.getFormattedDateSimple2(date_ship_millis);
-//                        } else {
-//                            endDateStr = Tools.getFormattedDateSimple2(date_ship_millis);
-//                        }
-//                    }
-//                },
-//                cur_calender.get(Calendar.YEAR),
-//                cur_calender.get(Calendar.MONTH),
-//                cur_calender.get(Calendar.DAY_OF_MONTH)
-//        );
-//        //set dark light
-//        datePicker.setThemeDark(false);
-//        datePicker.setAccentColor(act.getResources().getColor(R.color.colorPrimary));
-//        datePicker.setMinDate(cur_calender);
-//        datePicker.show(act.getFragmentManager(), "Datepickerdialog");
-//    }
-
     public static String UN_KNOWN = "Un-known";
+    public static String CHILDREN_ID = "yso:p4354";
+    public static String FAMILY_ID = "yso:p4363";
+    public static String YOUNG_PEOPLE_ID = "yso:p11617";
+
+    public static String SELLON_ID = "tprek:15417";
+    public static String END_TIME = getCustomizedEndTime();
 
     public static String convertToYYYYMMDD(String dateStr) {
         SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:SSS'Z'", Locale.US);
@@ -154,6 +78,18 @@ public class Tools {
             e.printStackTrace();
         }
         return "";
+    }
+
+    /**
+     * if today is 2018-10-18, then we define the endTime is 2018-12-18
+     */
+    public static String getCustomizedEndTime() {
+        Date da = new Date();       //获取当前时间
+        Calendar calendar = Calendar.getInstance(); //得到日历
+        calendar.setTime(da);//把当前时间赋给日历
+        calendar.add(Calendar.MONTH, +2);
+        da = calendar.getTime();//获取2个月后的时间
+        return getFormattedDateSimple2(da.getTime());
     }
 
     public static Long convertDateToLong(String dateStr) {

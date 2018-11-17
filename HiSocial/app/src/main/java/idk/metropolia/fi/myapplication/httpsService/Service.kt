@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit
  * @ Description：Build for Metropolia project
  */
 object Service {
-    private val httpService: EventHttpService by lazy {
+    val httpService: EventHttpService by lazy {
         val httpClientBuilder = OkHttpClient.Builder()
         httpClientBuilder.connectTimeout(5.toLong(), TimeUnit.SECONDS)
 
@@ -33,8 +33,8 @@ object Service {
                 .create(EventHttpService::class.java)
     }
 
-    fun findInitializedEvents(subscriber: Subscriber<EventsResponse>, include: String, start: String){
-        httpService.findInitializedEvents(include,start)
+    fun findInitializedEvents(subscriber: Subscriber<EventsResponse>, include: String, start: String) {
+        httpService.findInitializedEvents(include, start)
                 .onErrorReturn {
                     LogUtils.e("httpService --> ${it.localizedMessage}")
                     return@onErrorReturn null
@@ -47,7 +47,7 @@ object Service {
 
     // https://api.hel.fi/linkedevents/v1/search/?page=1&page_size=4&type=event&input=dance&start=2018-11-01
     fun loadCommingSoonEvents(subscriber: Subscriber<SearchEventsResultObject>,
-                              page: String, page_size: String, type: String, input: String, start: String){
+                              page: String, page_size: String, type: String, input: String, start: String) {
         httpService.loadCommingSoonEvents(page, page_size, type, input, start)
                 .onErrorReturn {
                     LogUtils.e("httpService --> ${it.localizedMessage}")
@@ -59,7 +59,7 @@ object Service {
                 .subscribe(subscriber);
     }
 
-    fun findEventById(subscriber: Subscriber<SingleEventObject>, id: String){
+    fun findEventById(subscriber: Subscriber<SingleEventObject>, id: String) {
 
         httpService.findEventById(id)
                 .onErrorReturn {
@@ -73,7 +73,7 @@ object Service {
                 .subscribe(subscriber);
     }
 
-    fun loadPlaceById(subscriber: Subscriber<SingleEventLocationObject>, id: String){
+    fun loadPlaceById(subscriber: Subscriber<SingleEventLocationObject>, id: String) {
 
         httpService.findPlaceById(id)
                 .onErrorReturn {

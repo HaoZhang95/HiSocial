@@ -1,9 +1,7 @@
 package idk.metropolia.fi.myapplication.view.fragment
 
 import android.os.Bundle
-import android.support.design.widget.FloatingActionButton
 import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentTransaction
 import android.support.v4.widget.NestedScrollView
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.StaggeredGridLayoutManager
@@ -11,25 +9,21 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.GridLayout
-import android.widget.TextView
-import com.bumptech.glide.request.animation.ViewAnimation
-import com.example.ahao9.socialevent.httpsService.Service
 import com.example.ahao9.socialevent.utils.LogUtils
 import idk.metropolia.fi.myapplication.R
+import idk.metropolia.fi.myapplication.adapter.MyRecyclerViewAdapter
+import idk.metropolia.fi.myapplication.httpsService.Networking
+import idk.metropolia.fi.myapplication.model.EventsResponse
+import idk.metropolia.fi.myapplication.model.SingleBeanData
+import idk.metropolia.fi.myapplication.utils.Tools
 import idk.metropolia.fi.myapplication.view.activity.CategoriesActivity
 import idk.metropolia.fi.myapplication.view.activity.DetailsActivity
-import idk.metropolia.fi.myapplication.adapter.MyCommingSoonRVAdapter
-import idk.metropolia.fi.myapplication.adapter.MyRecommendRVAdapter
-import idk.metropolia.fi.myapplication.model.SearchEventsResultObject
-import idk.metropolia.fi.myapplication.model.SearchEventsResultObject.SingleBeanInSearch
-import idk.metropolia.fi.myapplication.model.SingleEventLocationObject
-import idk.metropolia.fi.myapplication.utils.Tools
-import idk.metropolia.fi.myapplication.utils.ViewAnimationUtils
 import kotlinx.android.synthetic.main.event_card_item.*
 import kotlinx.android.synthetic.main.fragment_home.*
 import org.jetbrains.anko.support.v4.startActivity
-import org.jetbrains.anko.support.v4.toast
-import rx.Subscriber
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.io.Serializable
 import java.util.*
 
@@ -40,15 +34,12 @@ import java.util.*
  */
 class HomeFragment : Fragment() {
 
-    private var commingSoonAdapter: MyCommingSoonRVAdapter? = null
-    private val commingSoonDataList = ArrayList<SingleBeanInSearch>()
-    private var recommendAdapter: MyRecommendRVAdapter? = null
-    private val recommendDataList = ArrayList<SingleBeanInSearch>()
-    private val mLocationDatas = ArrayList<SingleEventLocationObject>()
+    private var childrenPartAdapter: MyRecyclerViewAdapter? = null
+    private val childrenPartDataList = ArrayList<SingleBeanData>()
+    private var familyPartAdapter: MyRecyclerViewAdapter? = null
+    private val familyPartDataList = ArrayList<SingleBeanData>()
 
-    private var singleBeanInSearch: SingleBeanInSearch? = null
-    private lateinit var mListSubscriber: Subscriber<SearchEventsResultObject>
-    private lateinit var mListLocationSubscriber: Subscriber<SingleEventLocationObject>
+    private var singleBeanInSearch: SingleBeanData? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_home, container, false)
@@ -56,7 +47,6 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         initData()
         initGridAdapterV()
         initStaggerAdapterV()
@@ -67,83 +57,57 @@ class HomeFragment : Fragment() {
     }
 
     private fun initData() {
+        loadEventsByKeywordType(keywordId = Tools.CHILDREN_ID, page_size = "5")
+        loadEventsByKeywordType(keywordId = Tools.FAMILY_ID)
 
-        loadSearchResultByKeyword(0, "1", "1", "design")
-        loadSearchResultByKeyword(1, "1", "1", "art")
-        loadSearchResultByKeyword(1, "1", "1", "dance")
-        loadSearchResultByKeyword(1, "1", "1", "music")
-        loadSearchResultByKeyword(1, "1", "1", "design")
-
-        loadSearchResultByKeyword(2, "1", "1", "play")
-        loadSearchResultByKeyword(2, "1", "1", "jazz")
-        loadSearchResultByKeyword(2, "1", "1", "ball")
-        loadSearchResultByKeyword(2, "1", "1", "tahto")
-        loadSearchResultByKeyword(2, "2", "1", "dance")
-        loadSearchResultByKeyword(2, "2", "1", "music")
-        loadSearchResultByKeyword(2, "2", "1", "design")
-        loadSearchResultByKeyword(2, "1", "1", "life")
-
-        commingSoonAdapter = MyCommingSoonRVAdapter(context, commingSoonDataList)
-        recommendAdapter = MyRecommendRVAdapter(context, recommendDataList)
+        childrenPartAdapter = MyRecyclerViewAdapter(context, childrenPartDataList)
+        familyPartAdapter = MyRecyclerViewAdapter(context, familyPartDataList)
     }
 
-    // https://api.hel.fi/linkedevents/v1/place/tprek:26429/
-    // tprek:15490 --> tprek%3A15490
-    private fun loadPlaceById(id: String, textView: TextView) {
-        var id = id
-        val splits = id.split("/".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-        id = splits[splits.size - 1].replace(":", "%3A")
-        LogUtils.e("location id: $id")
+    private fun loadEventsByKeywordType(keywordId: String, page_size: String = "10", start: String = "today", end: String = "today") {
 
-        mListLocationSubscriber = object : Subscriber<SingleEventLocationObject>() {
-            override fun onCompleted() {
+        Networking.service.loadEventsByKeywordType(keyword = keywordId, page_size = page_size,
+                start = start, end = end).enqueue(object : Callback<EventsResponse> {
 
+            override fun onFailure(call: Call<EventsResponse>?, t: Throwable?) {
+                LogUtils.e("loadEventsByKeywordType --> onFailure: ${t?.localizedMessage}")
             }
 
-            override fun onError(e: Throwable) {
-                LogUtils.e(e.message.toString())
-            }
+            override fun onResponse(call: Call<EventsResponse>?, response: Response<EventsResponse>?) {
+                when(keywordId){
+                    Tools.CHILDREN_ID -> {
+                        response?.let {
+                            if (it.isSuccessful) {
+                                for (i in 0 until (it.body().dataList.size - 1)) {
+                                    childrenPartDataList.add(it.body().dataList[i])
+                                }
+                                childrenPartAdapter?.notifyDataSetChanged()
 
-            override fun onNext(singleEventLocationObject: SingleEventLocationObject) {
-                mLocationDatas.add(singleEventLocationObject)
-                textView.text = singleEventLocationObject.name.fi
-            }
-        }
-
-        // Service.loadPlaceById(mListLocationSubscriber, id)
-    }
-
-    private fun loadSearchResultByKeyword(flag: Int, page: String, page_size: String = "1", keyword: String) {
-
-        mListSubscriber = object : Subscriber<SearchEventsResultObject>() {
-            override fun onCompleted() {}
-
-            override fun onError(e: Throwable) {
-                LogUtils.e(e.stackTrace.toString())
-            }
-
-            override fun onNext(httpsResponse: SearchEventsResultObject) {
-                if (flag == 1) {
-                    commingSoonDataList.addAll(httpsResponse.data)
-                    commingSoonAdapter?.notifyDataSetChanged()
-                } else if (flag == 2) {
-                    recommendDataList.addAll(httpsResponse.data)
-                    recommendAdapter?.notifyDataSetChanged()
-                } else if (flag == 0) {
-                    val dataBean = httpsResponse.data.get(0)
-                    singleBeanInSearch = dataBean
-                    if (dataBean.images.isNotEmpty()) {
-                        Tools.displayImageOriginal(context, iv_single_event, dataBean.images.get(0).url)
-                    } else {
-                        Tools.displayImageOriginal(context, iv_single_event, R.drawable.not_found)
+                                // 设置横幅的item
+                                val dataBean = it.body().dataList.last()
+                                singleBeanInSearch = dataBean
+                                if (dataBean.images.isNotEmpty()) {
+                                    Tools.displayImageOriginal(context, iv_single_event, dataBean.images.get(0).url)
+                                } else {
+                                    Tools.displayImageOriginal(context, iv_single_event, R.drawable.not_found)
+                                }
+                                tv_single_title.text = dataBean.name?.fi ?: Tools.UN_KNOWN
+                                tv_single_date.text = Tools.getFormattedDateEvent(Tools.convertDateToLong(dataBean.startTime))
+                            }
+                        }
                     }
-                    tv_single_title.text = dataBean.name!!.fi
-                    tv_single_date.text = Tools.getFormattedDateEvent(Tools.convertDateToLong(dataBean.startTime))
+
+                    Tools.FAMILY_ID -> {
+                        response?.let {
+                            if (it.isSuccessful) {
+                                familyPartDataList.addAll(it.body().dataList)
+                                familyPartAdapter?.notifyDataSetChanged()
+                            }
+                        }
+                    }
                 }
             }
-        }
-        Service.loadCommingSoonEvents(mListSubscriber, page, page_size,
-                "event", keyword, Tools.getFormattedToday())
+        })
     }
 
     private var myOnScrollChangeListener: MyOnScrollChangeListener? = null
@@ -156,12 +120,11 @@ class HomeFragment : Fragment() {
     }
 
     private fun initListeners() {
-        commingSoonMoreBtn.setOnClickListener { startActivity<CategoriesActivity>() }
-        recommendMoreBtn.setOnClickListener { startActivity<CategoriesActivity>() }
+        childrenMoreBtn.setOnClickListener { startActivity<CategoriesActivity>() }
+        familyMoreBtn.setOnClickListener { startActivity<CategoriesActivity>() }
 
-        commingSoonAdapter?.setOnItemClickListener { _, position ->
-            // data class中的每一个属性必须实现Serializable,否则整个obj编译不通过
-            startActivity<DetailsActivity>("obj" to (commingSoonDataList[position] as Serializable))
+        childrenPartAdapter?.setOnItemClickListener { _, position ->
+            startActivity<DetailsActivity>("obj" to (childrenPartDataList[position] as Serializable))
         }
 
         iv_single_event.setOnClickListener {
@@ -170,29 +133,29 @@ class HomeFragment : Fragment() {
             }
         }
 
-        recommendAdapter?.setOnItemClickListener { _, position ->
-            startActivity<DetailsActivity>("obj" to (recommendDataList[position] as Serializable))
+        familyPartAdapter?.setOnItemClickListener { _, position ->
+            startActivity<DetailsActivity>("obj" to (familyPartDataList[position] as Serializable))
         }
 
         nested_scroll_view.setOnScrollChangeListener { v: NestedScrollView?, scrollX: Int, scrollY: Int, oldScrollX: Int, oldScrollY: Int ->
-            myOnScrollChangeListener?.onScrollChangeListener(v,scrollX,scrollY,oldScrollX,oldScrollY)
+            myOnScrollChangeListener?.onScrollChangeListener(v, scrollX, scrollY, oldScrollX, oldScrollY)
         }
     }
 
     //纵向的网格布局
     private fun initGridAdapterV() {
         val layoutManager = GridLayoutManager(context, 2, GridLayout.VERTICAL, false)
-        rvCommingSoon.layoutManager = layoutManager
-        rvCommingSoon.adapter = commingSoonAdapter
-        rvCommingSoon.setHasFixedSize(true)     // 解决下滑加载时候的卡顿
+        rcChildren.layoutManager = layoutManager
+        rcChildren.adapter = childrenPartAdapter
+        rcChildren.setHasFixedSize(true)     // 解决下滑加载时候的卡顿
     }
 
     //纵向的瀑布流布局
     private fun initStaggerAdapterV() {
         val layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
-        rvRecommend.layoutManager = layoutManager
-        rvRecommend.adapter = recommendAdapter
-        rvRecommend.setHasFixedSize(true)
+        rvFamily.layoutManager = layoutManager
+        rvFamily.adapter = familyPartAdapter
+        rvFamily.setHasFixedSize(true)
     }
 
     private fun initComponent() {

@@ -20,14 +20,14 @@ import idk.metropolia.fi.myapplication.model.SingleEventLocationObject;
 import idk.metropolia.fi.myapplication.utils.Tools;
 import rx.Subscriber;
 
-public class MyCommingSoonRVAdapter extends RecyclerView.Adapter<MyCommingSoonRVAdapter.MyHolder> {
+public class MySearchResultAdapter extends RecyclerView.Adapter<MySearchResultAdapter.MyHolder> {
 
     private List<SingleBeanInSearch> list;
     private Context context;
     private List mLocationDatas = new ArrayList<SingleEventLocationObject>();
     private Subscriber<SingleEventLocationObject> mListLocationSubscriber;
 
-    public MyCommingSoonRVAdapter(Context context, List<SingleBeanInSearch> list) {
+    public MySearchResultAdapter(Context context, List<SingleBeanInSearch> list) {
         this.list = list;
         this.context = context;
     }

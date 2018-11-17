@@ -4,6 +4,7 @@ import idk.metropolia.fi.myapplication.model.EventsResponse
 import idk.metropolia.fi.myapplication.model.SearchEventsResultObject
 import idk.metropolia.fi.myapplication.model.SingleEventLocationObject
 import idk.metropolia.fi.myapplication.model.SingleEventObject
+import retrofit2.Callback
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -48,4 +49,5 @@ interface EventHttpService {
                            @Query("input") input: String,
                            @Query("start") start: String
     ): Observable<SearchEventsResultObject>
+
 }

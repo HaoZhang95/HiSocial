@@ -39,11 +39,11 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Starting Soon"
+                        android:text="Children"
                         android:textAppearance="@style/Base.TextAppearance.AppCompat.Title" />
 
                     <Button
-                        android:id="@+id/commingSoonMoreBtn"
+                        android:id="@+id/childrenMoreBtn"
                         style="@style/Widget.AppCompat.Button.Borderless"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -55,7 +55,7 @@
                 </LinearLayout>
 
                 <android.support.v7.widget.RecyclerView
-                    android:id="@+id/rvCommingSoon"
+                    android:id="@+id/rcChildren"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:overScrollMode="never"
@@ -75,11 +75,11 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Recommend"
+                        android:text="Family Group"
                         android:textAppearance="@style/Base.TextAppearance.AppCompat.Title" />
 
                     <Button
-                        android:id="@+id/recommendMoreBtn"
+                        android:id="@+id/familyMoreBtn"
                         style="@style/Widget.AppCompat.Button.Borderless"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -91,7 +91,7 @@
                 </LinearLayout>
 
                 <android.support.v7.widget.RecyclerView
-                    android:id="@+id/rvRecommend"
+                    android:id="@+id/rvFamily"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:overScrollMode="never"

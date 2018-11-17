@@ -9,7 +9,7 @@ import android.widget.LinearLayout
 import com.example.ahao9.socialevent.httpsService.Service
 import com.example.ahao9.socialevent.utils.LogUtils
 import idk.metropolia.fi.myapplication.R
-import idk.metropolia.fi.myapplication.adapter.MyCommingSoonRVAdapter
+import idk.metropolia.fi.myapplication.adapter.MySearchResultAdapter
 import idk.metropolia.fi.myapplication.model.SearchEventsResultObject
 import idk.metropolia.fi.myapplication.model.SearchEventsResultObject.SingleBeanInSearch
 import idk.metropolia.fi.myapplication.utils.Tools
@@ -22,7 +22,7 @@ class ListOfEventActivity : AppCompatActivity() {
 
     private lateinit var search_bar: View
 
-    private var mListAdapter: MyCommingSoonRVAdapter? = null
+    private var mListAdapter: MySearchResultAdapter? = null
     private val mDatas = ArrayList<SingleBeanInSearch>()
     private lateinit var mListSubscriber: Subscriber<SearchEventsResultObject>
 
@@ -39,7 +39,7 @@ class ListOfEventActivity : AppCompatActivity() {
     }
 
     private fun initData() {
-        mListAdapter = MyCommingSoonRVAdapter(this, mDatas)
+        mListAdapter = MySearchResultAdapter(this, mDatas)
         mListAdapter?.setOnItemClickListener { view, postion ->
             startActivity<DetailsActivity>( "obj" to (mDatas[postion] as Serializable))
         }

@@ -27,6 +27,7 @@ import idk.metropolia.fi.myapplication.utils.Tools
 import kotlinx.android.synthetic.main.activity_details.*
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.MarkerOptions
+import idk.metropolia.fi.myapplication.model.SingleBeanData
 import idk.metropolia.fi.myapplication.view.fragment.RouteFragment
 import idk.metropolia.fi.myapplication.model.SingleEventLocationObject
 import idk.metropolia.fi.myapplication.utils.Tools.toggleArrow
@@ -50,7 +51,7 @@ class DetailsActivity : AppCompatActivity(), OnMapReadyCallback {
     private var lat: Double = 60.170377     // default coordinate is helsinki church
     private var lng: Double = 24.952229
     private val MAP_VIEW_BUNDLE_KEY = "MapViewBundleKey"
-    private lateinit var obj: SingleBeanInSearch
+    private lateinit var obj: SingleBeanData
     private lateinit var mListLocationSubscriber: Subscriber<SingleEventLocationObject>
     private lateinit var lyt_expand_info: View
 
@@ -76,10 +77,10 @@ class DetailsActivity : AppCompatActivity(), OnMapReadyCallback {
         iv_details = findViewById(R.id.iv_details)
         lyt_expand_info = findViewById<View>(R.id.lyt_expand_info)
 
-        obj = intent.extras.get("obj") as SingleBeanInSearch
+        obj = intent.extras.get("obj") as SingleBeanData
         tv_title.text = obj.name?.fi ?: Tools.UN_KNOWN
         DetailsMapActivity.titleStr = obj.name?.fi ?: Tools.UN_KNOWN
-        tv_publisher.text = obj.provider?.fi ?: Tools.UN_KNOWN
+        tv_publisher.text = obj.publisher ?: Tools.UN_KNOWN
         tv_info_url.text = obj.infoUrl?.fi ?: Tools.UN_KNOWN
         tv_subtitle.text = obj.shortDescription?.fi ?: Tools.UN_KNOWN
 
@@ -112,12 +113,6 @@ class DetailsActivity : AppCompatActivity(), OnMapReadyCallback {
             Tools.displayImageOriginal(this, iv_details, R.drawable.not_found)
         }
 
-        if (obj.score != 0.0) {
-            tv_score.text = "${obj.score.toString().slice(0..3)} / 10"
-        } else {
-            tv_score.text = "un-known"
-        }
-        rb_score.rating = obj.score.toFloat() / 2
     }
 
     override fun onSaveInstanceState(outState: Bundle?) {
@@ -150,7 +145,9 @@ class DetailsActivity : AppCompatActivity(), OnMapReadyCallback {
             true
         }
 
-        loadPlaceById(obj.location.id, gmap)
+        if (obj.location.id != null) {
+            loadPlaceById(obj.location.id!!, gmap)
+        }
     }
 
     /**
