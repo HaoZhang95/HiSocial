@@ -9,10 +9,10 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
 import android.support.v4.app.ActivityCompat
-import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
+import android.support.v7.app.AppCompatActivity
 
-open class BaseFragment : Fragment() {
+open class BaseActivity : AppCompatActivity() {
 
     private val mRequestCode = 1024
     private var mRequestPermissionCallBack: RequestPermissionCallBack? = null
@@ -38,8 +38,8 @@ open class BaseFragment : Fragment() {
                         hasAllGranted = false
                         //在用户已经拒绝授权的情况下，如果shouldShowRequestPermissionRationale返回false则
                         // 可以推断出用户选择了“不在提示”选项，在这种情况下需要引导用户至设置页手动授权
-                        if (!ActivityCompat.shouldShowRequestPermissionRationale(activity!!, permissions[i])) {
-                            AlertDialog.Builder(context).setTitle("Permission Request")//设置对话框标题
+                        if (!ActivityCompat.shouldShowRequestPermissionRationale(this, permissions[i])) {
+                            AlertDialog.Builder(this).setTitle("Permission Request")//设置对话框标题
                                     .setMessage("Hi there，You need this permission：" + permissionNames +
                                             " Please allow, otherwise normal function will be affected。")//设置显示的内容
                                     .setPositiveButton("Allow") { dialog, which ->
@@ -47,7 +47,7 @@ open class BaseFragment : Fragment() {
                                         //确定按钮的响应事件
                                         //TODO Auto-generated method stub
                                         val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
-                                        val uri = Uri.fromParts("package", activity!!.applicationContext.packageName, null)
+                                        val uri = Uri.fromParts("package", this.applicationContext.packageName, null)
                                         intent.data = uri
                                         startActivity(intent)
                                         dialog.dismiss()

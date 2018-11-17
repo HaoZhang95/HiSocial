@@ -1,13 +1,13 @@
-package idk.metropolia.fi.myapplication.fragment
+package idk.metropolia.fi.myapplication.view.fragment
 
 import ItineraryPlanQuery
+import android.Manifest
 import android.app.Activity
 import android.app.ProgressDialog
 import android.content.Intent
 import android.graphics.Paint
 import android.os.Bundle
 import android.support.design.widget.Snackbar
-import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,20 +21,16 @@ import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException
 import com.google.android.gms.common.GooglePlayServicesRepairableException
 import com.google.android.gms.location.places.ui.PlaceAutocomplete
-import com.hjq.permissions.OnPermission
-import com.hjq.permissions.Permission
-import com.hjq.permissions.XXPermissions
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog
 import com.wdullaer.materialdatetimepicker.time.TimePickerDialog
 import idk.metropolia.fi.myapplication.R
-import idk.metropolia.fi.myapplication.view.activity.DetailsMapActivity
 import idk.metropolia.fi.myapplication.adapter.MyItineraryResultsRecyclerAdapter
 import idk.metropolia.fi.myapplication.httpsService.Apollo
 import idk.metropolia.fi.myapplication.model.Coordinate
 import idk.metropolia.fi.myapplication.utils.LocationUtils
+import idk.metropolia.fi.myapplication.view.activity.DetailsMapActivity
 import idk.metropolia.fi.myapplication.view.widget.ItineraryHolder
 import kotlinx.android.synthetic.main.fragment_route.*
-import org.jetbrains.anko.support.v4.toast
 import java.util.*
 
 /**
@@ -42,11 +38,14 @@ import java.util.*
  * @ Date       ：Created in 16:20 2018/10/29
  * @ Description：Build for Metropolia project
  */
-private const val REQUEST_CODE_ORIGIN = 1
-private const val REQUEST_CODE_DEST = 2
 
-class RouteFragment : Fragment(), MyItineraryResultsRecyclerAdapter.ItineraryResultsRecyclerAdapterListener,
-                        OnPermission{
+private const val CODE_LOCATION_REQUEST = 0xa4
+private const val REQUEST_CODE_ORIGIN = 0xa5
+private const val REQUEST_CODE_DEST = 0xa6
+
+class RouteFragment : BaseFragment(),
+        MyItineraryResultsRecyclerAdapter.ItineraryResultsRecyclerAdapterListener
+                        /*OnPermission*/ {
     companion object {
         var destLat: Double? = null
         var destLng: Double? = null
@@ -75,7 +74,6 @@ class RouteFragment : Fragment(), MyItineraryResultsRecyclerAdapter.ItineraryRes
 
         initComponents()
         initListeners()
-        requestPermission()
     }
 
     private fun showItinerary() {
@@ -83,38 +81,6 @@ class RouteFragment : Fragment(), MyItineraryResultsRecyclerAdapter.ItineraryRes
         LogUtils.e("toCoordinate: ${toCoordinate?.longitude} --> ${toCoordinate?.latitude}")
         if (fromCoordinate != null && toCoordinate != null) {
             queryItineraryPlan()
-        }
-    }
-
-    private fun requestPermission() {
-        if (XXPermissions.isHasPermission(context, Permission.Group.LOCATION)) {
-            // MyToast.show(context!!,"已经获取到权限，不需要再次申请了")
-        }else {
-            XXPermissions.with(activity)
-                    //.constantRequest() //可设置被拒绝后继续申请，直到用户授权或者永久拒绝
-                    //.permission(Permission.SYSTEM_ALERT_WINDOW, Permission.REQUEST_INSTALL_PACKAGES) //支持请求6.0悬浮窗权限8.0请求安装权限
-                    .permission(Permission.Group.LOCATION/*, Permission.Group.CALENDAR*/) //不指定权限则自动获取清单中的危险权限
-                    .request(this)
-        }
-    }
-
-    /**
-     * 如果是被永久拒绝就跳转到应用权限系统设置页面
-     */
-    override fun noPermission(denied: MutableList<String>?, quick: Boolean) {
-        if(quick) {
-            MyToast.show(context!!,"Authorized to be denied permanently, please grant permission manually");
-            XXPermissions.gotoPermissionSettings(context);
-        }else {
-            MyToast.show(context!!,"Failed to get permission");
-        }
-    }
-
-    override fun hasPermission(granted: MutableList<String>?, isAll: Boolean) {
-        if (isAll) {
-            MyToast.show(context!!,"Get permission successfully");
-        }else {
-            MyToast.show(context!!,"The permission is successfully obtained, and some permissions are not granted normally.");
         }
     }
 
@@ -191,18 +157,30 @@ class RouteFragment : Fragment(), MyItineraryResultsRecyclerAdapter.ItineraryRes
         queryItineraryPlan()
     }
 
+    private val requestPermissionsList = arrayOf(
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION)
     private fun getCurrentLocation() {
-        val location = LocationUtils.getInstance(context).location
-        if (location != null) {
-            fromCoordinate = Coordinate(location.longitude, location.latitude)
-            DetailsMapActivity.detailsMapFromLat = location.latitude
-            DetailsMapActivity.detailsMapFromLng = location.longitude
-            tv_origin.text = "My Location √"
-            showItinerary()
-        } else {
-            tv_origin.text = "My Location ❌"
-            toast("Get current location failed, Please type your location manually")
-        }
+
+        myRequestPermissions(context!!, requestPermissionsList, object : RequestPermissionCallBack {
+            override fun granted() {
+                val location = LocationUtils.getInstance(context).location
+                if (location != null) {
+                    fromCoordinate = Coordinate(location.longitude, location.latitude)
+                    DetailsMapActivity.detailsMapFromLat = location.latitude
+                    DetailsMapActivity.detailsMapFromLng = location.longitude
+                    tv_origin.text = "My Location √"
+                    showItinerary()
+                } else {
+                    tv_origin.text = "My Location ❌"
+                    MyToast.show(context!!,"Get current location failed, Please type your location manually")
+                }
+            }
+
+            override fun denied() {
+                MyToast.show(context!!, "Some permission acquisition failed, normal function is affected！")
+            }
+        })
     }
 
     private fun queryItineraryPlan() {
@@ -262,13 +240,13 @@ class RouteFragment : Fragment(), MyItineraryResultsRecyclerAdapter.ItineraryRes
         onItemClickListener!!.onItemClick()
     }
 
-    private var onItemClickListener: RouteFragment.OnItemClickListener? = null
+    private var onItemClickListener: OnItemClickListener? = null
 
     interface OnItemClickListener {
         fun onItemClick()
     }
 
-    fun setOnItemClickListener(onItemClickListener: RouteFragment.OnItemClickListener) {
+    fun setOnItemClickListener(onItemClickListener: OnItemClickListener) {
         this.onItemClickListener = onItemClickListener
     }
 
@@ -284,30 +262,33 @@ class RouteFragment : Fragment(), MyItineraryResultsRecyclerAdapter.ItineraryRes
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == REQUEST_CODE_ORIGIN) {
-            if (resultCode == Activity.RESULT_OK) {
-                val place = PlaceAutocomplete.getPlace(context, data)
-                (view!!.findViewById<TextView>(R.id.tv_origin)).text = place.name
+        when(requestCode) {
+            REQUEST_CODE_ORIGIN -> {
+                if (resultCode == Activity.RESULT_OK) {
+                    val place = PlaceAutocomplete.getPlace(context, data)
+                    (view!!.findViewById<TextView>(R.id.tv_origin)).text = place.name
 
-                fromCoordinate = Coordinate(place.latLng.longitude, place.latLng.latitude)
-                DetailsMapActivity.detailsMapFromLat = place.latLng.latitude
-                DetailsMapActivity.detailsMapFromLng = place.latLng.longitude
-            } else if (resultCode == PlaceAutocomplete.RESULT_ERROR) {
-                val status = PlaceAutocomplete.getStatus(context, data)
-                Snackbar.make(parent_view, status.toString(), Snackbar.LENGTH_SHORT).show()
+                    fromCoordinate = Coordinate(place.latLng.longitude, place.latLng.latitude)
+                    DetailsMapActivity.detailsMapFromLat = place.latLng.latitude
+                    DetailsMapActivity.detailsMapFromLng = place.latLng.longitude
+                } else if (resultCode == PlaceAutocomplete.RESULT_ERROR) {
+                    val status = PlaceAutocomplete.getStatus(context, data)
+                    Snackbar.make(parent_view, status.toString(), Snackbar.LENGTH_SHORT).show()
+                }
             }
-        }
-        if (requestCode == REQUEST_CODE_DEST) {
-            if (resultCode == Activity.RESULT_OK) {
-                val place = PlaceAutocomplete.getPlace(context, data)
-                (view!!.findViewById<TextView>(R.id.tv_destination)).text = place.name
 
-                toCoordinate = Coordinate(place.latLng.longitude, place.latLng.latitude)
-            } else if (resultCode == PlaceAutocomplete.RESULT_ERROR) {
-                val status = PlaceAutocomplete.getStatus(context, data)
-                Snackbar.make(parent_view, status.toString(), Snackbar.LENGTH_SHORT).show()
+            REQUEST_CODE_DEST -> {
+                if (resultCode == Activity.RESULT_OK) {
+                    val place = PlaceAutocomplete.getPlace(context, data)
+                    (view!!.findViewById<TextView>(R.id.tv_destination)).text = place.name
+
+                    toCoordinate = Coordinate(place.latLng.longitude, place.latLng.latitude)
+                } else if (resultCode == PlaceAutocomplete.RESULT_ERROR) {
+                    val status = PlaceAutocomplete.getStatus(context, data)
+                    Snackbar.make(parent_view, status.toString(), Snackbar.LENGTH_SHORT).show()
+                }
             }
         }
 

@@ -31,7 +31,6 @@ import idk.metropolia.fi.myapplication.utils.PhotoUtils
 import idk.metropolia.fi.myapplication.utils.PhotoUtils.hasSdcard
 import idk.metropolia.fi.myapplication.utils.Tools
 import idk.metropolia.fi.myapplication.utils.ViewAnimationUtils
-import idk.metropolia.fi.myapplication.view.activity.BaseFragment
 import kotlinx.android.synthetic.main.fragment_new_event.*
 import java.io.File
 import java.util.*
@@ -209,9 +208,10 @@ class NewEventFragment : BaseFragment() {
             override fun granted() {
                 if (hasSdcard()) {
                     imageUri = Uri.fromFile(fileUri)
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
-                    //通过FileProvider创建一个content类型的Uri
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                        //通过FileProvider创建一个content类型的UriF
                         imageUri = FileProvider.getUriForFile(context!!, fileProviderPath, fileUri)
+                    }
                     PhotoUtils.takePicture(activity, imageUri, CODE_CAMERA_REQUEST)
                 } else {
                     MyToast.show(context!!, "No sdcard on the device！")

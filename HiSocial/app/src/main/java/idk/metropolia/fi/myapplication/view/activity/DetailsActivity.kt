@@ -27,8 +27,7 @@ import idk.metropolia.fi.myapplication.utils.Tools
 import kotlinx.android.synthetic.main.activity_details.*
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.MarkerOptions
-import idk.metropolia.fi.myapplication.view.activity.DetailsMapActivity
-import idk.metropolia.fi.myapplication.fragment.RouteFragment
+import idk.metropolia.fi.myapplication.view.fragment.RouteFragment
 import idk.metropolia.fi.myapplication.model.SingleEventLocationObject
 import idk.metropolia.fi.myapplication.utils.Tools.toggleArrow
 import idk.metropolia.fi.myapplication.utils.ViewAnimationUtils
