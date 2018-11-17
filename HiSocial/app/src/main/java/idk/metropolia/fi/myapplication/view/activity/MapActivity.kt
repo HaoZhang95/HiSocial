@@ -1,10 +1,14 @@
 package idk.metropolia.fi.myapplication.view.activity
 
+import android.Manifest
+import android.annotation.SuppressLint
+import android.graphics.Color
+import android.location.Location
 import android.os.Build
 import android.os.Bundle
 import android.support.design.widget.BottomSheetBehavior
 import android.support.design.widget.BottomSheetDialog
-import android.support.v7.app.AppCompatActivity
+import android.support.v7.app.AlertDialog
 import android.support.v7.widget.AppCompatButton
 import android.transition.Explode
 import android.view.View
@@ -12,26 +16,32 @@ import android.view.Window
 import android.view.WindowManager
 import android.widget.ImageButton
 import android.widget.TextView
+import com.example.ahao9.socialevent.utils.LogUtils
 import com.example.ahao9.socialevent.utils.MyToast
 import com.google.android.gms.maps.CameraUpdate
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.Circle
+import com.google.android.gms.maps.model.CircleOptions
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import idk.metropolia.fi.myapplication.R
 import idk.metropolia.fi.myapplication.adapter.MyNearByRVAdapter
 import idk.metropolia.fi.myapplication.model.SingleEventLocationObject
+import idk.metropolia.fi.myapplication.utils.LocationUtils
 import idk.metropolia.fi.myapplication.utils.Tools
+import kotlinx.android.synthetic.main.activity_map.*
+import kotlinx.android.synthetic.main.include_search_bar_in_map.*
 
 private const val HOME_FRAGMENT = 0
 private const val NEAR_BY_FRAGMENT = 1
-class MapActivity : AppCompatActivity() {
+class MapActivity : BaseActivity() {
 
     private var index = 0
     private var mMap: GoogleMap? = null
-    private var lat: Double = 60.170377     // default coordinate is helsinki church
-    private var lng: Double = 24.952229
+    private var lat: Double = LocationUtils.lat
+    private var lng: Double = LocationUtils.lng
 
     private lateinit var mBehavior: BottomSheetBehavior<View>
     private var mBottomSheetDialog: BottomSheetDialog? = null
@@ -52,10 +62,8 @@ class MapActivity : AppCompatActivity() {
     private fun initComponents() {
         index = intent.extras["index"] as Int
         if (index == HOME_FRAGMENT) {
-            // MyToast.show(this,"显示Home相关的地图")
             initMapFragmentBasedOnHomeFragment(lat, lng)
         } else if (index == NEAR_BY_FRAGMENT){
-            // MyToast.show(this,"显示nearby相关的地图")
             initMapFragmentBasedOnNearByFragment()
         }
 
@@ -67,9 +75,10 @@ class MapActivity : AppCompatActivity() {
         val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync { googleMap ->
             mMap = Tools.configActivityMaps(googleMap)
+
             val markerOptions = MarkerOptions().position(LatLng(lat, lng))
             mMap!!.addMarker(markerOptions)
-            mMap!!.moveCamera(zoomingLocation(lat, lng))
+            mMap!!.animateCamera(zoomingLocation(lat, lng))
             mMap!!.setOnMarkerClickListener {
                 try {
                     // mMap!!.animateCamera(zoomingLocation(lat, lng))
@@ -94,7 +103,7 @@ class MapActivity : AppCompatActivity() {
                 marker.tag = temp
             }
 
-            mMap!!.moveCamera(zoomingLocation(lat, lng))        // 应当移动到用户的
+            mMap!!.animateCamera(zoomingLocation(lat, lng))        // 默认显示helsinki church
             mMap!!.setOnMarkerClickListener {
                 try {
                     // mMap!!.animateCamera(zoomingLocation(lat, lng))
@@ -106,8 +115,8 @@ class MapActivity : AppCompatActivity() {
         }
     }
 
-    private fun zoomingLocation(lat: Double, lng: Double): CameraUpdate {
-        return CameraUpdateFactory.newLatLngZoom(LatLng(lat, lng), 13f)
+    private fun zoomingLocation(lat: Double, lng: Double, level: Float = 13f): CameraUpdate {
+        return CameraUpdateFactory.newLatLngZoom(LatLng(lat, lng), level)
     }
 
     private fun showBottomSheetDialog(obj: SingleEventLocationObject?) {
@@ -140,7 +149,82 @@ class MapActivity : AppCompatActivity() {
         mBottomSheetDialog?.setOnDismissListener { mBottomSheetDialog = null }
     }
 
+    private val requestPermissionsList = arrayOf(
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION)
+    private var myLocation:Location? = null
     private fun initListeners() {
 
+        fabInMap.setOnClickListener {
+
+            myRequestPermissions(this, requestPermissionsList, object : RequestPermissionCallBack {
+                override fun granted() {
+                    val location = LocationUtils.getInstance(this@MapActivity).location
+                    if (location != null) {
+                        try {
+                            mMap?.isMyLocationEnabled = true
+                            mMap?.uiSettings?.isMyLocationButtonEnabled = false
+                            myLocation = location
+                            updateCircle()
+                        } catch (e: SecurityException) {
+                            LogUtils.e("Exception: ${e.message}")
+                            mMap?.isMyLocationEnabled = false
+                            mMap?.uiSettings?.isMyLocationButtonEnabled = false
+                        }
+                    } else {
+                        LogUtils.e("Location permission acquisition failed, normal function is affected！")
+                    }
+                }
+
+                @SuppressLint("MissingPermission")
+                override fun denied() {
+                    MyToast.show(this@MapActivity, "Location permission acquisition failed, normal function is affected！")
+                    mMap?.isMyLocationEnabled = false;
+                    mMap?.uiSettings?.isMyLocationButtonEnabled = false;
+                }
+            })
+        }
+
+        ib_radius_settings.setOnClickListener {
+            showRadiusChoiceDialog()
+        }
+    }
+
+    private val raidusList = arrayOf(1000.0,
+            3000.0, 5000.0, 7000.0, 10000.0,"Remove Radius?")
+    private val raidusString = arrayOf("1K meters",
+            "3K meters", "5k meters", "7K meters", "10K meters","Remove Radius?")
+    private var selectedIndex = 2
+    private fun showRadiusChoiceDialog() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Radius Settings")
+        builder.setSingleChoiceItems(raidusString, selectedIndex) { _, i ->
+            selectedIndex = i
+        }
+        builder.setPositiveButton("Okay") { dialogInterface, i ->
+            updateCircle()
+        }
+        builder.setNegativeButton("Cancel", null)
+        builder.show()
+    }
+
+    private var circle:Circle? = null
+    private fun updateCircle() {
+        myLocation?.let {
+            circle?.remove()
+            circle = mMap?.addCircle(CircleOptions()
+                    .center(LatLng(it.latitude, it.longitude))
+                    .strokeColor(Color.parseColor("#03A9F4"))
+                    .fillColor(Color.parseColor("#1A000000"))
+            )
+
+            if (selectedIndex == 5) {
+                circle?.remove()
+            } else {
+                circle?.radius = raidusList[selectedIndex] as Double
+            }
+
+            mMap!!.animateCamera(zoomingLocation(it.latitude, it.longitude, 10f))        // 应当移动到用户的
+        }
     }
 }

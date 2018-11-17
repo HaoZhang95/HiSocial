@@ -20,6 +20,10 @@ import java.util.List;
  * @ Description：Build for Metropolia project
  */
 public class LocationUtils {
+    // default coordinate is helsinki church
+    public static double lat = 60.170377;
+    public static double lng = 24.952229;
+
     private volatile static LocationUtils uniqueInstance;
     private LocationManager locationManager;
     private String locationProvider;
