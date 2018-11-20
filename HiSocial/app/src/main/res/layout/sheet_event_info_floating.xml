@@ -78,17 +78,39 @@
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 android:gravity="center"
-                android:orientation="vertical">
+                android:orientation="horizontal">
 
-                <android.support.v7.widget.AppCompatRatingBar
-                    style="@style/Yellow.AppCompatRatingBar"
+                <!--<android.support.v7.widget.AppCompatRatingBar-->
+                    <!--style="@style/Yellow.AppCompatRatingBar"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:isIndicator="false"-->
+                    <!--android:numStars="5"-->
+                    <!--android:rating="5"-->
+                    <!--android:stepSize="1"-->
+                    <!--android:theme="@style/Yellow.AppCompatRatingBar" />-->
+
+                <!--<View-->
+                    <!--android:layout_width="@dimen/spacing_xmedium"-->
+                    <!--android:layout_height="0dp" />-->
+
+                <ImageButton
+                    android:layout_width="@dimen/spacing_xmlarge"
+                    android:layout_height="@dimen/spacing_xmlarge"
+                    android:background="@android:color/transparent"
+                    android:clickable="true"
+                    android:tint="@color/light_green_700"
+                    app:srcCompat="@drawable/ic_money" />
+
+                <TextView
+                    android:id="@+id/tv_price"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:isIndicator="false"
-                    android:numStars="5"
-                    android:rating="5"
-                    android:stepSize="1"
-                    android:theme="@style/Yellow.AppCompatRatingBar" />
+                    android:text="Free"
+                    android:paddingRight="@dimen/spacing_middle"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                    android:textColor="@color/light_green_700"
+                    android:textStyle="bold" />
 
             </LinearLayout>
 
@@ -99,7 +121,7 @@
                 android:background="@drawable/btn_rounded_accent"
                 android:paddingLeft="@dimen/spacing_mlarge"
                 android:paddingRight="@dimen/spacing_mlarge"
-                android:text="SUBMIT RATING"
+                android:text="More Info"
                 android:textColor="@android:color/white" />
 
         </LinearLayout>

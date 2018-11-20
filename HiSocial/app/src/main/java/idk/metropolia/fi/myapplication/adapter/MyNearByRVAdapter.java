@@ -15,18 +15,19 @@ import java.util.List;
 
 import idk.metropolia.fi.myapplication.R;
 import idk.metropolia.fi.myapplication.model.SearchEventsResultObject.SingleBeanInSearch;
+import idk.metropolia.fi.myapplication.model.SingleBeanData;
 import idk.metropolia.fi.myapplication.model.SingleEventLocationObject;
 import idk.metropolia.fi.myapplication.utils.Tools;
 import rx.Subscriber;
 
 public class MyNearByRVAdapter extends RecyclerView.Adapter<MyNearByRVAdapter.MyHolder> {
 
-    private List<SingleBeanInSearch> list;
+    private List<SingleBeanData> list;
     private Context context;
-    public static List<SingleEventLocationObject> LOCATION_DATA_LIST = new ArrayList<>();
-    private Subscriber<SingleEventLocationObject> mListLocationSubscriber;
+    // public static List<SingleEventLocationObject> LOCATION_DATA_LIST = new ArrayList<>();
+    // private Subscriber<SingleEventLocationObject> mListLocationSubscriber;
 
-    public MyNearByRVAdapter(Context context, List<SingleBeanInSearch> list) {
+    public MyNearByRVAdapter(Context context, List<SingleBeanData> list) {
         this.list = list;
         this.context = context;
     }
@@ -70,7 +71,7 @@ public class MyNearByRVAdapter extends RecyclerView.Adapter<MyNearByRVAdapter.My
             });
         }
 
-        public void setDataAndRefreshUI(SingleBeanInSearch dataBean){
+        public void setDataAndRefreshUI(SingleBeanData dataBean){
             if (dataBean.getImages().size() > 0) {
                 Tools.displayImageOriginal(context, iv_single_event, dataBean.getImages().get(0).getUrl());
             } else {
@@ -82,41 +83,42 @@ public class MyNearByRVAdapter extends RecyclerView.Adapter<MyNearByRVAdapter.My
 
             // tv_single_location.setText("Helsinki");
 
-            loadPlaceById(dataBean.getLocation().getId(), tv_single_location);
+            tv_single_location.setText(dataBean.getLocation().getAddressLocality().getFi());
+            // loadPlaceById(dataBean.getLocation().getId(), tv_single_location);
         }
     }
 
     // https://api.hel.fi/linkedevents/v1/place/tprek:26429/
     // tprek:15490 --> tprek%3A15490
-    private void loadPlaceById(String id, final TextView textView) {
-        String[] splits = id.split("/");
-        id = splits[splits.length - 1].replace(":", "%3A");
-        LogUtils.INSTANCE.e("location id: " + id);
-
-        mListLocationSubscriber = new Subscriber<SingleEventLocationObject>() {
-            @Override
-            public void onCompleted() { }
-
-            @Override
-            public void onError(Throwable e) {
-                LogUtils.INSTANCE.e(e.getMessage());
-            }
-
-            @Override
-            public void onNext(SingleEventLocationObject singleEventLocationObject) {
-
-                LOCATION_DATA_LIST.add(singleEventLocationObject);
-
-                if (! singleEventLocationObject.getDivisions().isEmpty()) {
-                    textView.setText(singleEventLocationObject.getDivisions().get(0).getName().getFi());
-                } else {
-                    textView.setText(singleEventLocationObject.getName().getFi());
-                }
-            }
-        };
-
-        Service.INSTANCE.loadPlaceById(mListLocationSubscriber, id);
-    }
+//    private void loadPlaceById(String id, final TextView textView) {
+//        String[] splits = id.split("/");
+//        id = splits[splits.length - 1].replace(":", "%3A");
+//        LogUtils.INSTANCE.e("location id: " + id);
+//
+//        mListLocationSubscriber = new Subscriber<SingleEventLocationObject>() {
+//            @Override
+//            public void onCompleted() { }
+//
+//            @Override
+//            public void onError(Throwable e) {
+//                LogUtils.INSTANCE.e(e.getMessage());
+//            }
+//
+//            @Override
+//            public void onNext(SingleEventLocationObject singleEventLocationObject) {
+//
+//                LOCATION_DATA_LIST.add(singleEventLocationObject);
+//
+//                if (! singleEventLocationObject.getDivisions().isEmpty()) {
+//                    textView.setText(singleEventLocationObject.getDivisions().get(0).getName().getFi());
+//                } else {
+//                    textView.setText(singleEventLocationObject.getName().getFi());
+//                }
+//            }
+//        };
+//
+//        Service.INSTANCE.loadPlaceById(mListLocationSubscriber, id);
+//    }
 
     public interface MyItemClickListener {
         void onItemClick(View view, int postion);

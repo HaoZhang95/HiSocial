@@ -27,12 +27,14 @@ import com.google.android.gms.maps.model.CircleOptions
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import idk.metropolia.fi.myapplication.R
-import idk.metropolia.fi.myapplication.adapter.MyNearByRVAdapter
-import idk.metropolia.fi.myapplication.model.SingleEventLocationObject
+import idk.metropolia.fi.myapplication.model.SingleBeanData
 import idk.metropolia.fi.myapplication.utils.LocationUtils
 import idk.metropolia.fi.myapplication.utils.Tools
+import idk.metropolia.fi.myapplication.view.fragment.NearByFragment
 import kotlinx.android.synthetic.main.activity_map.*
 import kotlinx.android.synthetic.main.include_search_bar_in_map.*
+import org.jetbrains.anko.startActivity
+import java.io.Serializable
 
 private const val HOME_FRAGMENT = 0
 private const val NEAR_BY_FRAGMENT = 1
@@ -82,7 +84,7 @@ class MapActivity : BaseActivity() {
             mMap!!.setOnMarkerClickListener {
                 try {
                     // mMap!!.animateCamera(zoomingLocation(lat, lng))
-                    showBottomSheetDialog(null)
+                    // showBottomSheetDialog(null)
                 } catch (e: Exception) {
                 }
                 true
@@ -95,10 +97,12 @@ class MapActivity : BaseActivity() {
         mapFragment.getMapAsync { googleMap ->
             mMap = Tools.configActivityMaps(googleMap)
 
-            for (temp in MyNearByRVAdapter.LOCATION_DATA_LIST) {
-                val lat = temp.position.coordinates[1]
-                val lng = temp.position.coordinates[0]
-                val markerOptions = MarkerOptions().position(LatLng(lat, lng)).title(temp.name.fi)
+            for (temp in NearByFragment.NEARBY_DATA_LIST) {
+                val lat = temp.location.position.coordinates[1]
+                val lng = temp.location.position.coordinates[0]
+
+                LogUtils.e("lat: $lat --> lng: $lng")
+                val markerOptions = MarkerOptions().position(LatLng(lat, lng)).title(temp.name?.fi ?: Tools.UN_KNOWN)
                 val marker = mMap!!.addMarker(markerOptions)
                 marker.tag = temp
             }
@@ -107,7 +111,7 @@ class MapActivity : BaseActivity() {
             mMap!!.setOnMarkerClickListener {
                 try {
                     // mMap!!.animateCamera(zoomingLocation(lat, lng))
-                    showBottomSheetDialog(it.tag as SingleEventLocationObject)
+                    showBottomSheetDialog(it.tag as SingleBeanData)
                 } catch (e: Exception) {
                 }
                 true
@@ -119,22 +123,34 @@ class MapActivity : BaseActivity() {
         return CameraUpdateFactory.newLatLngZoom(LatLng(lat, lng), level)
     }
 
-    private fun showBottomSheetDialog(obj: SingleEventLocationObject?) {
+    private fun showBottomSheetDialog(obj: SingleBeanData) {
         if (mBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
             mBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
         }
 
         val view = layoutInflater.inflate(R.layout.sheet_event_info_floating, null)
-        (view.findViewById(R.id.name) as TextView).text = obj?.streetAddress?.fi
-        (view.findViewById(R.id.brief) as TextView).text = "Subtitle is here"
-        (view.findViewById(R.id.description) as TextView).setText(R.string.lorem_ipsum)
+        (view.findViewById(R.id.name) as TextView).text = obj.name?.fi
+        (view.findViewById(R.id.brief) as TextView).text = Tools.getFormattedDateEvent(Tools.convertDateToLong(obj.startTime))
+        (view.findViewById(R.id.description) as TextView).text = obj.shortDescription?.fi ?: "No Short Description"
+        val tvPrice = view.findViewById<TextView>(R.id.tv_price)
+
+        if (obj.offers.isNotEmpty()) {
+            tvPrice.text = if (obj.offers[0].isFree) {
+                "Free"
+            } else {
+                obj.offers[0].price?.fi ?: Tools.UN_KNOWN
+            }
+        } else {
+            tvPrice.text = Tools.UN_KNOWN
+        }
 
         view.findViewById<ImageButton>(R.id.bt_close).setOnClickListener {
             mBottomSheetDialog?.hide()
         }
 
         view.findViewById<AppCompatButton>(R.id.submit_rating).setOnClickListener {
-            MyToast.show(this, "More Info")
+            // MyToast.show(this, "More Info")
+            startActivity<DetailsActivity>("obj" to (obj as Serializable))
         }
 
         mBottomSheetDialog = BottomSheetDialog(this)

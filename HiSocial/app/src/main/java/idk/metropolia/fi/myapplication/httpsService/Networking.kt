@@ -27,6 +27,15 @@ object Networking {
                                    @Query("start") start: String
         ): Call<SearchEventsResultObject>
 
+        // https://api.hel.fi/linkedevents/v1/event/?page=1&page_size=4&type=event&start=2018-11-20&include=location
+        @GET("event/")
+        fun loadEventsByKeywordType(@Query("format") format: String = "json",
+                                    @Query("include") include: String = "location",
+                                    @Query("keyword") keyword: String,
+                                    @Query("page_size") page_size: String = "10",
+                                    @Query("start") start: String = "today"
+        ): Call<EventsResponse>
+
         // http://api.hel.fi/linkedevents/v1/event/?format=json&include=location&keyword=yso:p4363&page_size=10&start=today&end=today
         @GET("event/")
         fun loadEventsByKeywordType(@Query("format") format: String = "json",
@@ -37,12 +46,14 @@ object Networking {
                                    @Query("end") end: String
         ): Call<EventsResponse>
 
+        // https://api.hel.fi/linkedevents/v1/event/?page=1&page_size=4&type=event&start=2018-11-20&include=location
         @GET("event/")
-        fun loadEventsByKeywordType(@Query("format") format: String = "json",
-                                   @Query("include") include: String = "location",
-                                   @Query("keyword") keyword: String,
-                                   @Query("page_size") page_size: String = "10",
-                                   @Query("start") start: String = "today"
+        fun loadEventsByPageNumber(@Query("format") format: String = "json",
+                                    @Query("include") include: String = "location",
+                                    @Query("page") page: String = "1",
+                                    @Query("page_size") page_size: String = "10",
+                                    @Query("type") type: String = "event",
+                                    @Query("start") start: String = "today"
         ): Call<EventsResponse>
     }
 
