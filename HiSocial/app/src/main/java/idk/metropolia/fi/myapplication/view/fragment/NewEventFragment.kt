@@ -79,6 +79,7 @@ class NewEventFragment : BaseFragment() {
         view_list.add(view.findViewById(R.id.lyt_time))
         view_list.add(view.findViewById(R.id.lyt_date))
         view_list.add(view.findViewById(R.id.lyt_confirmation))
+        view_list.add(view.findViewById(R.id.lyt_competition))
 
         // populate view step (circle in left)
         step_view_list.add(view.findViewById(R.id.step_title) as RelativeLayout)
@@ -86,6 +87,7 @@ class NewEventFragment : BaseFragment() {
         step_view_list.add(view.findViewById(R.id.step_time) as RelativeLayout)
         step_view_list.add(view.findViewById(R.id.step_date) as RelativeLayout)
         step_view_list.add(view.findViewById(R.id.step_confirmation) as RelativeLayout)
+        step_view_list.add(view.findViewById(R.id.step_competition) as RelativeLayout)
 
         bottom_sheet = view.findViewById(R.id.bottom_sheet_list)
         mBehavior = BottomSheetBehavior.from(bottom_sheet)
@@ -136,7 +138,12 @@ class NewEventFragment : BaseFragment() {
         }
 
         bt_add_event.setOnClickListener {
-            createMyEvent()
+            // createMyEvent()
+            collapseAndContinue(4)
+        }
+
+        bt_competition.setOnClickListener {
+            MyToast.show(context!!,"Competition is clicked")
         }
 
         // ==========================================
@@ -177,6 +184,14 @@ class NewEventFragment : BaseFragment() {
                 current_step = 4
                 collapseAll()
                 ViewAnimationUtils.expand(view_list[4])
+            }
+        }
+
+        tv_label_competition.setOnClickListener {
+            if (success_step >= 5 && current_step != 5) {
+                current_step = 5
+                collapseAll()
+                ViewAnimationUtils.expand(view_list[5])
             }
         }
 

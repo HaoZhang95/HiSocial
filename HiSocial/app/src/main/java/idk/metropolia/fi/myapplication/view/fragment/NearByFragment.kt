@@ -39,12 +39,6 @@ import java.util.*
 class NearByFragment : Fragment() {
 
     private var nearByAdapter: MyNearByRVAdapter? = null
-    // private val nearByDataList = ArrayList<SingleBeanData>()
-
-    // private val mLocationDatas = ArrayList<SingleEventLocationObject>()
-    // private lateinit var mListSubscriber: Subscriber<SearchEventsResultObject>
-    // private lateinit var mListLocationSubscriber: Subscriber<SingleEventLocationObject>
-
     companion object {
         var NEARBY_DATA_LIST: MutableList<SingleBeanData> = ArrayList()
     }
@@ -64,22 +58,6 @@ class NearByFragment : Fragment() {
     }
 
     private fun initData() {
-
-//        loadSearchResultByKeyword(1, "1", "1", "art")
-//        loadSearchResultByKeyword(1, "1", "1", "dance")
-//        loadSearchResultByKeyword(1, "1", "1", "music")
-//        loadSearchResultByKeyword(1, "1", "1", "design")
-//
-//        loadSearchResultByKeyword(1, "1", "1", "play")
-//        loadSearchResultByKeyword(1, "1", "1", "jazz")
-//        loadSearchResultByKeyword(1, "1", "1", "ball")
-//        loadSearchResultByKeyword(1, "1", "1", "tahto")
-//        loadSearchResultByKeyword(1, "2", "1", "dance")
-//        loadSearchResultByKeyword(1, "2", "1", "music")
-//        loadSearchResultByKeyword(1, "2", "1", "design")
-//        loadSearchResultByKeyword(1, "1", "1", "life")
-
-
         loadEventsByPageNumber()
         nearByAdapter = MyNearByRVAdapter(context, NEARBY_DATA_LIST)
     }
@@ -103,52 +81,6 @@ class NearByFragment : Fragment() {
             }
         })
     }
-
-    // https://api.hel.fi/linkedevents/v1/place/tprek:26429/
-    // tprek:15490 --> tprek%3A15490
-//    private fun loadPlaceById(id: String, textView: TextView) {
-//        var id = id
-//        val splits = id.split("/".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-//        id = splits[splits.size - 1].replace(":", "%3A")
-//        LogUtils.e("location id: $id")
-//
-//        mListLocationSubscriber = object : Subscriber<SingleEventLocationObject>() {
-//            override fun onCompleted() {
-//
-//            }
-//
-//            override fun onError(e: Throwable) {
-//                LogUtils.e(e.message.toString())
-//            }
-//
-//            override fun onNext(singleEventLocationObject: SingleEventLocationObject) {
-//                mLocationDatas.add(singleEventLocationObject)
-//                textView.text = singleEventLocationObject.name.fi
-//            }
-//        }
-//
-//        Service.loadPlaceById(mListLocationSubscriber, id)
-//    }
-//
-//    private fun loadSearchResultByKeyword(flag: Int, page: String, page_size: String = "1", keyword: String) {
-//
-//        mListSubscriber = object : Subscriber<SearchEventsResultObject>() {
-//            override fun onCompleted() {}
-//
-//            override fun onError(e: Throwable) {
-//                LogUtils.e(e.stackTrace.toString())
-//            }
-//
-//            override fun onNext(httpsResponse: SearchEventsResultObject) {
-//                if (flag == 1) {
-//                    nearByDataList.addAll(httpsResponse.data)
-//                    nearByAdapter?.notifyDataSetChanged()
-//                }
-//            }
-//        }
-//        Service.loadCommingSoonEvents(mListSubscriber, page, page_size,
-//                "event", keyword, Tools.getFormattedToday())
-//    }
 
     private var myOnScrollChangeListener: MyOnScrollChangeListener? = null
     interface MyOnScrollChangeListener {

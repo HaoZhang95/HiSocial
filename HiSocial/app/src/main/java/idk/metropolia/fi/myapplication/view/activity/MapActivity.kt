@@ -64,7 +64,8 @@ class MapActivity : BaseActivity() {
     private fun initComponents() {
         index = intent.extras["index"] as Int
         if (index == HOME_FRAGMENT) {
-            initMapFragmentBasedOnHomeFragment(lat, lng)
+            // initMapFragmentBasedOnHomeFragment(lat, lng)
+            initMapFragmentBasedOnNearByFragment()
         } else if (index == NEAR_BY_FRAGMENT){
             initMapFragmentBasedOnNearByFragment()
         }
