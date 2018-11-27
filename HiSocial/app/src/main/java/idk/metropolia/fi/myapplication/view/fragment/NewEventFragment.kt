@@ -72,9 +72,11 @@ class NewEventFragment : BaseFragment() {
         initListeners()
     }
 
+
     private fun initComponents(view: View) {
         // populate layout field
-        view_list.add(view.findViewById(R.id.lyt_title))
+
+       // view_list.add(view.findViewById(R.id.lyt_title))
         view_list.add(view.findViewById(R.id.lyt_description))
         view_list.add(view.findViewById(R.id.lyt_time))
         view_list.add(view.findViewById(R.id.lyt_date))
@@ -88,6 +90,7 @@ class NewEventFragment : BaseFragment() {
         step_view_list.add(view.findViewById(R.id.step_date) as RelativeLayout)
         step_view_list.add(view.findViewById(R.id.step_confirmation) as RelativeLayout)
         step_view_list.add(view.findViewById(R.id.step_competition) as RelativeLayout)
+
 
         bottom_sheet = view.findViewById(R.id.bottom_sheet_list)
         mBehavior = BottomSheetBehavior.from(bottom_sheet)
