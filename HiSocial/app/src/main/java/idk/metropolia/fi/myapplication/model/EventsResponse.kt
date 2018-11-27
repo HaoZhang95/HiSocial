@@ -78,7 +78,7 @@ data class SingleBeanData(
             @SerializedName("street_address") val streetAddress: StreetAddress,
             @SerializedName("telephone") val telephone: Telephone,
             @SerializedName("description") val description: Any, // null
-            @SerializedName("address_locality") val addressLocality: AddressLocality,
+            @SerializedName("address_locality") val addressLocality: AddressLocality?,
             @SerializedName("info_url") val infoUrl: InfoUrl,
             @SerializedName("@id") val web_id: String, // https://api.hel.fi/linkedevents/v1/place/tprek:15490/
             @SerializedName("@context") val context: String, // http://schema.org

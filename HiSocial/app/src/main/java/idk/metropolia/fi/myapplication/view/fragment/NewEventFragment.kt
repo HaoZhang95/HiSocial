@@ -18,22 +18,27 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
-import android.widget.EditText
-import android.widget.ImageButton
-import android.widget.RelativeLayout
-import android.widget.TextView
+import android.widget.*
 import com.example.ahao9.socialevent.utils.LogUtils
 import com.example.ahao9.socialevent.utils.MyToast
+import com.google.gson.Gson
+import com.google.gson.JsonObject
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog
 import com.wdullaer.materialdatetimepicker.time.TimePickerDialog
 import idk.metropolia.fi.myapplication.R
+import idk.metropolia.fi.myapplication.httpsService.Networking
+import idk.metropolia.fi.myapplication.model.MyEventObject
 import idk.metropolia.fi.myapplication.utils.PhotoUtils
 import idk.metropolia.fi.myapplication.utils.PhotoUtils.hasSdcard
 import idk.metropolia.fi.myapplication.utils.Tools
 import idk.metropolia.fi.myapplication.utils.ViewAnimationUtils
 import kotlinx.android.synthetic.main.fragment_new_event.*
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.io.File
 import java.util.*
+import kotlin.collections.ArrayList
 
 /**
  * @ Author     ：Hao Zhang.
@@ -54,7 +59,11 @@ class NewEventFragment : BaseFragment() {
     private var current_step = 0
     private lateinit var parent_view: View
     private var date: Date? = null
-    private var time: String? = null
+    private var dateStr: String? = null
+    private var startTime: String? = null
+    private var endTime: String? = null
+    private var selectedLocation: String? = null
+    private var selectedLocationButtons: MutableList<Button> = mutableListOf()
     private lateinit var mBehavior: BottomSheetBehavior<View>
     private var mBottomSheetDialog: BottomSheetDialog? = null
     private lateinit var bottom_sheet: View
@@ -76,21 +85,20 @@ class NewEventFragment : BaseFragment() {
     private fun initComponents(view: View) {
         // populate layout field
 
-       // view_list.add(view.findViewById(R.id.lyt_title))
+        view_list.add(view.findViewById(R.id.lyt_title))
         view_list.add(view.findViewById(R.id.lyt_description))
         view_list.add(view.findViewById(R.id.lyt_time))
         view_list.add(view.findViewById(R.id.lyt_date))
+        view_list.add(view.findViewById(R.id.lyt_location))
         view_list.add(view.findViewById(R.id.lyt_confirmation))
-        view_list.add(view.findViewById(R.id.lyt_competition))
 
         // populate view step (circle in left)
         step_view_list.add(view.findViewById(R.id.step_title) as RelativeLayout)
         step_view_list.add(view.findViewById(R.id.step_description) as RelativeLayout)
         step_view_list.add(view.findViewById(R.id.step_time) as RelativeLayout)
         step_view_list.add(view.findViewById(R.id.step_date) as RelativeLayout)
+        step_view_list.add(view.findViewById(R.id.step_location) as RelativeLayout)
         step_view_list.add(view.findViewById(R.id.step_confirmation) as RelativeLayout)
-        step_view_list.add(view.findViewById(R.id.step_competition) as RelativeLayout)
-
 
         bottom_sheet = view.findViewById(R.id.bottom_sheet_list)
         mBehavior = BottomSheetBehavior.from(bottom_sheet)
@@ -124,8 +132,8 @@ class NewEventFragment : BaseFragment() {
 
         bt_continue_time.setOnClickListener {
             // validate input user here
-            if (time == null) {
-                Snackbar.make(parent_view, "Please set event time", Snackbar.LENGTH_SHORT).show()
+            if (startTime == null || endTime == null) {
+                Snackbar.make(parent_view, "Please set event start Time and end Time", Snackbar.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
             collapseAndContinue(2)
@@ -140,13 +148,16 @@ class NewEventFragment : BaseFragment() {
             collapseAndContinue(3)
         }
 
-        bt_add_event.setOnClickListener {
-            // createMyEvent()
+        bt_continue_location.setOnClickListener {
+            if (selectedLocation == null) {
+                Snackbar.make(parent_view, "Please select event location", Snackbar.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
             collapseAndContinue(4)
         }
 
-        bt_competition.setOnClickListener {
-            MyToast.show(context!!,"Competition is clicked")
+        bt_add_event.setOnClickListener {
+            createMyEvent()
         }
 
         // ==========================================
@@ -182,7 +193,7 @@ class NewEventFragment : BaseFragment() {
             }
         }
 
-        tv_label_confirmation.setOnClickListener {
+        tv_label_location.setOnClickListener {
             if (success_step >= 4 && current_step != 4) {
                 current_step = 4
                 collapseAll()
@@ -190,7 +201,7 @@ class NewEventFragment : BaseFragment() {
             }
         }
 
-        tv_label_competition.setOnClickListener {
+        tv_label_confirmation.setOnClickListener {
             if (success_step >= 5 && current_step != 5) {
                 current_step = 5
                 collapseAll()
@@ -200,25 +211,71 @@ class NewEventFragment : BaseFragment() {
 
         fab_take_photo.setOnClickListener { showBottomSheetDialog() }
 
-        tv_time.setOnClickListener { dialogTimePickerLight(it as TextView) }
+        tv_start_time.setOnClickListener { dialogTimePickerLight(it as TextView, 1) }
+
+        tv_end_time.setOnClickListener { dialogTimePickerLight(it as TextView, 2) }
 
         tv_date.setOnClickListener { dialogDatePickerLight(it as TextView) }
+
+        btn_locationA.setOnClickListener { selectLocation(it as Button) }
+        btn_locationB.setOnClickListener { selectLocation(it as Button) }
+        btn_locationC.setOnClickListener { selectLocation(it as Button) }
     }
 
     private fun createMyEvent() {
 
         val title = et_title.text.trim().toString()
         val desc = et_description.text.trim().toString()
-        val time = tv_time.text.trim().toString()
+        val startTimeStr = tv_start_time.text.trim().toString()
+        val endTimeStr = tv_end_time.text.trim().toString()
         val date = tv_date.text.trim().toString()
 
         if (hasImage) {
             val image = iv_event.drawable
-            LogUtils.e("$image $title --> $desc --> $time --> $date")
+            LogUtils.e("$image $title --> $desc --> $startTimeStr --> $endTimeStr --> $date --> $selectedLocation")
         } else {
-            LogUtils.e("$title --> $desc --> $time --> $date")
+            LogUtils.e("$title --> $desc --> $startTimeStr --> $endTimeStr --> $date --> $selectedLocation")
         }
 
+        val ev = MyEventObject()
+        ev.name = MyEventObject.Name(title)
+        ev.location = MyEventObject.Location("https://linkedcourses-api.test.hel.ninja/linkedcourses-test/v1/place/tprek:7259/")
+        ev.startTime = dateStr!!
+        ev.endTime = dateStr!!
+        ev.description = MyEventObject.Description(desc)
+        ev.shortDescription = MyEventObject.ShortDescription(desc)
+
+        var keywords: MutableList<MyEventObject.Keyword> = mutableListOf()
+        keywords.add(MyEventObject.Keyword("https://linkedcourses-api.test.hel.ninja/linkedcourses-test/v1/keyword/yso:p4354/"))
+        ev.keywords = keywords
+
+        var offers: MutableList<MyEventObject.Offer> = mutableListOf()
+        offers.add(MyEventObject.Offer(true))
+        ev.offers = offers
+
+
+        LogUtils.e(Gson().toJson(ev).toString())
+
+        val call = Networking.testService.postNewEvent(ev)
+
+        val value = object: Callback<JsonObject> {
+            // this method gets called after a http call, no matter the http code
+            override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
+
+                if (response.isSuccessful) {
+                    val res = response.body()
+                    LogUtils.e(res.toString())
+                    LogUtils.e("上传成功")
+                }
+            }
+
+            // this method gets called if the http call fails (no internet etc)
+            override fun onFailure(call: Call<JsonObject>, t: Throwable) {
+                LogUtils.e("onFailure: " + t.toString())
+            }
+        }
+
+        call.enqueue(value)
     }
 
     private fun takePhoto() {
@@ -269,6 +326,25 @@ class NewEventFragment : BaseFragment() {
         mBottomSheetDialog?.setOnDismissListener {
             mBottomSheetDialog = null
         }
+    }
+
+    fun selectLocation(button: Button) {
+        if (! selectedLocationButtons.contains(button)) {
+            selectedLocationButtons.add(button)
+        }
+        selectedLocation = null
+        for ( button in selectedLocationButtons) {
+            if (button.isSelected) {
+                button.setTextColor(resources.getColor(R.color.blue_500))
+                button.isSelected = !button.isSelected
+            }
+        }
+
+
+        button.isSelected = true
+        button.setTextColor(Color.WHITE)
+        selectedLocation = button.text.trim().toString()
+
     }
 
     private fun openGallery() {
@@ -362,6 +438,7 @@ class NewEventFragment : BaseFragment() {
                     calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
                     val date_ship_millis = calendar.timeInMillis
                     date = Date(date_ship_millis)
+                    dateStr = Tools.getFormattedDateSimple2(date_ship_millis)
                     textView.text = Tools.getFormattedDateSimple(date_ship_millis)
                 },
                 cur_calender.get(Calendar.YEAR),
@@ -375,16 +452,32 @@ class NewEventFragment : BaseFragment() {
         datePicker.show(activity!!.fragmentManager, "Datepickerdialog")
     }
 
-    private fun dialogTimePickerLight(textView: TextView) {
-        val cur_calender = Calendar.getInstance()
-        val datePicker = TimePickerDialog.newInstance({ view, hourOfDay, minute, second ->
-            time = (if (hourOfDay > 9) hourOfDay.toString() + "" else "0$hourOfDay") + ":" + minute
-            textView.text = time
-        }, cur_calender.get(Calendar.HOUR_OF_DAY), cur_calender.get(Calendar.MINUTE), true)
-        //set dark light
-        datePicker.isThemeDark = false
-        datePicker.accentColor = resources.getColor(R.color.colorPrimary)
-        datePicker.show(activity!!.fragmentManager, "Timepickerdialog")
+    /**
+     * flag -> 1: setup start startTime
+     *         2: setup end startTime
+     */
+    private fun dialogTimePickerLight(textView: TextView, flag: Int) {
+        if (flag == 1) {
+            val cur_calender = Calendar.getInstance()
+            val datePicker = TimePickerDialog.newInstance({ view, hourOfDay, minute, second ->
+                startTime = (if (hourOfDay > 9) hourOfDay.toString() + "" else "0$hourOfDay") + ":" + minute
+                textView.text = startTime
+            }, cur_calender.get(Calendar.HOUR_OF_DAY), cur_calender.get(Calendar.MINUTE), true)
+            //set dark light
+            datePicker.isThemeDark = false
+            datePicker.accentColor = resources.getColor(R.color.colorPrimary)
+            datePicker.show(activity!!.fragmentManager, "Timepickerdialog")
+        } else {
+            val cur_calender = Calendar.getInstance()
+            val datePicker = TimePickerDialog.newInstance({ view, hourOfDay, minute, second ->
+                endTime = (if (hourOfDay > 9) hourOfDay.toString() + "" else "0$hourOfDay") + ":" + minute
+                textView.text = endTime
+            }, cur_calender.get(Calendar.HOUR_OF_DAY), cur_calender.get(Calendar.MINUTE), true)
+            //set dark light
+            datePicker.isThemeDark = false
+            datePicker.accentColor = resources.getColor(R.color.colorPrimary)
+            datePicker.show(activity!!.fragmentManager, "Timepickerdialog")
+        }
     }
 
     private fun hideSoftKeyboard() {

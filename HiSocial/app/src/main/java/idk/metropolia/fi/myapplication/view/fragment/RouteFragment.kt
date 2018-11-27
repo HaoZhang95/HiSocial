@@ -93,12 +93,12 @@ class RouteFragment : BaseFragment(),
             tv_destination.text = destStr
         }
 
-        tv_time.paint.flags = Paint.UNDERLINE_TEXT_FLAG
-        tv_time.paint.isAntiAlias = true
+        tv_start_time.paint.flags = Paint.UNDERLINE_TEXT_FLAG
+        tv_start_time.paint.isAntiAlias = true
         tv_date.paint.flags = Paint.UNDERLINE_TEXT_FLAG
         tv_date.paint.isAntiAlias = true
 
-        tv_time.text = "${this.hourOfDay}:${this.minute}"
+        tv_start_time.text = "${this.hourOfDay}:${this.minute}"
         tv_date.text = "${this.dayOfMonth}-${this.month}-${this.year}"
     }
 
@@ -111,7 +111,7 @@ class RouteFragment : BaseFragment(),
 
         ib_locate.setOnClickListener { getCurrentLocation() }
         ib_swap.setOnClickListener { swapItinerary() }
-        tv_time.setOnClickListener { showTimePicker() }
+        tv_start_time.setOnClickListener { showTimePicker() }
         fake_time.setOnClickListener { showTimePicker() }
         tv_date.setOnClickListener { showDatePicker() }
         fake_date.setOnClickListener { showDatePicker() }
@@ -142,7 +142,7 @@ class RouteFragment : BaseFragment(),
             LogUtils.e(hourOfDay.toString() + " : " + minute)
             this.hourOfDay = hourOfDay
             this.minute = minute
-            tv_time.text = "${this.hourOfDay}:${this.minute}"
+            tv_start_time.text = "${this.hourOfDay}:${this.minute}"
             queryItineraryPlan()
         }, cur_calender.get(Calendar.HOUR_OF_DAY), cur_calender.get(Calendar.MINUTE), true)
         //set dark light

@@ -75,11 +75,18 @@ public class MyNearByRVAdapter extends RecyclerView.Adapter<MyNearByRVAdapter.My
             } else {
                 Tools.displayImageOriginal(context, iv_single_event, R.drawable.not_found);
             }
+
+
             tv_single_title.setText(dataBean.getName().getFi());
 
             tv_single_date.setText(Tools.getFormattedDateEvent(Tools.convertDateToLong(dataBean.getStartTime())));
 
-            tv_single_location.setText(dataBean.getLocation().getAddressLocality().getFi());
+            if (dataBean.getLocation().getAddressLocality() != null) {
+                tv_single_location.setText(dataBean.getLocation().getAddressLocality().getFi());
+            } else {
+                tv_single_location.setText("Unknown Address");
+            }
+
         }
     }
 

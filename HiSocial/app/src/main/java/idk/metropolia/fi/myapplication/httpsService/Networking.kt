@@ -2,6 +2,7 @@ package idk.metropolia.fi.myapplication.httpsService
 
 import com.google.gson.JsonObject
 import idk.metropolia.fi.myapplication.model.EventsResponse
+import idk.metropolia.fi.myapplication.model.MyEventObject
 import idk.metropolia.fi.myapplication.model.SearchEventsResultObject
 import retrofit2.Call
 import retrofit2.Retrofit
@@ -17,6 +18,22 @@ object Networking {
 
     val service = retrofit.create(NetworkServices::class.java)!!
 
+
+    private const val POST_BASE_URL = "https://linkedcourses-api.test.hel.ninja/linkedcourses-test/v1/"
+    private val testRetrofit = Retrofit.Builder()
+            .baseUrl(POST_BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+
+    val testService = testRetrofit.create(TestNetworkServices::class.java)
+
+
+    interface TestNetworkServices {
+
+        @Headers("ApiKey:14OGbx613yeIIoUm2sF6")
+        @POST("event/")
+        fun postNewEvent(@Body eventObj: MyEventObject): Call<JsonObject>
+    }
 
     interface NetworkServices {
         @GET("search/")

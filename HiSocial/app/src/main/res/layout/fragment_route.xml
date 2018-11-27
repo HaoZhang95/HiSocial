@@ -135,7 +135,7 @@
                         android:textColor="@color/colorPrimary" />
 
                     <TextView
-                        android:id="@+id/tv_time"
+                        android:id="@+id/tv_start_time"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="2.5"
