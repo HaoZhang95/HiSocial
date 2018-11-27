@@ -517,7 +517,7 @@
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:background="@drawable/btn_rounded_outline"
-                                        android:text="Location A"
+                                        android:text="Kamppi, Annankatu 30 "
                                         android:textAllCaps="false"
                                         android:textColor="@color/blue_500" />
 
@@ -526,7 +526,7 @@
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:background="@drawable/btn_rounded_outline"
-                                        android:text="Location B"
+                                        android:text="Kluuvi Mikonkatu 17c"
                                         android:textAllCaps="false"
                                         android:textColor="@color/blue_500" />
 
@@ -535,7 +535,7 @@
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:background="@drawable/btn_rounded_outline"
-                                        android:text="Location C"
+                                        android:text="Vartiokylä, Turunlinnantie 1"
                                         android:textAllCaps="false"
                                         android:textColor="@color/blue_500" />
 

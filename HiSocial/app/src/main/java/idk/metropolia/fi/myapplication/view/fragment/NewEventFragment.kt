@@ -226,20 +226,11 @@ class NewEventFragment : BaseFragment() {
 
         val title = et_title.text.trim().toString()
         val desc = et_description.text.trim().toString()
-        val startTimeStr = tv_start_time.text.trim().toString()
-        val endTimeStr = tv_end_time.text.trim().toString()
-        val date = tv_date.text.trim().toString()
-
-        if (hasImage) {
-            val image = iv_event.drawable
-            LogUtils.e("$image $title --> $desc --> $startTimeStr --> $endTimeStr --> $date --> $selectedLocation")
-        } else {
-            LogUtils.e("$title --> $desc --> $startTimeStr --> $endTimeStr --> $date --> $selectedLocation")
-        }
 
         val ev = MyEventObject()
         ev.name = MyEventObject.Name(title)
-        ev.location = MyEventObject.Location("https://linkedcourses-api.test.hel.ninja/linkedcourses-test/v1/place/tprek:7259/")
+
+        ev.location = MyEventObject.Location(getLocationID())
         ev.startTime = dateStr!!
         ev.endTime = dateStr!!
         ev.description = MyEventObject.Description(desc)
@@ -265,7 +256,9 @@ class NewEventFragment : BaseFragment() {
                 if (response.isSuccessful) {
                     val res = response.body()
                     LogUtils.e(res.toString())
-                    LogUtils.e("上传成功")
+                    MyToast.show(context!!, "Created successfully")
+                } else {
+                    MyToast.show(context!!, "Created failed, Please retry")
                 }
             }
 
@@ -328,7 +321,18 @@ class NewEventFragment : BaseFragment() {
         }
     }
 
-    fun selectLocation(button: Button) {
+    private fun getLocationID(): String {
+        if (btn_locationA.isSelected) {
+            return "https://linkedcourses-api.test.hel.ninja/linkedcourses-test/v1/place/tprek:7254/"
+        } else if (btn_locationB.isSelected){
+            return "https://linkedcourses-api.test.hel.ninja/linkedcourses-test/v1/place/tprek:7256/"
+        } else if (btn_locationC.isSelected){
+            return "https://linkedcourses-api.test.hel.ninja/linkedcourses-test/v1/place/tprek:7259/"
+        }
+        return "https://linkedcourses-api.test.hel.ninja/linkedcourses-test/v1/place/tprek:7254/"
+    }
+
+    private fun selectLocation(button: Button) {
         if (! selectedLocationButtons.contains(button)) {
             selectedLocationButtons.add(button)
         }
@@ -344,7 +348,6 @@ class NewEventFragment : BaseFragment() {
         button.isSelected = true
         button.setTextColor(Color.WHITE)
         selectedLocation = button.text.trim().toString()
-
     }
 
     private fun openGallery() {
