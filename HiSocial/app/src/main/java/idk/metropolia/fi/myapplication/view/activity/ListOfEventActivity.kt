@@ -8,12 +8,19 @@ import android.view.View
 import android.widget.LinearLayout
 import com.example.ahao9.socialevent.httpsService.Service
 import com.example.ahao9.socialevent.utils.LogUtils
+import com.example.ahao9.socialevent.utils.MyToast
 import idk.metropolia.fi.myapplication.R
 import idk.metropolia.fi.myapplication.adapter.MySearchResultAdapter
+import idk.metropolia.fi.myapplication.httpsService.Networking
 import idk.metropolia.fi.myapplication.model.SearchEventsResultObject
 import idk.metropolia.fi.myapplication.model.SearchEventsResultObject.SingleBeanInSearch
+import idk.metropolia.fi.myapplication.model.SearchPlacesResultObject
 import idk.metropolia.fi.myapplication.utils.Tools
+import idk.metropolia.fi.myapplication.view.activity.SearchActivity.Companion.LOCATION_NAME_LIST
 import kotlinx.android.synthetic.main.activity_card_basic.*
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.Response
 import org.jetbrains.anko.startActivity
 import rx.Subscriber
 import java.io.Serializable
@@ -30,8 +37,13 @@ class ListOfEventActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_card_basic)
 
-        val text = intent.extras.get("text") as String
-        loadSearchResultByKeyword("1",text)
+        val bundle = intent.extras.get("obj") as Bundle
+        val text = bundle["text"] as String
+        val startDate = bundle["start"] as String?
+        val endDate = bundle["end"] as String?
+        val location = bundle["location"] as String?
+
+        loadSearchResultByKeyword(text, startDate?: "today", startDate, location)
 
         initComponent()
         initData()
@@ -41,26 +53,64 @@ class ListOfEventActivity : AppCompatActivity() {
     private fun initData() {
         mListAdapter = MySearchResultAdapter(this, mDatas)
         mListAdapter?.setOnItemClickListener { view, postion ->
-            startActivity<DetailsActivity>( "obj" to (mDatas[postion] as Serializable))
+            startActivity<DetailsActivity>("obj" to (mDatas[postion] as Serializable))
         }
     }
 
-    private fun loadSearchResultByKeyword(page: String, keyword: String) {
-        mListSubscriber = object : Subscriber<SearchEventsResultObject>() {
-            override fun onCompleted() {}
+    // page: String, page_size: String, type: String, input: String, start: String
+    private lateinit var call: retrofit2.Call<SearchEventsResultObject>
+    private fun loadSearchResultByKeyword(text: String, start: String, end: String?, location: String?) {
 
-            override fun onError(e: Throwable) {
-                LogUtils.e(e.stackTrace.toString())
+        if (location != null && end != null) {
+            call = Networking.service.searchEvent(
+                    keyword = text,
+                    start = start,
+                    end = end,
+                    location = location
+            )
+        } else if (location == null && end != null) {
+            call = Networking.service.searchEvent(
+                    keyword = text,
+                    start = start,
+                    end = end
+            )
+        } else if (end == null && location != null){
+            call = Networking.service.searchEvent(
+                    keyword = text,
+                    start = start,
+                    location = location
+            )
+        } else if (location == null && end == null) {
+            call = Networking.service.searchEvent(
+                    keyword = text,
+                    start = start
+            )
+        }
+
+        LogUtils.e("text: $text --> startDate: $start --> endDate: $end --> location: $location")
+
+        val value = object : retrofit2.Callback<SearchEventsResultObject> {
+            override fun onResponse(call: retrofit2.Call<SearchEventsResultObject>, response: retrofit2.Response<SearchEventsResultObject>) {
+
+                if (response.isSuccessful) {
+                    val dataList = response.body().data
+
+                    mDatas.clear()
+                    mDatas.addAll(dataList)
+                    mListAdapter?.notifyDataSetChanged()
+
+                    LogUtils.e("size: --> ${dataList.size}")
+                } else {
+                    MyToast.show(this@ListOfEventActivity, "Can not get any result")
+                }
             }
 
-            override fun onNext(httpsResponse: SearchEventsResultObject) {
-                mDatas.clear()
-                mDatas.addAll(httpsResponse.data)
-                mListAdapter?.notifyDataSetChanged()
+            // this method gets called if the http call fails (no internet etc)
+            override fun onFailure(call: retrofit2.Call<SearchEventsResultObject>, t: Throwable) {
+                LogUtils.e("onFailure: " + t.toString())
             }
         }
-        Service.loadCommingSoonEvents(mListSubscriber, page, "20",
-                "event", keyword, Tools.getFormattedToday())
+        call.enqueue(value)
     }
 
     //纵向列表布局

@@ -344,7 +344,6 @@ class NewEventFragment : BaseFragment() {
             }
         }
 
-
         button.isSelected = true
         button.setTextColor(Color.WHITE)
         selectedLocation = button.text.trim().toString()

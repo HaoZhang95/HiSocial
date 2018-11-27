@@ -16,7 +16,7 @@ import idk.metropolia.fi.myapplication.httpsService.Networking
 import idk.metropolia.fi.myapplication.model.EventsResponse
 import idk.metropolia.fi.myapplication.model.SingleBeanData
 import idk.metropolia.fi.myapplication.utils.Tools
-import idk.metropolia.fi.myapplication.view.activity.CategoriesActivity
+import idk.metropolia.fi.myapplication.view.activity.SearchActivity
 import idk.metropolia.fi.myapplication.view.activity.DetailsActivity
 import kotlinx.android.synthetic.main.event_card_item.*
 import kotlinx.android.synthetic.main.fragment_home.*
@@ -120,8 +120,8 @@ class HomeFragment : Fragment() {
     }
 
     private fun initListeners() {
-        childrenMoreBtn.setOnClickListener { startActivity<CategoriesActivity>() }
-        familyMoreBtn.setOnClickListener { startActivity<CategoriesActivity>() }
+        childrenMoreBtn.setOnClickListener { startActivity<SearchActivity>() }
+        familyMoreBtn.setOnClickListener { startActivity<SearchActivity>() }
 
         childrenPartAdapter?.setOnItemClickListener { _, position ->
             startActivity<DetailsActivity>("obj" to (childrenPartDataList[position] as Serializable))

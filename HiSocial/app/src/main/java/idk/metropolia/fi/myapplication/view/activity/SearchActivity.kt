@@ -2,39 +2,57 @@ package idk.metropolia.fi.myapplication.view.activity
 
 import android.app.Dialog
 import android.content.Context
+import android.graphics.Color
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
-import android.view.Menu
-import android.view.MenuItem
-import android.view.Window
-import android.view.WindowManager
+import android.view.*
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.ImageButton
 import com.example.ahao9.socialevent.utils.LogUtils
+import com.example.ahao9.socialevent.utils.MyToast
+import com.google.android.flexbox.FlexboxLayout
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog
 import idk.metropolia.fi.myapplication.R
+import idk.metropolia.fi.myapplication.httpsService.Networking
+import idk.metropolia.fi.myapplication.model.SearchPlacesResultObject
 import idk.metropolia.fi.myapplication.utils.Tools
-import kotlinx.android.synthetic.main.activity_categories.*
+import kotlinx.android.synthetic.main.activity_search.*
 import org.jetbrains.anko.startActivity
+import org.json.JSONObject
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.util.*
 
-class CategoriesActivity : AppCompatActivity() {
+class SearchActivity : AppCompatActivity() {
+
+    private lateinit var locationBox: FlexboxLayout
+    private var selectedLocationButtons: MutableList<Button> = mutableListOf()
+    private var selectedLocation: String? = null
+    private var startDate: String? = null
+    private var endDate: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_categories)
+        setContentView(R.layout.activity_search)
         initToolbar()
+        initData()
+        initComponents()
         initListeners()
     }
 
+    private fun initComponents() {
+        locationBox = findViewById(R.id.flex_box)
+    }
+
+    private fun initData() {
+        getLocations()
+    }
+
     private fun initListeners() {
-        category01.setOnClickListener { startActivity<ListOfEventActivity>("text" to "Play") }
-        category02.setOnClickListener { startActivity<ListOfEventActivity>("text" to "Tahto") }
-        category03.setOnClickListener { startActivity<ListOfEventActivity>("text" to "Art") }
-        category04.setOnClickListener { startActivity<ListOfEventActivity>("text" to "Music") }
 
         addFilterBtn.setOnClickListener { showFilterDialog() }
 
@@ -47,13 +65,23 @@ class CategoriesActivity : AppCompatActivity() {
             }
             return@setOnEditorActionListener false
         }
+
+        btn_clear.setOnClickListener {
+            resetLocation()
+        }
     }
 
     private fun searchAction(text: String) {
         et_search.text.clear()
         et_search.clearFocus()
 
-        startActivity<ListOfEventActivity>("text" to text)
+        val bundle = Bundle()
+        bundle.putString("text",text)
+        bundle.putString("start",startDate)
+        bundle.putString("end",endDate)
+        bundle.putString("location",selectedLocation)
+
+        startActivity<ListOfEventActivity>("obj" to bundle)
     }
 
     // 设置搜索
@@ -88,6 +116,8 @@ class CategoriesActivity : AppCompatActivity() {
         (dialog.findViewById(R.id.bt_close) as ImageButton).setOnClickListener { dialog.dismiss() }
         (dialog.findViewById(R.id.bt_save) as Button).setOnClickListener {
             LogUtils.e("$startDateStr --> $endDateStr")
+            startDate = startDateStr
+            endDate = endDateStr
             dialog.dismiss()
         }
 
@@ -145,5 +175,90 @@ class CategoriesActivity : AppCompatActivity() {
         }
         return super.onOptionsItemSelected(item)
     }
+
+    // ===========================
+    companion object {
+        val LOCATION_NAME_LIST = mutableMapOf<String, String>()
+    }
+
+    private fun getLocations() {
+
+        val call = Networking.service.searchPlacesResult()
+
+        val value = object : Callback<SearchPlacesResultObject> {
+            // this method gets called after a http call, no matter the http code
+            override fun onResponse(call: Call<SearchPlacesResultObject>, response: Response<SearchPlacesResultObject>) {
+
+                if (response.isSuccessful) {
+                    val dataList = response.body().data
+
+                    for (temp in dataList) {
+                        temp.name?.let {
+                            if (it.fi != null) {
+                                LOCATION_NAME_LIST.put(temp.id, it.fi)
+
+                                generateLocationChip(temp.id, it.fi)
+                            }
+                        }
+                    }
+
+                    LogUtils.e("size: --> ${dataList.size}")
+                } else {
+                    MyToast.show(this@SearchActivity, "Can not get any areas")
+                }
+            }
+
+            // this method gets called if the http call fails (no internet etc)
+            override fun onFailure(call: Call<SearchPlacesResultObject>, t: Throwable) {
+                LogUtils.e("onFailure: " + t.toString())
+            }
+        }
+        call.enqueue(value)
+    }
+
+
+    private fun generateLocationChip(id: String, name: String) {
+
+        val locationChip = LayoutInflater.from(this)
+                .inflate(R.layout.location_small_item, locationBox, false)
+
+        val chip = locationChip.findViewById<Button>(R.id.btn_chip)
+        chip.text = name
+        locationBox.addView(locationChip)
+
+        chip.setOnClickListener {
+            selectLocation(id, it as Button)
+        }
+    }
+
+    private fun selectLocation(id: String, button: Button) {
+        if (! selectedLocationButtons.contains(button)) {
+            selectedLocationButtons.add(button)
+        }
+        selectedLocation = null
+        for ( button in selectedLocationButtons) {
+            if (button.isSelected) {
+                button.setTextColor(resources.getColor(R.color.orange_500))
+                button.isSelected = !button.isSelected
+            }
+        }
+
+        button.isSelected = true
+        button.setTextColor(Color.WHITE)
+        selectedLocation = id
+    }
+
+    private fun resetLocation() {
+        for ( button in selectedLocationButtons) {
+            if (button.isSelected) {
+                button.setTextColor(resources.getColor(R.color.orange_500))
+                button.isSelected = !button.isSelected
+            }
+        }
+        selectedLocation = null
+
+        MyToast.show(this, "Reset successfully")
+    }
+
 
 }

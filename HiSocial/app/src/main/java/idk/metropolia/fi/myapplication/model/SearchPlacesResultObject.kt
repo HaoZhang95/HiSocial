@@ -39,7 +39,7 @@ data class SearchPlacesResultObject(
             @SerializedName("parent") val parent: Any? = Any(), // null
             @SerializedName("replaced_by") val replacedBy: Any? = Any(), // null
             @SerializedName("position") val position: Position = Position(),
-            @SerializedName("name") val name: Name = Name(),
+            @SerializedName("name") val name: Name? = null,
             @SerializedName("street_address") val streetAddress: StreetAddress = StreetAddress(),
             @SerializedName("telephone") val telephone: Telephone = Telephone(),
             @SerializedName("description") val description: Any? = Any(), // null
@@ -71,7 +71,7 @@ data class SearchPlacesResultObject(
         data class Name(
                 @SerializedName("sv") val sv: String = "", // Finskspråkig eftermiddagsverksamhet / Kalasataman peruskoulu, Danny's Bollywood Dance Crew Oy
                 @SerializedName("en") val en: String = "", // Afternoon activities / Kalasatama Comprehensive School, Danny's Bollywood Dance Crew Oy
-                @SerializedName("fi") val fi: String = "" // Iltapäivätoiminta / Kalasataman peruskoulu, Danny's Bollywood Dance Crew Oy
+                @SerializedName("fi") val fi: String? = null // Iltapäivätoiminta / Kalasataman peruskoulu, Danny's Bollywood Dance Crew Oy
         )
 
         data class AddressLocality(
