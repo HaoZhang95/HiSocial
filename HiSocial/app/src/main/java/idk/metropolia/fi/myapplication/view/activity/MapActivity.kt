@@ -2,6 +2,7 @@ package idk.metropolia.fi.myapplication.view.activity
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.ProgressDialog
 import android.graphics.Color
 import android.location.Location
 import android.os.Build
@@ -10,10 +11,9 @@ import android.support.design.widget.BottomSheetBehavior
 import android.support.design.widget.BottomSheetDialog
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.AppCompatButton
+import android.support.v7.widget.Toolbar
 import android.transition.Explode
-import android.view.View
-import android.view.Window
-import android.view.WindowManager
+import android.view.*
 import android.widget.ImageButton
 import android.widget.TextView
 import com.example.ahao9.socialevent.utils.LogUtils
@@ -27,20 +27,19 @@ import com.google.android.gms.maps.model.CircleOptions
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import idk.metropolia.fi.myapplication.R
-import idk.metropolia.fi.myapplication.model.SingleBeanData
+import idk.metropolia.fi.myapplication.httpsService.Networking
+import idk.metropolia.fi.myapplication.model.SearchEventsResultObject
 import idk.metropolia.fi.myapplication.utils.LocationUtils
 import idk.metropolia.fi.myapplication.utils.Tools
-import idk.metropolia.fi.myapplication.view.fragment.NearByFragment
 import kotlinx.android.synthetic.main.activity_map.*
-import kotlinx.android.synthetic.main.include_search_bar_in_map.*
 import org.jetbrains.anko.startActivity
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.io.Serializable
 
-private const val HOME_FRAGMENT = 0
-private const val NEAR_BY_FRAGMENT = 1
 class MapActivity : BaseActivity() {
 
-    private var index = 0
     private var mMap: GoogleMap? = null
     private var lat: Double = LocationUtils.lat
     private var lng: Double = LocationUtils.lng
@@ -57,74 +56,117 @@ class MapActivity : BaseActivity() {
         window.exitTransition = Explode()
         setContentView(R.layout.activity_map)
 
+        initToolbar()
+        initData()
         initComponents()
         initListeners()
     }
 
-    private fun initComponents() {
-        index = intent.extras["index"] as Int
-        if (index == HOME_FRAGMENT) {
-            // initMapFragmentBasedOnHomeFragment(lat, lng)
-            initMapFragmentBasedOnNearByFragment()
-        } else if (index == NEAR_BY_FRAGMENT){
-            initMapFragmentBasedOnNearByFragment()
+    private fun initToolbar() {
+
+        val toolbar = findViewById<Toolbar>(R.id.toolbar)
+        toolbar.setNavigationIcon(R.drawable.ic_back)
+        setSupportActionBar(toolbar)
+        supportActionBar!!.title = "Map"
+        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.menu_map, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == android.R.id.home) {
+            finish()
+        } else {
+            showRadiusChoiceDialog()
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    private fun initData() {
+        loadEventsByPageNumber()
+    }
+
+    var test = mutableMapOf<Double,Double>()
+    private fun loadEventsByPageNumber() {
+
+        val mDialog = ProgressDialog(this)
+        mDialog.setProgressStyle(0)
+        mDialog.setCancelable(false)
+        mDialog.setMessage("Loading...")
+        mDialog.show()
+
+        for (i in 0..10) {
+            Networking.service.searchEventBySize(page = (i+ 1).toString()).enqueue(object : Callback<SearchEventsResultObject> {
+
+                override fun onFailure(call: Call<SearchEventsResultObject>?, t: Throwable?) {
+                    LogUtils.e("loadEventsByKeywordType --> onFailure: ${t?.localizedMessage}")
+                    mDialog.dismiss()
+                }
+
+                override fun onResponse(call: Call<SearchEventsResultObject>?, response: Response<SearchEventsResultObject>?) {
+                    response?.let {
+                        if (it.isSuccessful) {
+                            LogUtils.e("地图界面的获取的事件数量: ${response.body().data.size}")
+                            var count = 0
+
+
+                            val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
+                            mapFragment.getMapAsync { googleMap ->
+                                mMap = Tools.configActivityMaps(googleMap)
+
+                                for (temp in response.body().data) {
+
+                                    temp.location.position?.let {
+                                        it.coordinates?.let {
+                                            val lat = it[1]
+                                            val lng = it[0]
+
+                                            test.put(lat,lng)
+                                            // LogUtils.e("lat: $lat --> lng: $lng")
+                                            val markerOptions = MarkerOptions().position(LatLng(lat, lng)).title(temp.name?.fi ?: Tools.UN_KNOWN)
+                                            val marker = mMap!!.addMarker(markerOptions)
+                                            marker.tag = temp
+                                            count ++
+                                        }
+                                    }
+                                }
+
+                                LogUtils.e("地图界面的marker数量: ${count}")
+                                LogUtils.e("地图界面的test数量: ${test.size}")
+                                mMap!!.animateCamera(zoomingLocation(lat, lng))        // 默认显示helsinki church
+                                mMap!!.setOnMarkerClickListener {
+                                    try {
+                                        // mMap!!.animateCamera(zoomingLocation(lat, lng))
+                                        LogUtils.e("marker点击了")
+                                        showBottomSheetDialog(it.tag as SearchEventsResultObject.SingleBeanData)
+                                    } catch (e: Exception) {
+                                    }
+                                    true
+                                }
+                            }
+                        }
+
+                        mDialog.dismiss()
+                    }
+                }
+            })
         }
 
+    }
+
+    private fun initComponents() {
         bottom_sheet = findViewById(R.id.bottom_sheet)
         mBehavior = BottomSheetBehavior.from<View>(bottom_sheet)
-    }
-
-    private fun initMapFragmentBasedOnHomeFragment(lat: Double, lng: Double) {
-        val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
-        mapFragment.getMapAsync { googleMap ->
-            mMap = Tools.configActivityMaps(googleMap)
-
-            val markerOptions = MarkerOptions().position(LatLng(lat, lng))
-            mMap!!.addMarker(markerOptions)
-            mMap!!.animateCamera(zoomingLocation(lat, lng))
-            mMap!!.setOnMarkerClickListener {
-                try {
-                    // mMap!!.animateCamera(zoomingLocation(lat, lng))
-                    // showBottomSheetDialog(null)
-                } catch (e: Exception) {
-                }
-                true
-            }
-        }
-    }
-
-    private fun initMapFragmentBasedOnNearByFragment() {
-        val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
-        mapFragment.getMapAsync { googleMap ->
-            mMap = Tools.configActivityMaps(googleMap)
-
-            for (temp in NearByFragment.NEARBY_DATA_LIST) {
-                val lat = temp.location.position.coordinates[1]
-                val lng = temp.location.position.coordinates[0]
-
-                LogUtils.e("lat: $lat --> lng: $lng")
-                val markerOptions = MarkerOptions().position(LatLng(lat, lng)).title(temp.name?.fi ?: Tools.UN_KNOWN)
-                val marker = mMap!!.addMarker(markerOptions)
-                marker.tag = temp
-            }
-
-            mMap!!.animateCamera(zoomingLocation(lat, lng))        // 默认显示helsinki church
-            mMap!!.setOnMarkerClickListener {
-                try {
-                    // mMap!!.animateCamera(zoomingLocation(lat, lng))
-                    showBottomSheetDialog(it.tag as SingleBeanData)
-                } catch (e: Exception) {
-                }
-                true
-            }
-        }
     }
 
     private fun zoomingLocation(lat: Double, lng: Double, level: Float = 13f): CameraUpdate {
         return CameraUpdateFactory.newLatLngZoom(LatLng(lat, lng), level)
     }
 
-    private fun showBottomSheetDialog(obj: SingleBeanData) {
+    private fun showBottomSheetDialog(obj: SearchEventsResultObject.SingleBeanData) {
         if (mBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
             mBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
         }
@@ -202,9 +244,6 @@ class MapActivity : BaseActivity() {
             })
         }
 
-        ib_radius_settings.setOnClickListener {
-            showRadiusChoiceDialog()
-        }
     }
 
     private val raidusList = arrayOf(1000.0,

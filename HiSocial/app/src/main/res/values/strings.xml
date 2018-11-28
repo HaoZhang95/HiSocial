@@ -11,4 +11,7 @@
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam efficitur ipsum in placerat molestie.  Fusce quis mauris a enim sollicitudin
         nLorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam efficitur ipsum in placerat molestie.  Fusce quis mauris a enim sollicitudin
     </string>
+
+    <string name="search_general_keyword">Try to input a more general keyword</string>
+    <string name="search_no_result">No result</string>
 </resources>

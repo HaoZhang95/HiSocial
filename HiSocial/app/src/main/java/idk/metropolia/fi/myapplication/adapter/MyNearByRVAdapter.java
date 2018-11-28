@@ -10,15 +10,15 @@ import android.widget.TextView;
 import java.util.List;
 
 import idk.metropolia.fi.myapplication.R;
-import idk.metropolia.fi.myapplication.model.SingleBeanData;
+import idk.metropolia.fi.myapplication.model.SearchEventsResultObject;
 import idk.metropolia.fi.myapplication.utils.Tools;
 
 public class MyNearByRVAdapter extends RecyclerView.Adapter<MyNearByRVAdapter.MyHolder> {
 
-    private List<SingleBeanData> list;
+    private List<SearchEventsResultObject.SingleBeanData> list;
     private Context context;
 
-    public MyNearByRVAdapter(Context context, List<SingleBeanData> list) {
+    public MyNearByRVAdapter(Context context, List<SearchEventsResultObject.SingleBeanData> list) {
         this.list = list;
         this.context = context;
     }
@@ -62,7 +62,7 @@ public class MyNearByRVAdapter extends RecyclerView.Adapter<MyNearByRVAdapter.My
             });
         }
 
-        public void setDataAndRefreshUI(SingleBeanData dataBean){
+        public void setDataAndRefreshUI(SearchEventsResultObject.SingleBeanData dataBean){
             if (dataBean.getImages().size() > 0) {
                 Tools.displayImageOriginal(context, iv_single_event, dataBean.getImages().get(0).getUrl());
             } else {

@@ -92,7 +92,7 @@
                     <ImageView
                         android:layout_width="40dp"
                         android:tint="@color/green_300"
-                        android:src="@drawable/ic_favorites"
+                        android:src="@drawable/ic_timer"
                         android:layout_height="40dp" />
 
                     <Button
@@ -126,7 +126,7 @@
                     <ImageView
                         android:layout_width="40dp"
                         android:tint="@color/red_300"
-                        android:src="@drawable/ic_favorites"
+                        android:src="@drawable/ic_timer"
                         android:layout_height="40dp" />
 
                     <Button

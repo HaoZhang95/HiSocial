@@ -1,7 +1,5 @@
 package idk.metropolia.fi.myapplication.httpsService
 
-import com.example.ahao9.socialevent.httpsService.Service.httpService
-import com.example.ahao9.socialevent.utils.LogUtils
 import com.google.gson.JsonObject
 import idk.metropolia.fi.myapplication.model.EventsResponse
 import idk.metropolia.fi.myapplication.model.MyEventObject
@@ -11,9 +9,6 @@ import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.*
-import rx.Subscriber
-import rx.android.schedulers.AndroidSchedulers
-import rx.schedulers.Schedulers
 
 object Networking {
     private const val BASE_URL = "https://api.hel.fi/linkedevents/v1/"
@@ -57,7 +52,7 @@ object Networking {
                                     @Query("keyword") keyword: String,
                                     @Query("page_size") page_size: String = "10",
                                     @Query("start") start: String = "today"
-        ): Call<EventsResponse>
+        ): Call<SearchEventsResultObject>
 
         // http://api.hel.fi/linkedevents/v1/event/?format=json&include=location&keyword=yso:p4363&page_size=10&start=today&end=today
         @GET("event/")
@@ -67,7 +62,7 @@ object Networking {
                                     @Query("page_size") page_size: String = "10",
                                     @Query("start") start: String = "today",
                                     @Query("end") end: String
-        ): Call<EventsResponse>
+        ): Call<SearchEventsResultObject>
 
         // https://api.hel.fi/linkedevents/v1/event/?page=1&page_size=4&type=event&start=2018-11-20&include=location
         @GET("event/")
@@ -76,8 +71,9 @@ object Networking {
                                    @Query("page") page: String = "1",
                                    @Query("page_size") page_size: String = "10",
                                    @Query("type") type: String = "event",
-                                   @Query("start") start: String = "today"
-        ): Call<EventsResponse>
+                                   @Query("start") start: String = "today",
+                                   @Query("end") end: String = "today"
+        ): Call<SearchEventsResultObject>
 
         // http://api.hel.fi/linkedevents/v1/place?page_size=1000
         @GET("place/")
@@ -116,6 +112,15 @@ object Networking {
         fun searchEvent(
                 @Query("include") include: String = "location",
                 @Query("text") keyword: String,
+                @Query("start") start: String = "today"
+        ): Call<SearchEventsResultObject>
+
+        @GET("event/")
+        fun searchEventBySize(
+                @Query("format") format: String = "json",
+                @Query("include") include: String = "location",
+                @Query("page") page: String = "1",
+                @Query("page_size") page_size: String = "1000",
                 @Query("start") start: String = "today"
         ): Call<SearchEventsResultObject>
     }

@@ -1,6 +1,7 @@
 package idk.metropolia.fi.myapplication.view.activity
 
 import android.app.Dialog
+import android.app.ProgressDialog
 import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
@@ -182,6 +183,12 @@ class SearchActivity : AppCompatActivity() {
 
     private fun getLocations() {
 
+        val mDialog = ProgressDialog(this)
+        mDialog.setProgressStyle(0)
+        mDialog.setCancelable(false)
+        mDialog.setMessage("Loading...")
+        mDialog.show()
+
         val call = Networking.service.searchPlacesResult()
 
         val value = object : Callback<SearchPlacesResultObject> {
@@ -201,15 +208,18 @@ class SearchActivity : AppCompatActivity() {
                         }
                     }
 
+                    mDialog.dismiss()
                     LogUtils.e("size: --> ${dataList.size}")
                 } else {
                     MyToast.show(this@SearchActivity, "Can not get any areas")
+                    mDialog.dismiss()
                 }
             }
 
             // this method gets called if the http call fails (no internet etc)
             override fun onFailure(call: Call<SearchPlacesResultObject>, t: Throwable) {
                 LogUtils.e("onFailure: " + t.toString())
+                mDialog.dismiss()
             }
         }
         call.enqueue(value)

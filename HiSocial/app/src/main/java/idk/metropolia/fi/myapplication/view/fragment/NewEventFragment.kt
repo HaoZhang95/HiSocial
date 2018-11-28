@@ -2,6 +2,7 @@ package idk.metropolia.fi.myapplication.view.fragment
 
 import android.Manifest
 import android.app.Activity.RESULT_OK
+import android.app.ProgressDialog
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Color
@@ -247,6 +248,12 @@ class NewEventFragment : BaseFragment() {
 
         LogUtils.e(Gson().toJson(ev).toString())
 
+        val mDialog = ProgressDialog(context)
+        mDialog.setProgressStyle(0)
+        mDialog.setCancelable(false)
+        mDialog.setMessage("Loading...")
+        mDialog.show()
+
         val call = Networking.testService.postNewEvent(ev)
 
         val value = object: Callback<JsonObject> {
@@ -257,14 +264,17 @@ class NewEventFragment : BaseFragment() {
                     val res = response.body()
                     LogUtils.e(res.toString())
                     MyToast.show(context!!, "Created successfully")
+                    mDialog.dismiss()
                 } else {
                     MyToast.show(context!!, "Created failed, Please retry")
+                    mDialog.dismiss()
                 }
             }
 
             // this method gets called if the http call fails (no internet etc)
             override fun onFailure(call: Call<JsonObject>, t: Throwable) {
                 LogUtils.e("onFailure: " + t.toString())
+                mDialog.dismiss()
             }
         }
 

@@ -1,7 +1,9 @@
 package idk.metropolia.fi.myapplication.view.activity
 
+import android.app.ProgressDialog
 import android.content.Context
 import android.os.Bundle
+import android.os.Handler
 import android.support.v4.widget.NestedScrollView
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
@@ -17,7 +19,6 @@ import idk.metropolia.fi.myapplication.R
 import idk.metropolia.fi.myapplication.adapter.MySearchResultAdapter
 import idk.metropolia.fi.myapplication.httpsService.Networking
 import idk.metropolia.fi.myapplication.model.SearchEventsResultObject
-import idk.metropolia.fi.myapplication.model.SingleBeanData
 import idk.metropolia.fi.myapplication.utils.Tools
 import kotlinx.android.synthetic.main.activity_card_basic.*
 import org.jetbrains.anko.startActivity
@@ -31,7 +32,7 @@ class ListOfEventActivity : AppCompatActivity() {
     private lateinit var searchET: EditText
 
     private var mListAdapter: MySearchResultAdapter? = null
-    private val mDatas = ArrayList<SingleBeanData>()
+    private val mDatas = ArrayList<SearchEventsResultObject.SingleBeanData>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -92,6 +93,12 @@ class ListOfEventActivity : AppCompatActivity() {
     private lateinit var call: retrofit2.Call<SearchEventsResultObject>
     private fun loadSearchResultByKeyword(text: String, start: String, end: String?, location: String?) {
 
+        val mDialog = ProgressDialog(this)
+        mDialog.setProgressStyle(0)
+        mDialog.setCancelable(false)
+        mDialog.setMessage("Loading...")
+        mDialog.show()
+
         if (location != null && end != null) {
             call = Networking.service.searchEvent(
                     keyword = text,
@@ -120,6 +127,7 @@ class ListOfEventActivity : AppCompatActivity() {
 
         LogUtils.e("text: $text --> startDate: $start --> endDate: $end --> location: $location")
 
+
         val value = object : retrofit2.Callback<SearchEventsResultObject> {
             override fun onResponse(call: retrofit2.Call<SearchEventsResultObject>, response: retrofit2.Response<SearchEventsResultObject>) {
 
@@ -130,15 +138,18 @@ class ListOfEventActivity : AppCompatActivity() {
                     mDatas.addAll(dataList)
                     mListAdapter?.notifyDataSetChanged()
 
+                    mDialog.dismiss()
                     LogUtils.e("size: --> ${dataList.size}")
                 } else {
                     MyToast.show(this@ListOfEventActivity, "Can not get any result")
+                    mDialog.dismiss()
                 }
             }
 
             // this method gets called if the http call fails (no internet etc)
             override fun onFailure(call: retrofit2.Call<SearchEventsResultObject>, t: Throwable) {
                 LogUtils.e("onFailure: " + t.toString())
+                mDialog.dismiss()
             }
         }
         call.enqueue(value)

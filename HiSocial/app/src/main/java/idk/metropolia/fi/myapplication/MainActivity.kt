@@ -15,15 +15,12 @@ import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.Toast
-import com.example.ahao9.socialevent.utils.LogUtils
 import com.example.ahao9.socialevent.utils.MyToast
-import idk.metropolia.fi.myapplication.R.id.tab_layout
 import idk.metropolia.fi.myapplication.adapter.MyViewPagerAdapter
 import idk.metropolia.fi.myapplication.utils.Tools
 import idk.metropolia.fi.myapplication.utils.ViewAnimationUtils
-import idk.metropolia.fi.myapplication.view.activity.DetailsMapActivity
 import idk.metropolia.fi.myapplication.view.activity.MapActivity
+import idk.metropolia.fi.myapplication.view.activity.SearchActivity
 import idk.metropolia.fi.myapplication.view.fragment.*
 import org.jetbrains.anko.startActivity
 
@@ -55,10 +52,8 @@ class MainActivity : AppCompatActivity(), HomeFragment.MyOnScrollChangeListener,
     private fun initToolbar() {
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         toolbar.setNavigationIcon(R.drawable.ic_logo_sized)
-        // toolbar.navigationIcon?.setColorFilter(resources.getColor(R.color.grey_60), PorterDuff.Mode.SRC_ATOP)
         setSupportActionBar(toolbar)
         supportActionBar?.title = "Home"
-        // supportActionBar?.setDisplayHomeAsUpEnabled(true)
         Tools.setSystemBarColor(this, R.color.grey_5)
         Tools.setSystemBarLight(this)
     }
@@ -78,7 +73,7 @@ class MainActivity : AppCompatActivity(), HomeFragment.MyOnScrollChangeListener,
         tab_layout.setupWithViewPager(view_pager)
 
         tab_layout.getTabAt(0)?.setIcon(R.drawable.ic_filter_list)
-        tab_layout.getTabAt(1)?.setIcon(R.drawable.ic_near_me)
+        tab_layout.getTabAt(1)?.setIcon(R.drawable.ic_timer)
         tab_layout.getTabAt(2)?.setIcon(R.drawable.ic_add)
         tab_layout.getTabAt(3)?.setIcon(R.drawable.ic_person)
 
@@ -141,7 +136,7 @@ class MainActivity : AppCompatActivity(), HomeFragment.MyOnScrollChangeListener,
             }
             1 -> {
                 fab.visibility = View.VISIBLE
-                fab.setImageDrawable(resources.getDrawable(R.drawable.ic_near_me))
+                fab.setImageDrawable(resources.getDrawable(R.drawable.ic_map))
             }
             2 -> {
                 fab.visibility = View.GONE
@@ -167,7 +162,7 @@ class MainActivity : AppCompatActivity(), HomeFragment.MyOnScrollChangeListener,
     private fun setupViewPager(viewPager: ViewPager) {
         viewPagerAdapter = MyViewPagerAdapter(supportFragmentManager)
         viewPagerAdapter.addFragment(homeFragment, "Home")    // index 0
-        viewPagerAdapter.addFragment(nearByFragment, "Near By")   // index 1
+        viewPagerAdapter.addFragment(nearByFragment, "Ongoing Event")   // index 1
         viewPagerAdapter.addFragment(newEventFragment, "Add Event")    // index 2
         viewPagerAdapter.addFragment(profileFragment, "Profile")    // index 3
         viewPager.adapter = viewPagerAdapter
@@ -180,7 +175,7 @@ class MainActivity : AppCompatActivity(), HomeFragment.MyOnScrollChangeListener,
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        Toast.makeText(applicationContext, item.title, Toast.LENGTH_SHORT).show()
+        startActivity<SearchActivity>()
         return super.onOptionsItemSelected(item)
     }
 

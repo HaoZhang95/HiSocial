@@ -12,8 +12,7 @@ import com.example.ahao9.socialevent.utils.LogUtils
 import idk.metropolia.fi.myapplication.R
 import idk.metropolia.fi.myapplication.adapter.MyNearByRVAdapter
 import idk.metropolia.fi.myapplication.httpsService.Networking
-import idk.metropolia.fi.myapplication.model.EventsResponse
-import idk.metropolia.fi.myapplication.model.SingleBeanData
+import idk.metropolia.fi.myapplication.model.SearchEventsResultObject
 import idk.metropolia.fi.myapplication.view.activity.DetailsActivity
 import kotlinx.android.synthetic.main.fragment_nearby.*
 import org.jetbrains.anko.support.v4.startActivity
@@ -32,7 +31,7 @@ class NearByFragment : Fragment() {
 
     private var nearByAdapter: MyNearByRVAdapter? = null
     companion object {
-        var NEARBY_DATA_LIST: MutableList<SingleBeanData> = ArrayList()
+        var NEARBY_DATA_LIST: MutableList<SearchEventsResultObject.SingleBeanData> = ArrayList()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -54,19 +53,19 @@ class NearByFragment : Fragment() {
         nearByAdapter = MyNearByRVAdapter(context, NEARBY_DATA_LIST)
     }
 
-    private fun loadEventsByPageNumber(page: String = "1", page_size: String = "20", start: String = "today") {
+    private fun loadEventsByPageNumber(page: String = "1", page_size: String = "20", start: String = "today", end: String = "today") {
 
         Networking.service.loadEventsByPageNumber(page = page, page_size = page_size,
-                start = start).enqueue(object : Callback<EventsResponse> {
+                start = start, end = end).enqueue(object : Callback<SearchEventsResultObject> {
 
-            override fun onFailure(call: Call<EventsResponse>?, t: Throwable?) {
+            override fun onFailure(call: Call<SearchEventsResultObject>?, t: Throwable?) {
                 LogUtils.e("loadEventsByKeywordType --> onFailure: ${t?.localizedMessage}")
             }
 
-            override fun onResponse(call: Call<EventsResponse>?, response: Response<EventsResponse>?) {
+            override fun onResponse(call: Call<SearchEventsResultObject>?, response: Response<SearchEventsResultObject>?) {
                 response?.let {
                     if (it.isSuccessful) {
-                        NEARBY_DATA_LIST.addAll(it.body().dataList)
+                        NEARBY_DATA_LIST.addAll(it.body().data)
                         nearByAdapter?.notifyDataSetChanged()
                     }
                 }

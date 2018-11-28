@@ -1,5 +1,6 @@
 package idk.metropolia.fi.myapplication.view.fragment
 
+import android.app.ProgressDialog
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.widget.NestedScrollView
@@ -13,11 +14,10 @@ import com.example.ahao9.socialevent.utils.LogUtils
 import idk.metropolia.fi.myapplication.R
 import idk.metropolia.fi.myapplication.adapter.MyRecyclerViewAdapter
 import idk.metropolia.fi.myapplication.httpsService.Networking
-import idk.metropolia.fi.myapplication.model.EventsResponse
-import idk.metropolia.fi.myapplication.model.SingleBeanData
+import idk.metropolia.fi.myapplication.model.SearchEventsResultObject
 import idk.metropolia.fi.myapplication.utils.Tools
-import idk.metropolia.fi.myapplication.view.activity.SearchActivity
 import idk.metropolia.fi.myapplication.view.activity.DetailsActivity
+import idk.metropolia.fi.myapplication.view.activity.ListOfEventActivity
 import kotlinx.android.synthetic.main.event_card_item.*
 import kotlinx.android.synthetic.main.fragment_home.*
 import org.jetbrains.anko.support.v4.startActivity
@@ -35,11 +35,11 @@ import java.util.*
 class HomeFragment : Fragment() {
 
     private var childrenPartAdapter: MyRecyclerViewAdapter? = null
-    private val childrenPartDataList = ArrayList<SingleBeanData>()
+    private val childrenPartDataList = ArrayList<SearchEventsResultObject.SingleBeanData>()
     private var familyPartAdapter: MyRecyclerViewAdapter? = null
-    private val familyPartDataList = ArrayList<SingleBeanData>()
+    private val familyPartDataList = ArrayList<SearchEventsResultObject.SingleBeanData>()
 
-    private var singleBeanInSearch: SingleBeanData? = null
+    private var singleBeanInSearch: SearchEventsResultObject.SingleBeanData? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_home, container, false)
@@ -66,25 +66,31 @@ class HomeFragment : Fragment() {
 
     private fun loadEventsByKeywordType(keywordId: String, page_size: String = "10", start: String = "today", end: String = "today") {
 
-        Networking.service.loadEventsByKeywordType(keyword = keywordId, page_size = page_size,
-                start = start, end = end).enqueue(object : Callback<EventsResponse> {
+        val mDialog = ProgressDialog(context)
+        mDialog.setProgressStyle(0)
+        mDialog.setCancelable(false)
+        mDialog.setMessage("Loading...")
+        mDialog.show()
 
-            override fun onFailure(call: Call<EventsResponse>?, t: Throwable?) {
+        Networking.service.loadEventsByKeywordType(keyword = keywordId, page_size = page_size,
+                start = start, end = end).enqueue(object : Callback<SearchEventsResultObject> {
+
+            override fun onFailure(call: Call<SearchEventsResultObject>?, t: Throwable?) {
                 LogUtils.e("loadEventsByKeywordType --> onFailure: ${t?.localizedMessage}")
+                mDialog.dismiss()
             }
 
-            override fun onResponse(call: Call<EventsResponse>?, response: Response<EventsResponse>?) {
-                when(keywordId){
+            override fun onResponse(call: Call<SearchEventsResultObject>?, response: Response<SearchEventsResultObject>?) {
+                when (keywordId) {
                     Tools.CHILDREN_ID -> {
                         response?.let {
                             if (it.isSuccessful) {
-                                for (i in 0 until (it.body().dataList.size - 1)) {
-                                    childrenPartDataList.add(it.body().dataList[i])
+                                for (i in 0 until (it.body().data.size - 1)) {
+                                    childrenPartDataList.add(it.body().data[i])
                                 }
                                 childrenPartAdapter?.notifyDataSetChanged()
 
-                                // 设置横幅的item
-                                val dataBean = it.body().dataList.last()
+                                val dataBean = it.body().data.last()
                                 singleBeanInSearch = dataBean
                                 if (dataBean.images.isNotEmpty()) {
                                     Tools.displayImageOriginal(context, iv_single_event, dataBean.images.get(0).url)
@@ -94,16 +100,18 @@ class HomeFragment : Fragment() {
                                 tv_single_title.text = dataBean.name?.fi ?: Tools.UN_KNOWN
                                 tv_single_date.text = Tools.getFormattedDateEvent(Tools.convertDateToLong(dataBean.startTime))
                             }
+                            mDialog.dismiss()
                         }
                     }
 
                     Tools.FAMILY_ID -> {
                         response?.let {
                             if (it.isSuccessful) {
-                                familyPartDataList.addAll(it.body().dataList)
+                                familyPartDataList.addAll(it.body().data)
                                 familyPartAdapter?.notifyDataSetChanged()
                             }
                         }
+                        mDialog.dismiss()
                     }
                 }
             }
@@ -111,6 +119,7 @@ class HomeFragment : Fragment() {
     }
 
     private var myOnScrollChangeListener: MyOnScrollChangeListener? = null
+
     interface MyOnScrollChangeListener {
         fun onScrollChangeListener(v: NestedScrollView?, scrollX: Int, scrollY: Int, oldScrollX: Int, oldScrollY: Int)
     }
@@ -120,8 +129,16 @@ class HomeFragment : Fragment() {
     }
 
     private fun initListeners() {
-        childrenMoreBtn.setOnClickListener { startActivity<SearchActivity>() }
-        familyMoreBtn.setOnClickListener { startActivity<SearchActivity>() }
+        childrenMoreBtn.setOnClickListener {
+            val bundle = Bundle()
+            bundle.putString("text", "child")
+            startActivity<ListOfEventActivity>("obj" to bundle)
+        }
+        familyMoreBtn.setOnClickListener {
+            val bundle = Bundle()
+            bundle.putString("text", "family")
+            startActivity<ListOfEventActivity>("obj" to bundle)
+        }
 
         childrenPartAdapter?.setOnItemClickListener { _, position ->
             startActivity<DetailsActivity>("obj" to (childrenPartDataList[position] as Serializable))

@@ -26,7 +26,7 @@ import idk.metropolia.fi.myapplication.utils.Tools
 import kotlinx.android.synthetic.main.activity_details.*
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.MarkerOptions
-import idk.metropolia.fi.myapplication.model.SingleBeanData
+import idk.metropolia.fi.myapplication.model.SearchEventsResultObject
 import idk.metropolia.fi.myapplication.view.fragment.RouteFragment
 import idk.metropolia.fi.myapplication.model.SingleEventLocationObject
 import idk.metropolia.fi.myapplication.utils.Tools.toggleArrow
@@ -50,7 +50,7 @@ class DetailsActivity : AppCompatActivity(), OnMapReadyCallback {
     private var lat: Double = 60.170377     // default coordinate is helsinki church
     private var lng: Double = 24.952229
     private val MAP_VIEW_BUNDLE_KEY = "MapViewBundleKey"
-    private lateinit var obj: SingleBeanData
+    private lateinit var obj: SearchEventsResultObject.SingleBeanData
     private lateinit var mListLocationSubscriber: Subscriber<SingleEventLocationObject>
     private lateinit var lyt_expand_info: View
 
@@ -76,7 +76,7 @@ class DetailsActivity : AppCompatActivity(), OnMapReadyCallback {
         iv_details = findViewById(R.id.iv_details)
         lyt_expand_info = findViewById<View>(R.id.lyt_expand_info)
 
-        obj = intent.extras.get("obj") as SingleBeanData
+        obj = intent.extras.get("obj") as SearchEventsResultObject.SingleBeanData
         tv_title.text = obj.name?.fi ?: Tools.UN_KNOWN
         DetailsMapActivity.titleStr = obj.name?.fi ?: Tools.UN_KNOWN
         tv_publisher.text = obj.publisher ?: Tools.UN_KNOWN

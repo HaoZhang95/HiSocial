@@ -10,6 +10,7 @@ import android.widget.TextView;
 import com.example.ahao9.socialevent.httpsService.Service;
 import com.example.ahao9.socialevent.utils.LogUtils;
 
+import idk.metropolia.fi.myapplication.model.SearchEventsResultObject;
 import idk.metropolia.fi.myapplication.model.SearchEventsResultObject.*;
 
 import java.util.ArrayList;
@@ -23,11 +24,11 @@ import rx.Subscriber;
 
 public class MySearchResultAdapter extends RecyclerView.Adapter<MySearchResultAdapter.MyHolder> {
 
-    private List<SingleBeanData> list;
+    private List<SearchEventsResultObject.SingleBeanData> list;
     private Context context;
     private Subscriber<SingleEventLocationObject> mListLocationSubscriber;
 
-    public MySearchResultAdapter(Context context, List<SingleBeanData> list) {
+    public MySearchResultAdapter(Context context, List<SearchEventsResultObject.SingleBeanData> list) {
         this.list = list;
         this.context = context;
     }
@@ -69,7 +70,7 @@ public class MySearchResultAdapter extends RecyclerView.Adapter<MySearchResultAd
             });
         }
 
-        public void setDataAndRefreshUI(SingleBeanData dataBean){
+        public void setDataAndRefreshUI(SearchEventsResultObject.SingleBeanData dataBean){
             if (dataBean.getImages().size() > 0) {
                 Tools.displayImageOriginal(context, iv_event, dataBean.getImages().get(0).getUrl());
             } else {
