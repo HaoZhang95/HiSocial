@@ -279,7 +279,7 @@ public class Tools {
         ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
         ClipData clip = ClipData.newPlainText("clipboard", data);
         clipboard.setPrimaryClip(clip);
-        MyToast.INSTANCE.show(context, "Text copied to clipboard");
+        MyToast.INSTANCE.show(context, context.getString(R.string.copy_to_clipboard));
     }
 
     public static void nestedScrollTo(final NestedScrollView nested, final View targetView) {

@@ -38,7 +38,6 @@ class MainActivity : AppCompatActivity(), HomeFragment.MyOnScrollChangeListener,
     private lateinit var fab: FloatingActionButton
     private var hide = false
     private lateinit var fragmentTransaction: FragmentTransaction
-    private lateinit var mapFragment: MapFragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,7 +52,7 @@ class MainActivity : AppCompatActivity(), HomeFragment.MyOnScrollChangeListener,
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         toolbar.setNavigationIcon(R.drawable.ic_logo_sized)
         setSupportActionBar(toolbar)
-        supportActionBar?.title = "Home"
+        supportActionBar?.title = getString(R.string.home)
         Tools.setSystemBarColor(this, R.color.grey_5)
         Tools.setSystemBarLight(this)
     }
@@ -63,7 +62,6 @@ class MainActivity : AppCompatActivity(), HomeFragment.MyOnScrollChangeListener,
         nearByFragment = NearByFragment()
         newEventFragment = NewEventFragment()
         profileFragment = ProfileFragment()
-        mapFragment = MapFragment()
 
         view_pager = findViewById(R.id.view_pager)
         view_pager.offscreenPageLimit = 4  // 解决viewpager滑动卡顿
@@ -161,10 +159,10 @@ class MainActivity : AppCompatActivity(), HomeFragment.MyOnScrollChangeListener,
 
     private fun setupViewPager(viewPager: ViewPager) {
         viewPagerAdapter = MyViewPagerAdapter(supportFragmentManager)
-        viewPagerAdapter.addFragment(homeFragment, "Home")    // index 0
-        viewPagerAdapter.addFragment(nearByFragment, "Ongoing Event")   // index 1
-        viewPagerAdapter.addFragment(newEventFragment, "Add Event")    // index 2
-        viewPagerAdapter.addFragment(profileFragment, "Profile")    // index 3
+        viewPagerAdapter.addFragment(homeFragment, getString(R.string.home))    // index 0
+        viewPagerAdapter.addFragment(nearByFragment, getString(R.string.ongoing_event))   // index 1
+        viewPagerAdapter.addFragment(newEventFragment, getString(R.string.add_event))    // index 2
+        viewPagerAdapter.addFragment(profileFragment, getString(R.string.preference))    // index 3
         viewPager.adapter = viewPagerAdapter
     }
 
@@ -185,7 +183,7 @@ class MainActivity : AppCompatActivity(), HomeFragment.MyOnScrollChangeListener,
     override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             if (System.currentTimeMillis() - mExitTime > 2000) {
-                MyToast.show(this@MainActivity, "Press again to exit")
+                MyToast.show(this@MainActivity, getString(R.string.press_again_to_exit))
                 mExitTime = System.currentTimeMillis()
             } else {
                 MyToast.cancel()

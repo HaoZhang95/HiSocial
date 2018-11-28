@@ -39,7 +39,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Children"
+                        android:text="@string/children"
                         android:textAppearance="@style/Base.TextAppearance.AppCompat.Title" />
 
                     <Button
@@ -49,7 +49,7 @@
                         android:layout_height="wrap_content"
                         android:gravity="center"
                         android:minWidth="0dp"
-                        android:text="MORE"
+                        android:text="@string/more"
                         android:textColor="@color/grey_60" />
 
                 </LinearLayout>
@@ -75,7 +75,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Family Group"
+                        android:text="@string/family"
                         android:textAppearance="@style/Base.TextAppearance.AppCompat.Title" />
 
                     <Button
@@ -85,7 +85,7 @@
                         android:layout_height="wrap_content"
                         android:gravity="center"
                         android:minWidth="0dp"
-                        android:text="MORE"
+                        android:text="@string/more"
                         android:textColor="@color/grey_60" />
 
                 </LinearLayout>

@@ -117,7 +117,7 @@
                                 android:gravity="center_vertical"
                                 android:paddingLeft="@dimen/spacing_small"
                                 android:paddingRight="@dimen/spacing_small"
-                                android:text="Title"
+                                android:text="@string/title"
                                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                                 android:textColor="@color/grey_90" />
 
@@ -133,7 +133,7 @@
                                     android:text="title"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:hint="Event title" />
+                                    android:hint="@string/event_title_hint" />
 
                                 <Button
                                     android:id="@+id/bt_continue_title"
@@ -141,7 +141,8 @@
                                     android:layout_height="wrap_content"
                                     android:gravity="center"
                                     android:minWidth="0dp"
-                                    android:text="CONTINUE"
+                                    android:textAllCaps="false"
+                                    android:text="@string/continue_step"
                                     android:theme="@style/Button.Primary" />
 
                             </LinearLayout>
@@ -203,7 +204,7 @@
                                 android:gravity="center_vertical"
                                 android:paddingLeft="@dimen/spacing_small"
                                 android:paddingRight="@dimen/spacing_small"
-                                android:text="Description"
+                                android:text="@string/desc"
                                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                                 android:textColor="@color/grey_90" />
 
@@ -220,7 +221,7 @@
                                     android:layout_height="wrap_content"
                                     android:gravity="top"
                                     android:text="desc"
-                                    android:hint="Event description"
+                                    android:hint="@string/event_description_hint"
                                     android:lines="4" />
 
                                 <Button
@@ -229,8 +230,9 @@
                                     android:layout_height="wrap_content"
                                     android:gravity="center"
                                     android:minWidth="0dp"
-                                    android:text="CONTINUE"
-                                    android:theme="@style/Button.Primary" />
+                                    android:textAllCaps="false"
+                                    android:text="@string/continue_step"
+                                    android:theme="@style/Button.Primary"  />
 
                             </LinearLayout>
 
@@ -291,7 +293,7 @@
                                 android:gravity="center_vertical"
                                 android:paddingLeft="@dimen/spacing_small"
                                 android:paddingRight="@dimen/spacing_small"
-                                android:text="Start, End Time"
+                                android:text="@string/start_end_time"
                                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                                 android:textColor="@color/grey_90" />
 
@@ -340,7 +342,8 @@
                                     android:layout_height="wrap_content"
                                     android:gravity="center"
                                     android:minWidth="0dp"
-                                    android:text="CONTINUE"
+                                    android:textAllCaps="false"
+                                    android:text="@string/continue_step"
                                     android:theme="@style/Button.Primary" />
 
                             </LinearLayout>
@@ -402,7 +405,7 @@
                                 android:gravity="center_vertical"
                                 android:paddingLeft="@dimen/spacing_small"
                                 android:paddingRight="@dimen/spacing_small"
-                                android:text="Date"
+                                android:text="@string/date"
                                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                                 android:textColor="@color/grey_90" />
 
@@ -429,8 +432,9 @@
                                     android:layout_height="wrap_content"
                                     android:gravity="center"
                                     android:minWidth="0dp"
-                                    android:text="CONTINUE"
-                                    android:theme="@style/Button.Primary" />
+                                    android:textAllCaps="false"
+                                    android:text="@string/continue_step"
+                                    android:theme="@style/Button.Primary"  />
 
                             </LinearLayout>
 
@@ -491,7 +495,7 @@
                                 android:gravity="center_vertical"
                                 android:paddingLeft="@dimen/spacing_small"
                                 android:paddingRight="@dimen/spacing_small"
-                                android:text="Location"
+                                android:text="@string/location"
                                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                                 android:textColor="@color/grey_90" />
 
@@ -549,8 +553,9 @@
                                     android:layout_height="wrap_content"
                                     android:gravity="center"
                                     android:minWidth="0dp"
-                                    android:text="CONTINUE"
-                                    android:theme="@style/Button.Primary" />
+                                    android:textAllCaps="false"
+                                    android:text="@string/continue_step"
+                                    android:theme="@style/Button.Primary"  />
 
                             </LinearLayout>
 
@@ -612,7 +617,7 @@
                                 android:gravity="center_vertical"
                                 android:paddingLeft="@dimen/spacing_small"
                                 android:paddingRight="@dimen/spacing_small"
-                                android:text="Confirmation"
+                                android:text="@string/confirmation"
                                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                                 android:textColor="@color/grey_90" />
 
@@ -629,10 +634,9 @@
                                     android:layout_height="wrap_content"
                                     android:gravity="center"
                                     android:minWidth="0dp"
-                                    android:text="ADD EVENT"
+                                    android:textAllCaps="false"
+                                    android:text="@string/add_event"
                                     android:theme="@style/Button.Primary" />
-
-
                             </LinearLayout>
 
                         </LinearLayout>

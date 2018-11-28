@@ -46,7 +46,7 @@
                         android:maxLines="1"
                         android:minHeight="@dimen/spacing_xmlarge"
                         android:singleLine="true"
-                        android:text="From"
+                        android:text="@string/from"
                         android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
                         android:textColor="@color/grey_80" />
 
@@ -94,7 +94,7 @@
                             android:maxLines="1"
                             android:minHeight="@dimen/spacing_xmlarge"
                             android:singleLine="true"
-                            android:text="To"
+                            android:text="@string/to"
                             android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
                             android:textColor="@color/grey_80" />
 
@@ -129,7 +129,7 @@
                         android:maxLines="1"
                         android:minHeight="@dimen/spacing_xmlarge"
                         android:singleLine="true"
-                        android:text="Depart At:"
+                        android:text="@string/depart_at"
                         android:paddingRight="@dimen/spacing_middle"
                         android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
                         android:textColor="@color/colorPrimary" />
@@ -157,7 +157,7 @@
                         android:maxLines="1"
                         android:minHeight="@dimen/spacing_xmlarge"
                         android:singleLine="true"
-                        android:text="Date:"
+                        android:text="@string/date_in_route"
                         android:paddingRight="@dimen/spacing_middle"
                         android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
                         android:textColor="@color/colorPrimary" />

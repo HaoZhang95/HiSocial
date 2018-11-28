@@ -186,7 +186,7 @@ class SearchActivity : AppCompatActivity() {
         val mDialog = ProgressDialog(this)
         mDialog.setProgressStyle(0)
         mDialog.setCancelable(false)
-        mDialog.setMessage("Loading...")
+        mDialog.setMessage(getString(R.string.loading))
         mDialog.show()
 
         val call = Networking.service.searchPlacesResult()
@@ -211,7 +211,7 @@ class SearchActivity : AppCompatActivity() {
                     mDialog.dismiss()
                     LogUtils.e("size: --> ${dataList.size}")
                 } else {
-                    MyToast.show(this@SearchActivity, "Can not get any areas")
+                    MyToast.show(this@SearchActivity, getString(R.string.check_network))
                     mDialog.dismiss()
                 }
             }
@@ -219,6 +219,7 @@ class SearchActivity : AppCompatActivity() {
             // this method gets called if the http call fails (no internet etc)
             override fun onFailure(call: Call<SearchPlacesResultObject>, t: Throwable) {
                 LogUtils.e("onFailure: " + t.toString())
+                MyToast.show(this@SearchActivity, getString(R.string.check_network))
                 mDialog.dismiss()
             }
         }
@@ -266,7 +267,7 @@ class SearchActivity : AppCompatActivity() {
         }
         selectedLocation = null
 
-        MyToast.show(this, "Reset successfully")
+        MyToast.show(this, getString(R.string.reset_done))
     }
 
 

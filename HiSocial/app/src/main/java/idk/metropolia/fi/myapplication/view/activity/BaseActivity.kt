@@ -11,6 +11,7 @@ import android.provider.Settings
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
+import idk.metropolia.fi.myapplication.R
 
 open class BaseActivity : AppCompatActivity() {
 
@@ -39,10 +40,10 @@ open class BaseActivity : AppCompatActivity() {
                         //在用户已经拒绝授权的情况下，如果shouldShowRequestPermissionRationale返回false则
                         // 可以推断出用户选择了“不在提示”选项，在这种情况下需要引导用户至设置页手动授权
                         if (!ActivityCompat.shouldShowRequestPermissionRationale(this, permissions[i])) {
-                            AlertDialog.Builder(this).setTitle("Permission Request")//设置对话框标题
-                                    .setMessage("Hi there，You need this permission：" + permissionNames +
-                                            " Please allow, otherwise normal function will be affected。")//设置显示的内容
-                                    .setPositiveButton("Allow") { dialog, which ->
+                            AlertDialog.Builder(this).setTitle(getString(R.string.permission_request))//设置对话框标题
+                                    .setMessage(getString(R.string.permission_request_message_part_one) + permissionNames +
+                                            getString(R.string.permission_request_message_part_two))//设置显示的内容
+                                    .setPositiveButton(getString(R.string.allow)) { dialog, which ->
                                         //添加确定按钮
                                         //确定按钮的响应事件
                                         //TODO Auto-generated method stub
@@ -51,7 +52,7 @@ open class BaseActivity : AppCompatActivity() {
                                         intent.data = uri
                                         startActivity(intent)
                                         dialog.dismiss()
-                                    }.setNegativeButton("Cancel") { dialog, which ->
+                                    }.setNegativeButton(getString(R.string.cancel)) { dialog, which ->
                                         //添加返回按钮
                                         //响应事件
                                         // TODO Auto-generated method stub
@@ -87,10 +88,10 @@ open class BaseActivity : AppCompatActivity() {
             if (ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_DENIED) {
                 isAllGranted = false
                 if (ActivityCompat.shouldShowRequestPermissionRationale(context as Activity, permission)) {
-                    AlertDialog.Builder(context).setTitle("Permission Request")//设置对话框标题
-                            .setMessage("Hi there，You need this permission：" + permissionNames +
-                                    " Please allow, otherwise normal function will be affected。")//设置显示的内容
-                            .setPositiveButton("Okay") { dialog, which ->
+                    AlertDialog.Builder(context).setTitle(getString(R.string.permission_request))//设置对话框标题
+                            .setMessage(getString(R.string.permission_request_message_part_one) + permissionNames +
+                                    getString(R.string.permission_request_message_part_two))//设置显示的内容
+                            .setPositiveButton(getString(R.string.okay)) { _, _ ->
                                 //添加确定按钮
                                 //确定按钮的响应事件
                                 //TODO Auto-generated method stub

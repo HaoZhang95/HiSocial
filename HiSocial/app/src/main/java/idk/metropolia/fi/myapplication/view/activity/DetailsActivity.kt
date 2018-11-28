@@ -226,7 +226,7 @@ class DetailsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private fun openWebPage(url: String) {
         if (url == Tools.UN_KNOWN) {
-            MyToast.show(this, "Link is not provided")
+            MyToast.show(this, getString(R.string.link_missing))
         } else {
             browse(url)
         }
@@ -234,7 +234,7 @@ class DetailsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private fun openCallPage(number: String) {
         if (number == Tools.UN_KNOWN) {
-            MyToast.show(this, "Phone number is not provided")
+            MyToast.show(this, getString(R.string.phone_num_missing))
         } else {
             makeCall(number)
         }
@@ -243,11 +243,7 @@ class DetailsActivity : AppCompatActivity(), OnMapReadyCallback {
     private fun toggleSectionInfo(view: View) {
         val show = toggleArrow(view)
         if (show) {
-            ViewAnimationUtils.expand(lyt_expand_info, object : ViewAnimationUtils.AnimListener {
-                override fun onFinish() {
-                    Tools.nestedScrollTo(nested_scroll_view, lyt_expand_info)
-                }
-            })
+            ViewAnimationUtils.expand(lyt_expand_info) { Tools.nestedScrollTo(nested_scroll_view, lyt_expand_info) }
         } else {
             ViewAnimationUtils.collapse(lyt_expand_info)
         }
@@ -264,7 +260,6 @@ class DetailsActivity : AppCompatActivity(), OnMapReadyCallback {
         } else {
             // share("test", "share content?")
             // email("hello@makery.co", "Great app idea", "potato")
-
             shareContent()
         }
         return super.onOptionsItemSelected(item)
@@ -290,7 +285,7 @@ class DetailsActivity : AppCompatActivity(), OnMapReadyCallback {
             intent.putExtra(Intent.EXTRA_SUBJECT, "Hello, this is the subject line")
             intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(file))
             intent.type = "image/*"
-            startActivity(Intent.createChooser(intent, "share image via"))
+            startActivity(Intent.createChooser(intent, getString(R.string.share_img)))
         } catch (e: Exception) {
             LogUtils.e(e.localizedMessage)
         }

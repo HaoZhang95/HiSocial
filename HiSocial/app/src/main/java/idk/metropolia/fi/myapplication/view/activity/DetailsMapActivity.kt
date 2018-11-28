@@ -20,6 +20,7 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
 import idk.metropolia.fi.myapplication.R
+import idk.metropolia.fi.myapplication.R.color.*
 import idk.metropolia.fi.myapplication.fragment.RouteDetailsFragment
 import idk.metropolia.fi.myapplication.view.fragment.RouteFragment
 import idk.metropolia.fi.myapplication.utils.PolylineUtils
@@ -149,15 +150,16 @@ class DetailsMapActivity : AppCompatActivity(), RouteFragment.OnItemClickListene
                 val polylineOptions = PolylineOptions()
 
                 when(it.mode().toString()) {
+
                     "BICYCLE" -> { polylineOptions.color(resources.getColor(R.color.colorBike, null))
                     }
                     "BUS"-> { polylineOptions.color(resources.getColor(R.color.colorBus, null))
                     }
-                    "FERRY"-> { polylineOptions.color(resources.getColor(R.color.colorFerry, null))
+                    getString(R.string.ferry)-> { polylineOptions.color(resources.getColor(R.color.colorFerry, null))
                     }
-                    "RAIL"-> { polylineOptions.color(resources.getColor(R.color.colorTrain, null))
+                    "FERRY"-> { polylineOptions.color(resources.getColor(R.color.colorTrain, null))
                     }
-                    "SUBWAY"-> { polylineOptions.color(resources.getColor(R.color.colorMetro, null))
+                    "RAIL"-> { polylineOptions.color(resources.getColor(R.color.colorMetro, null))
                     }
                     "TRAM" -> { polylineOptions.color(resources.getColor(R.color.colorTram, null))
                     }

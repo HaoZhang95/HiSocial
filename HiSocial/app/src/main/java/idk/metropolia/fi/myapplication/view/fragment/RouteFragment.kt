@@ -169,16 +169,16 @@ class RouteFragment : BaseFragment(),
                     fromCoordinate = Coordinate(location.longitude, location.latitude)
                     DetailsMapActivity.detailsMapFromLat = location.latitude
                     DetailsMapActivity.detailsMapFromLng = location.longitude
-                    tv_origin.text = "My Location √"
+                    tv_origin.text = getString(R.string.my_location_okay)
                     showItinerary()
                 } else {
-                    tv_origin.text = "My Location ❌"
-                    MyToast.show(context!!,"Get current location failed, Please type your location manually")
+                    tv_origin.text = getString(R.string.my_location_failed)
+                    MyToast.show(context!!,getString(R.string.get_my_location_failed))
                 }
             }
 
             override fun denied() {
-                MyToast.show(context!!, "Some permission acquisition failed, normal function is affected！")
+                MyToast.show(context!!, getString(R.string.permission_missing_message))
             }
         })
     }
@@ -188,7 +188,7 @@ class RouteFragment : BaseFragment(),
             val mDialog = ProgressDialog(context)
             mDialog.setProgressStyle(0)
             mDialog.setCancelable(false)
-            mDialog.setMessage("Loading...")
+            mDialog.setMessage(getString(R.string.loading))
             mDialog.show()
 
             Apollo.apolloClient.query(ItineraryPlanQuery
@@ -204,7 +204,7 @@ class RouteFragment : BaseFragment(),
             ).enqueue(object : ApolloCall.Callback<ItineraryPlanQuery.Data>() {
                 override fun onFailure(e: ApolloException) {
                     errorMessageTextView.visibility = View.VISIBLE
-                    errorMessageTextView.text = "Cannot get route"
+                    errorMessageTextView.text = getString(R.string.check_network)
                     mDialog.dismiss()
                 }
 
@@ -225,7 +225,7 @@ class RouteFragment : BaseFragment(),
                         this@RouteFragment.activity?.runOnUiThread {
                             errorMessageTextView.visibility = View.VISIBLE
                             itineraryResultView.visibility = View.GONE
-                            errorMessageTextView.text = "Cannot get route"
+                            errorMessageTextView.text = getString(R.string.check_network)
                             mDialog.dismiss()
                         }
                     }
@@ -257,7 +257,7 @@ class RouteFragment : BaseFragment(),
         } catch (e: GooglePlayServicesRepairableException) {
             GoogleApiAvailability.getInstance().getErrorDialog(activity, e.connectionStatusCode, 0).show()
         } catch (e: GooglePlayServicesNotAvailableException) {
-            val message = "Google Play Services is not available: " + GoogleApiAvailability.getInstance().getErrorString(e.errorCode)
+            val message = getString(R.string.google_service_error) + GoogleApiAvailability.getInstance().getErrorString(e.errorCode)
             Snackbar.make(parent_view, message, Snackbar.LENGTH_SHORT).show()
         }
     }

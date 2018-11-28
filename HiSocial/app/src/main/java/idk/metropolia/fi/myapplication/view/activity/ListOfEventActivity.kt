@@ -56,7 +56,7 @@ class ListOfEventActivity : AppCompatActivity() {
         backButotn.setOnClickListener { finish() }
         searchButton.setOnClickListener { searchAction() }
 
-        searchET.setOnEditorActionListener { textView, actionId, keyEvent ->
+        searchET.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 hideKeyboard()
                 searchAction()
@@ -96,7 +96,7 @@ class ListOfEventActivity : AppCompatActivity() {
         val mDialog = ProgressDialog(this)
         mDialog.setProgressStyle(0)
         mDialog.setCancelable(false)
-        mDialog.setMessage("Loading...")
+        mDialog.setMessage(getString(R.string.loading))
         mDialog.show()
 
         if (location != null && end != null) {
@@ -141,7 +141,7 @@ class ListOfEventActivity : AppCompatActivity() {
                     mDialog.dismiss()
                     LogUtils.e("size: --> ${dataList.size}")
                 } else {
-                    MyToast.show(this@ListOfEventActivity, "Can not get any result")
+                    MyToast.show(this@ListOfEventActivity, getString(R.string.check_network))
                     mDialog.dismiss()
                 }
             }
@@ -149,6 +149,7 @@ class ListOfEventActivity : AppCompatActivity() {
             // this method gets called if the http call fails (no internet etc)
             override fun onFailure(call: retrofit2.Call<SearchEventsResultObject>, t: Throwable) {
                 LogUtils.e("onFailure: " + t.toString())
+                MyToast.show(this@ListOfEventActivity, getString(R.string.check_network))
                 mDialog.dismiss()
             }
         }

@@ -67,7 +67,7 @@ class MapActivity : BaseActivity() {
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         toolbar.setNavigationIcon(R.drawable.ic_back)
         setSupportActionBar(toolbar)
-        supportActionBar!!.title = "Map"
+        supportActionBar!!.title = getString(R.string.map)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
     }
 
@@ -95,7 +95,7 @@ class MapActivity : BaseActivity() {
         val mDialog = ProgressDialog(this)
         mDialog.setProgressStyle(0)
         mDialog.setCancelable(false)
-        mDialog.setMessage("Loading...")
+        mDialog.setMessage(getString(R.string.loading))
         mDialog.show()
 
         for (i in 0..10) {
@@ -103,6 +103,7 @@ class MapActivity : BaseActivity() {
 
                 override fun onFailure(call: Call<SearchEventsResultObject>?, t: Throwable?) {
                     LogUtils.e("loadEventsByKeywordType --> onFailure: ${t?.localizedMessage}")
+                    MyToast.show(this@MapActivity, getString(R.string.check_network))
                     mDialog.dismiss()
                 }
 
@@ -174,12 +175,12 @@ class MapActivity : BaseActivity() {
         val view = layoutInflater.inflate(R.layout.sheet_event_info_floating, null)
         (view.findViewById(R.id.name) as TextView).text = obj.name?.fi
         (view.findViewById(R.id.brief) as TextView).text = Tools.getFormattedDateEvent(Tools.convertDateToLong(obj.startTime))
-        (view.findViewById(R.id.description) as TextView).text = obj.shortDescription?.fi ?: "No Short Description"
+        (view.findViewById(R.id.description) as TextView).text = obj.shortDescription?.fi ?: getString(R.string.no_short_desc)
         val tvPrice = view.findViewById<TextView>(R.id.tv_price)
 
         if (obj.offers.isNotEmpty()) {
             tvPrice.text = if (obj.offers[0].isFree) {
-                "Free"
+                getString(R.string.free)
             } else {
                 obj.offers[0].price?.fi ?: Tools.UN_KNOWN
             }
@@ -231,13 +232,13 @@ class MapActivity : BaseActivity() {
                             mMap?.uiSettings?.isMyLocationButtonEnabled = false
                         }
                     } else {
-                        LogUtils.e("Location permission acquisition failed, normal function is affected！")
+                        LogUtils.e(getString(R.string.permission_missing_message))
                     }
                 }
 
                 @SuppressLint("MissingPermission")
                 override fun denied() {
-                    MyToast.show(this@MapActivity, "Location permission acquisition failed, normal function is affected！")
+                    MyToast.show(this@MapActivity, getString(R.string.permission_missing_message))
                     mMap?.isMyLocationEnabled = false;
                     mMap?.uiSettings?.isMyLocationButtonEnabled = false;
                 }
@@ -247,20 +248,21 @@ class MapActivity : BaseActivity() {
     }
 
     private val raidusList = arrayOf(1000.0,
-            3000.0, 5000.0, 7000.0, 10000.0,"Remove Radius?")
-    private val raidusString = arrayOf("1K meters",
-            "3K meters", "5k meters", "7K meters", "10K meters","Remove Radius?")
+            3000.0, 5000.0, 7000.0, 10000.0,getString(R.string.remove_radius))
+    private val raidusString = arrayOf(getString(R.string.one_k_meters),
+            getString(R.string.three_k_meters),
+            getString(R.string.five_k_meters), getString(R.string.seven_k_meters), getString(R.string.ten_k_meters),getString(R.string.remove_radius))
     private var selectedIndex = 2
     private fun showRadiusChoiceDialog() {
         val builder = AlertDialog.Builder(this)
-        builder.setTitle("Radius Settings")
+        builder.setTitle(getString(R.string.radius_settings))
         builder.setSingleChoiceItems(raidusString, selectedIndex) { _, i ->
             selectedIndex = i
         }
-        builder.setPositiveButton("Okay") { dialogInterface, i ->
+        builder.setPositiveButton(getString(R.string.okay)) { dialogInterface, i ->
             updateCircle()
         }
-        builder.setNegativeButton("Cancel", null)
+        builder.setNegativeButton(getString(R.string.cancel), null)
         builder.show()
     }
 

@@ -116,7 +116,7 @@ class NewEventFragment : BaseFragment() {
         bt_continue_title.setOnClickListener {
             // validate input user here
             if ((view!!.findViewById(R.id.et_title) as EditText).text.toString().trim { it <= ' ' } == "") {
-                Snackbar.make(parent_view, "Title cannot empty", Snackbar.LENGTH_SHORT).show()
+                Snackbar.make(parent_view, getString(R.string.title_empty), Snackbar.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
             collapseAndContinue(0)
@@ -125,7 +125,7 @@ class NewEventFragment : BaseFragment() {
         bt_continue_description.setOnClickListener {
             // validate input user here
             if ((view!!.findViewById(R.id.et_description) as EditText).text.toString().trim { it <= ' ' } == "") {
-                Snackbar.make(parent_view, "Description cannot empty", Snackbar.LENGTH_SHORT).show()
+                Snackbar.make(parent_view, getString(R.string.desc_empy), Snackbar.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
             collapseAndContinue(1)
@@ -134,7 +134,7 @@ class NewEventFragment : BaseFragment() {
         bt_continue_time.setOnClickListener {
             // validate input user here
             if (startTime == null || endTime == null) {
-                Snackbar.make(parent_view, "Please set event start Time and end Time", Snackbar.LENGTH_SHORT).show()
+                Snackbar.make(parent_view, getString(R.string.time_empy), Snackbar.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
             collapseAndContinue(2)
@@ -143,7 +143,7 @@ class NewEventFragment : BaseFragment() {
         bt_continue_date.setOnClickListener {
             // validate input user here
             if (date == null) {
-                Snackbar.make(parent_view, "Please set event date", Snackbar.LENGTH_SHORT).show()
+                Snackbar.make(parent_view, getString(R.string.date_empty), Snackbar.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
             collapseAndContinue(3)
@@ -151,7 +151,7 @@ class NewEventFragment : BaseFragment() {
 
         bt_continue_location.setOnClickListener {
             if (selectedLocation == null) {
-                Snackbar.make(parent_view, "Please select event location", Snackbar.LENGTH_SHORT).show()
+                Snackbar.make(parent_view, getString(R.string.location_empy), Snackbar.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
             collapseAndContinue(4)
@@ -251,7 +251,7 @@ class NewEventFragment : BaseFragment() {
         val mDialog = ProgressDialog(context)
         mDialog.setProgressStyle(0)
         mDialog.setCancelable(false)
-        mDialog.setMessage("Loading...")
+        mDialog.setMessage(getString(R.string.loading))
         mDialog.show()
 
         val call = Networking.testService.postNewEvent(ev)
@@ -263,10 +263,10 @@ class NewEventFragment : BaseFragment() {
                 if (response.isSuccessful) {
                     val res = response.body()
                     LogUtils.e(res.toString())
-                    MyToast.show(context!!, "Created successfully")
+                    MyToast.show(context!!, getString(R.string.create_event_okay))
                     mDialog.dismiss()
                 } else {
-                    MyToast.show(context!!, "Created failed, Please retry")
+                    MyToast.show(context!!, getString(R.string.create_event_failed))
                     mDialog.dismiss()
                 }
             }
@@ -274,6 +274,7 @@ class NewEventFragment : BaseFragment() {
             // this method gets called if the http call fails (no internet etc)
             override fun onFailure(call: Call<JsonObject>, t: Throwable) {
                 LogUtils.e("onFailure: " + t.toString())
+                MyToast.show(context!!, getString(R.string.check_network))
                 mDialog.dismiss()
             }
         }
@@ -292,12 +293,12 @@ class NewEventFragment : BaseFragment() {
                     }
                     PhotoUtils.takePicture(activity, imageUri, CODE_CAMERA_REQUEST)
                 } else {
-                    MyToast.show(context!!, "No sdcard on the device！")
+                    MyToast.show(context!!, getString(R.string.no_sdcard))
                 }
             }
 
             override fun denied() {
-                MyToast.show(context!!, "Some permission acquisition failed, normal function is affected！")
+                MyToast.show(context!!, getString(R.string.permission_missing_message))
             }
         })
     }
@@ -367,7 +368,7 @@ class NewEventFragment : BaseFragment() {
             }
 
             override fun denied() {
-                MyToast.show(context!!, "Some permission acquisition failed, normal function is affected！")
+                MyToast.show(context!!, getString(R.string.permission_missing_message))
             }
         })
     }
@@ -397,7 +398,7 @@ class NewEventFragment : BaseFragment() {
                             newUri = FileProvider.getUriForFile(context!!, fileProviderPath, File(newUri.path!!))
                         PhotoUtils.notCropImageUri(activity, newUri, cropImageUri, CODE_RESULT_REQUEST)
                     } else {
-                        MyToast.show(context!!, "No sdcard on the device！")
+                        MyToast.show(context!!, getString(R.string.no_sdcard))
                     }
                 CODE_RESULT_REQUEST -> {
                     val bitmap = PhotoUtils.getBitmapFromUri(cropImageUri, context)

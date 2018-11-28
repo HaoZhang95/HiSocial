@@ -25,10 +25,10 @@
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
             app:contentInsetStartWithNavigation="0dp"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-            app:subtitle="Choose event by different area"
+            app:subtitle="@string/hi_subtitle"
             app:subtitleTextAppearance="@style/Base.TextAppearance.AppCompat.Caption"
             app:subtitleTextColor="@color/grey_10"
-            app:title="Hi, there" />
+            app:title="@string/hi_there" />
 
     </RelativeLayout>
 
@@ -66,7 +66,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@android:color/transparent"
-                android:hint="Search"
+                android:hint="@string/search"
                 android:imeOptions="actionSearch"
                 android:maxLines="1"
                 android:singleLine="true">
@@ -128,7 +128,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Select your nearest Area ?"
+                        android:text="@string/select_your_nearest_area"
                         android:textAlignment="center"
                         android:textAppearance="@style/Base.TextAppearance.AppCompat.Headline"
                         android:textColor="@color/indigo_700" />
@@ -137,7 +137,7 @@
                         android:id="@+id/btn_clear"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Click here to clear your selection"
+                        android:text="@string/click_here_to_clear_your_selection"
                         android:textAlignment="center"
                         android:textAppearance="@style/Base.TextAppearance.AppCompat.Subhead"
                         android:textColor="@color/grey_40" />
