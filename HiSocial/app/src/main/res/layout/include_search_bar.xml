@@ -29,12 +29,12 @@
             android:orientation="horizontal">
 
             <ImageButton
-                android:id="@+id/bt_menu"
+                android:id="@+id/bt_back"
                 android:layout_width="?attr/actionBarSize"
                 android:layout_height="?attr/actionBarSize"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:tint="@color/grey_60"
-                app:srcCompat="@drawable/ic_stack_menu" />
+                app:srcCompat="@drawable/ic_back" />
 
             <EditText
                 android:id="@+id/et_search"
@@ -50,12 +50,12 @@
             </EditText>
 
             <ImageButton
-                android:id="@+id/addFilterBtn"
+                android:id="@+id/filterBtn"
                 android:layout_width="?attr/actionBarSize"
                 android:layout_height="?attr/actionBarSize"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:tint="@color/grey_60"
-                app:srcCompat="@drawable/ic_add" />
+                app:srcCompat="@drawable/ic_search" />
 
         </LinearLayout>
 

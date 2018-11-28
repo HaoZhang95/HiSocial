@@ -7,18 +7,11 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.ahao9.socialevent.httpsService.Service;
-import com.example.ahao9.socialevent.utils.LogUtils;
-
-import java.util.ArrayList;
 import java.util.List;
 
 import idk.metropolia.fi.myapplication.R;
-import idk.metropolia.fi.myapplication.model.SearchEventsResultObject.SingleBeanInSearch;
 import idk.metropolia.fi.myapplication.model.SingleBeanData;
-import idk.metropolia.fi.myapplication.model.SingleEventLocationObject;
 import idk.metropolia.fi.myapplication.utils.Tools;
-import rx.Subscriber;
 
 public class MyNearByRVAdapter extends RecyclerView.Adapter<MyNearByRVAdapter.MyHolder> {
 

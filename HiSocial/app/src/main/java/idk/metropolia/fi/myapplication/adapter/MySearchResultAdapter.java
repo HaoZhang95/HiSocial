@@ -16,18 +16,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 import idk.metropolia.fi.myapplication.R;
+import idk.metropolia.fi.myapplication.model.SingleBeanData;
 import idk.metropolia.fi.myapplication.model.SingleEventLocationObject;
 import idk.metropolia.fi.myapplication.utils.Tools;
 import rx.Subscriber;
 
 public class MySearchResultAdapter extends RecyclerView.Adapter<MySearchResultAdapter.MyHolder> {
 
-    private List<SingleBeanInSearch> list;
+    private List<SingleBeanData> list;
     private Context context;
-    private List mLocationDatas = new ArrayList<SingleEventLocationObject>();
     private Subscriber<SingleEventLocationObject> mListLocationSubscriber;
 
-    public MySearchResultAdapter(Context context, List<SingleBeanInSearch> list) {
+    public MySearchResultAdapter(Context context, List<SingleBeanData> list) {
         this.list = list;
         this.context = context;
     }
@@ -69,7 +69,7 @@ public class MySearchResultAdapter extends RecyclerView.Adapter<MySearchResultAd
             });
         }
 
-        public void setDataAndRefreshUI(SingleBeanInSearch dataBean){
+        public void setDataAndRefreshUI(SingleBeanData dataBean){
             if (dataBean.getImages().size() > 0) {
                 Tools.displayImageOriginal(context, iv_event, dataBean.getImages().get(0).getUrl());
             } else {

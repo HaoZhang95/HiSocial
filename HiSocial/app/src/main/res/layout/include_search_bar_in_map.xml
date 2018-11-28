@@ -29,7 +29,7 @@
             android:orientation="horizontal">
 
             <ImageButton
-                android:id="@+id/bt_menu"
+                android:id="@+id/bt_back"
                 android:layout_width="?attr/actionBarSize"
                 android:layout_height="?attr/actionBarSize"
                 android:background="?attr/selectableItemBackgroundBorderless"

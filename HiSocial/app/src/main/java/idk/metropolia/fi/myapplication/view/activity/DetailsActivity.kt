@@ -22,7 +22,6 @@ import com.example.ahao9.socialevent.utils.MyToast
 import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.LatLng
 import idk.metropolia.fi.myapplication.R
-import idk.metropolia.fi.myapplication.model.SearchEventsResultObject.SingleBeanInSearch
 import idk.metropolia.fi.myapplication.utils.Tools
 import kotlinx.android.synthetic.main.activity_details.*
 import com.google.android.gms.maps.CameraUpdateFactory

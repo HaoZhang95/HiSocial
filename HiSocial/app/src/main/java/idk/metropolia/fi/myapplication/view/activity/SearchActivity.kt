@@ -21,7 +21,6 @@ import idk.metropolia.fi.myapplication.model.SearchPlacesResultObject
 import idk.metropolia.fi.myapplication.utils.Tools
 import kotlinx.android.synthetic.main.activity_search.*
 import org.jetbrains.anko.startActivity
-import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -54,7 +53,7 @@ class SearchActivity : AppCompatActivity() {
 
     private fun initListeners() {
 
-        addFilterBtn.setOnClickListener { showFilterDialog() }
+        filterBtn.setOnClickListener { showFilterDialog() }
 
         et_search.setOnEditorActionListener { textView, actionId, keyEvent ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
@@ -72,7 +71,7 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun searchAction(text: String) {
-        et_search.text.clear()
+//        et_search.text.clear()
         et_search.clearFocus()
 
         val bundle = Bundle()

@@ -76,7 +76,7 @@
             </EditText>
 
             <ImageButton
-                android:id="@+id/addFilterBtn"
+                android:id="@+id/filterBtn"
                 android:layout_width="?attr/actionBarSize"
                 android:layout_height="?attr/actionBarSize"
                 android:background="?android:attr/selectableItemBackgroundBorderless"

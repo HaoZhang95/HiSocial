@@ -1,37 +1,37 @@
 package idk.metropolia.fi.myapplication.view.activity
 
+import android.content.Context
 import android.os.Bundle
 import android.support.v4.widget.NestedScrollView
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
+import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
+import android.widget.ImageButton
 import android.widget.LinearLayout
-import com.example.ahao9.socialevent.httpsService.Service
 import com.example.ahao9.socialevent.utils.LogUtils
 import com.example.ahao9.socialevent.utils.MyToast
 import idk.metropolia.fi.myapplication.R
 import idk.metropolia.fi.myapplication.adapter.MySearchResultAdapter
 import idk.metropolia.fi.myapplication.httpsService.Networking
 import idk.metropolia.fi.myapplication.model.SearchEventsResultObject
-import idk.metropolia.fi.myapplication.model.SearchEventsResultObject.SingleBeanInSearch
-import idk.metropolia.fi.myapplication.model.SearchPlacesResultObject
+import idk.metropolia.fi.myapplication.model.SingleBeanData
 import idk.metropolia.fi.myapplication.utils.Tools
-import idk.metropolia.fi.myapplication.view.activity.SearchActivity.Companion.LOCATION_NAME_LIST
 import kotlinx.android.synthetic.main.activity_card_basic.*
-import okhttp3.Call
-import okhttp3.Callback
-import okhttp3.Response
 import org.jetbrains.anko.startActivity
-import rx.Subscriber
 import java.io.Serializable
 
 class ListOfEventActivity : AppCompatActivity() {
 
     private lateinit var search_bar: View
+    private lateinit var backButotn: ImageButton
+    private lateinit var searchButton: ImageButton
+    private lateinit var searchET: EditText
 
     private var mListAdapter: MySearchResultAdapter? = null
-    private val mDatas = ArrayList<SingleBeanInSearch>()
-    private lateinit var mListSubscriber: Subscriber<SearchEventsResultObject>
+    private val mDatas = ArrayList<SingleBeanData>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,11 +43,42 @@ class ListOfEventActivity : AppCompatActivity() {
         val endDate = bundle["end"] as String?
         val location = bundle["location"] as String?
 
-        loadSearchResultByKeyword(text, startDate?: "today", startDate, location)
+        loadSearchResultByKeyword(text, startDate?: "today", endDate, location)
 
         initComponent()
         initData()
         initListAdapterV()
+        initListeners()
+    }
+
+    private fun initListeners() {
+        backButotn.setOnClickListener { finish() }
+        searchButton.setOnClickListener { searchAction() }
+
+        searchET.setOnEditorActionListener { textView, actionId, keyEvent ->
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                hideKeyboard()
+                searchAction()
+                return@setOnEditorActionListener true
+            }
+            return@setOnEditorActionListener false
+        }
+    }
+
+    private fun searchAction() {
+        val text = searchET.text.toString().trim()
+        if (text.isNotEmpty()) {
+            loadSearchResultByKeyword(text,"today", null, null)
+        }
+    }
+
+    // 设置搜索
+    private fun hideKeyboard() {
+        val view = this.currentFocus
+        if (view != null) {
+            val imm = this.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
+            imm!!.hideSoftInputFromWindow(view.getWindowToken(), 0)
+        }
     }
 
     private fun initData() {
@@ -122,6 +153,10 @@ class ListOfEventActivity : AppCompatActivity() {
 
     private fun initComponent() {
         search_bar = findViewById(R.id.search_bar)
+        backButotn = search_bar.findViewById(R.id.bt_back)
+        searchButton = search_bar.findViewById(R.id.filterBtn)
+        searchET = search_bar.findViewById(R.id.et_search)
+
         nested_scroll_view.setOnScrollChangeListener { v: NestedScrollView?, scrollX: Int, scrollY: Int, oldScrollX: Int, oldScrollY: Int ->
             if (scrollY < oldScrollY) { // up
                 animateSearchBar(false)
