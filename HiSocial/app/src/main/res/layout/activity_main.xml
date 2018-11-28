@@ -49,12 +49,11 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/spacing_smlarge"
-        android:tint="@color/colorPrimary"
         app:backgroundTint="@color/mdtp_white"
         android:clickable="true"
         android:focusable="true"
         app:fabSize="normal"
         app:rippleColor="@color/colorPrimary"
-        app:srcCompat="@drawable/ic_map" />
+        app:srcCompat="@drawable/ic_map_icon24" />
 
 </android.support.design.widget.CoordinatorLayout>

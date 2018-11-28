@@ -79,7 +79,6 @@ class DetailsActivity : AppCompatActivity(), OnMapReadyCallback {
         obj = intent.extras.get("obj") as SearchEventsResultObject.SingleBeanData
         tv_title.text = obj.name?.fi ?: Tools.UN_KNOWN
         DetailsMapActivity.titleStr = obj.name?.fi ?: Tools.UN_KNOWN
-        tv_publisher.text = obj.publisher ?: Tools.UN_KNOWN
         tv_info_url.text = obj.infoUrl?.fi ?: Tools.UN_KNOWN
         tv_subtitle.text = obj.shortDescription?.fi ?: Tools.UN_KNOWN
 

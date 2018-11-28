@@ -50,7 +50,7 @@ class MainActivity : AppCompatActivity(), HomeFragment.MyOnScrollChangeListener,
 
     private fun initToolbar() {
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
-        toolbar.setNavigationIcon(R.drawable.ic_logo_sized)
+        toolbar.setNavigationIcon(R.drawable.rsz_helsinki_logo)
         setSupportActionBar(toolbar)
         supportActionBar?.title = getString(R.string.home)
         Tools.setSystemBarColor(this, R.color.grey_5)
@@ -73,7 +73,7 @@ class MainActivity : AppCompatActivity(), HomeFragment.MyOnScrollChangeListener,
         tab_layout.getTabAt(0)?.setIcon(R.drawable.ic_filter_list)
         tab_layout.getTabAt(1)?.setIcon(R.drawable.ic_timer)
         tab_layout.getTabAt(2)?.setIcon(R.drawable.ic_add)
-        tab_layout.getTabAt(3)?.setIcon(R.drawable.ic_person)
+        tab_layout.getTabAt(3)?.setIcon(R.drawable.ic_settings_white)
 
         // set icon color pre-selected
         tab_layout.getTabAt(0)?.icon?.setColorFilter(resources.getColor(R.color.colorPrimary), PorterDuff.Mode.SRC_IN)
@@ -130,11 +130,11 @@ class MainActivity : AppCompatActivity(), HomeFragment.MyOnScrollChangeListener,
         when (tabPosition) {
             0 -> {
                 fab.visibility = View.VISIBLE
-                fab.setImageDrawable(resources.getDrawable(R.drawable.ic_map))
+                fab.setImageDrawable(resources.getDrawable(R.drawable.ic_google_map_logo))
             }
             1 -> {
                 fab.visibility = View.VISIBLE
-                fab.setImageDrawable(resources.getDrawable(R.drawable.ic_map))
+                fab.setImageDrawable(resources.getDrawable(R.drawable.ic_google_map_logo))
             }
             2 -> {
                 fab.visibility = View.GONE

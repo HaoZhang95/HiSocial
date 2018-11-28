@@ -148,6 +148,7 @@ class SearchActivity : AppCompatActivity() {
                 cur_calender.get(Calendar.YEAR),
                 cur_calender.get(Calendar.MONTH),
                 cur_calender.get(Calendar.DAY_OF_MONTH)
+
         )
         //set dark light
         datePicker.isThemeDark = false

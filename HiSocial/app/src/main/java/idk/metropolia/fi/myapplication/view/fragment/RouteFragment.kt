@@ -138,7 +138,8 @@ class RouteFragment : BaseFragment(),
     private fun showTimePicker() {
         val cur_calender = Calendar.getInstance()
 
-        val datePicker = TimePickerDialog.newInstance({ view, hourOfDay, minute, second ->
+        val datePicker = TimePickerDialog.newInstance(
+                { view, hourOfDay, minute, second ->
             LogUtils.e(hourOfDay.toString() + " : " + minute)
             this.hourOfDay = hourOfDay
             this.minute = minute
