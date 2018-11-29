@@ -83,4 +83,32 @@
     <string name="camera">Camera</string>
     <string name="gallery">Gallery</string>
     <string name="back_to_home">Back to Home</string>
+    <string name="end_before">End Before</string>
+    <string name="start_from">Start From</string>
+    <string name="age">Age</string>
+    <string name="price">Price</string>
+    <string name="all">All</string>
+    <string name="DISCARD">Discard</string>
+    <string name="reset_selctions">Reset selections ?</string>
+    <string name="category_dance">Dancing</string>
+    <string name="category_floorball">Floorball</string>
+    <string name="category_reading">Reading</string>
+    <string name="category_hiking">Hiking</string>
+    <string name="category_running">Running</string>
+    <string name="category_chess">Chess</string>
+    <string name="category_painting">Painting</string>
+    <string name="category_golf">Golf</string>
+    <string name="category_tennis">Tennis</string>
+    <string name="category_skating">Skating</string>
+    <string name="category_cycling">Cycling</string>
+    <string name="category_fishing">Fishing</string>
+
+
+    <string name="code_3">00120</string>
+    <string name="code_5">00190</string>
+    <string name="code_6">00970</string>
+    <string name="code_1">02610</string>
+    <string name="code_2">02260</string>
+    <string name="code_4">04600</string>
+
 </resources>

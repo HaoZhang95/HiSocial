@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="category">
+        <item>@string/category_chess</item>
+        <item>@string/category_cycling</item>
+        <item>@string/category_dance</item>
+        <item>@string/category_fishing</item>
+        <item>@string/category_floorball</item>
+        <item>@string/category_golf</item>
+        <item>@string/category_hiking</item>
+        <item>@string/category_painting</item>
+        <item>@string/category_reading</item>
+        <item>@string/category_running</item>
+        <item>@string/category_skating</item>
+        <item>@string/category_tennis</item>
+    </string-array>
+
+    <string-array name="postcode">
+        <item>@string/code_1</item>
+        <item>@string/code_2</item>
+        <item>@string/code_3</item>
+        <item>@string/code_4</item>
+        <item>@string/code_5</item>
+        <item>@string/code_6</item>
+    </string-array>
+
+
+</resources>

@@ -3,7 +3,6 @@ package idk.metropolia.fi.myapplication.view.activity
 import android.app.ProgressDialog
 import android.content.Context
 import android.os.Bundle
-import android.os.Handler
 import android.support.v4.widget.NestedScrollView
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
@@ -166,7 +165,7 @@ class ListOfEventActivity : AppCompatActivity() {
     private fun initComponent() {
         search_bar = findViewById(R.id.search_bar)
         backButotn = search_bar.findViewById(R.id.bt_back)
-        searchButton = search_bar.findViewById(R.id.filterBtn)
+        searchButton = search_bar.findViewById(R.id.clearBtn)
         searchET = search_bar.findViewById(R.id.et_search)
 
         nested_scroll_view.setOnScrollChangeListener { v: NestedScrollView?, scrollX: Int, scrollY: Int, oldScrollX: Int, oldScrollY: Int ->

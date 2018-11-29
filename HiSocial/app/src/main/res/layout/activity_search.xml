@@ -3,14 +3,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/grey_10"
     android:fitsSystemWindows="true"
+    android:background="@color/grey_10"
     android:orientation="vertical">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="120dp"
         android:background="@color/colorPrimary">
+
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -37,10 +38,10 @@
         android:id="@+id/search_bar"
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:layout_marginBottom="@dimen/spacing_medium"
         android:layout_marginLeft="@dimen/spacing_middle"
-        android:layout_marginRight="@dimen/spacing_middle"
         android:layout_marginTop="-30dp"
+        android:layout_marginRight="@dimen/spacing_middle"
+        android:layout_marginBottom="@dimen/spacing_medium"
         android:clipToPadding="false"
         app:cardBackgroundColor="@android:color/white"
         app:cardCornerRadius="4dp"
@@ -55,8 +56,8 @@
             <ImageButton
                 android:layout_width="?attr/actionBarSize"
                 android:layout_height="?attr/actionBarSize"
-                android:clickable="true"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
                 android:tint="@color/grey_60"
                 app:srcCompat="@drawable/ic_search" />
 
@@ -76,13 +77,13 @@
             </EditText>
 
             <ImageButton
-                android:id="@+id/filterBtn"
+                android:id="@+id/clearBtn"
                 android:layout_width="?attr/actionBarSize"
                 android:layout_height="?attr/actionBarSize"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:clickable="true"
                 android:tint="@color/grey_60"
-                app:srcCompat="@drawable/ic_add" />
+                app:srcCompat="@drawable/ic_delete_sweep" />
 
         </LinearLayout>
 
@@ -109,54 +110,280 @@
             <android.support.v7.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/spacing_medium"
                 android:layout_marginLeft="@dimen/spacing_middle"
-                android:layout_marginRight="@dimen/spacing_middle"
                 android:layout_marginTop="@dimen/spacing_middle"
+                android:layout_marginRight="@dimen/spacing_middle"
+                android:layout_marginBottom="@dimen/spacing_medium"
                 android:visibility="visible"
                 app:cardCornerRadius="4dp"
                 app:cardElevation="2dp">
 
                 <LinearLayout
-                    android:layout_width="250dp"
-                    android:layout_height="80dp"
-                    android:layout_marginBottom="@dimen/spacing_large"
-                    android:gravity="center"
-                    android:layout_gravity="center_horizontal"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/select_your_nearest_area"
-                        android:textAlignment="center"
-                        android:textAppearance="@style/Base.TextAppearance.AppCompat.Headline"
-                        android:textColor="@color/indigo_700" />
-
-                    <TextView
-                        android:id="@+id/btn_clear"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/click_here_to_clear_your_selection"
-                        android:textAlignment="center"
-                        android:textAppearance="@style/Base.TextAppearance.AppCompat.Subhead"
-                        android:textColor="@color/grey_40" />
-
-                </LinearLayout>
-
-                <com.google.android.flexbox.FlexboxLayout
-                    android:id="@+id/flex_box"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="80dp"
-                    android:layout_centerInParent="true"
-                    android:padding="@dimen/spacing_large"
-                    app:flexWrap="wrap"
-                    app:justifyContent="center">
+                    android:orientation="vertical"
+                    android:paddingLeft="@dimen/spacing_mlarge"
+                    android:paddingRight="@dimen/spacing_mlarge"
+                    android:paddingBottom="@dimen/spacing_mlarge">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_large"
+                        android:text="@string/price"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                        android:textColor="@color/grey_90" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/spacing_large"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="@string/free"
+                                android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+                                android:textColor="@color/grey_60"
+                                android:textSize="18sp" />
+
+                            <android.support.v7.widget.AppCompatCheckBox
+                                android:id="@+id/free_checkbox"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:theme="@style/Checkbox.Blue" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/lyt_price"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/spacing_large"
+                            android:orientation="vertical">
+
+                            <idk.metropolia.fi.myapplication.view.widget.RangeSeekBar
+                                android:id="@+id/range_seek_bar"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                app:bar_color="@color/grey_20"
+                                app:bar_highlight_color="@color/colorPrimary"
+                                app:data_type="_long"
+                                app:left_thumb_color="@color/colorPrimary"
+                                app:left_thumb_color_pressed="@color/colorPrimaryDark"
+                                app:max_value="200"
+                                app:min_value="0"
+                                app:right_thumb_color="@color/colorPrimary"
+                                app:right_thumb_color_pressed="@color/colorPrimaryDark" />
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/spacing_medium"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:id="@+id/price_min"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="0 €"
+                                    android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+                                    android:textColor="@color/grey_60" />
+
+                                <View
+                                    android:layout_width="0dp"
+                                    android:layout_height="0dp"
+                                    android:layout_weight="1" />
+
+                                <TextView
+                                    android:id="@+id/price_max"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="200 €"
+                                    android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+                                    android:textColor="@color/grey_60" />
+
+                            </LinearLayout>
+                        </LinearLayout>
 
 
+                    </LinearLayout>
 
-                </com.google.android.flexbox.FlexboxLayout>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_large"
+                        android:text="@string/start_end_time"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                        android:textColor="@color/grey_90" />
+
+                    <com.google.android.flexbox.FlexboxLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_medium"
+                        app:flexWrap="wrap"
+                        app:justifyContent="flex_start">
+
+                        <Button
+                            android:id="@+id/btnStartFrom"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/btn_rounded_grey_outline"
+                            android:text="@string/start_from"
+                            android:textAllCaps="false"
+                            android:textColor="@color/grey_40" />
+
+                        <Button
+                            android:id="@+id/btnEndBefore"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/btn_rounded_grey_outline"
+                            android:text="@string/end_before"
+                            android:textAllCaps="false"
+                            android:textColor="@color/grey_40" />
+
+                    </com.google.android.flexbox.FlexboxLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_large"
+                        android:text="@string/age"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                        android:textColor="@color/grey_90" />
+
+                    <com.google.android.flexbox.FlexboxLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_medium"
+                        app:flexWrap="wrap"
+                        app:justifyContent="flex_start">
+
+                        <Button
+                            android:id="@+id/ageGroup01"
+                            android:layout_width="100dp"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/btn_rounded_grey_outline"
+                            android:text="5-7 Years"
+                            android:textAllCaps="false"
+                            android:textColor="@color/grey_40" />
+
+                        <Button
+                            android:id="@+id/ageGroup02"
+                            android:layout_width="100dp"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/btn_rounded_grey_outline"
+                            android:text="8-13 Years"
+                            android:textAllCaps="false"
+                            android:textColor="@color/grey_40" />
+
+                        <Button
+                            android:id="@+id/ageGroup03"
+                            android:layout_width="100dp"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/btn_rounded_grey_outline"
+                            android:text="13-15 Years"
+                            android:textAllCaps="false"
+                            android:textColor="@color/grey_40" />
+
+                        <Button
+                            android:id="@+id/ageGroup04"
+                            android:layout_width="100dp"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/btn_rounded_grey_outline"
+                            android:text="15-17 Years"
+                            android:textAllCaps="false"
+                            android:textColor="@color/grey_40" />
+
+                        <Button
+                            android:id="@+id/ageGroup05"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/btn_rounded_grey_outline"
+                            android:text="over 17 years"
+                            android:textAllCaps="false"
+                            android:textColor="@color/grey_40" />
+
+                    </com.google.android.flexbox.FlexboxLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_large"
+                        android:text="@string/more"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                        android:textColor="@color/grey_90" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_medium"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:padding="@dimen/spacing_medium">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="@dimen/spacing_medium"
+                                android:text="Category"
+                                android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+                                android:textColor="@color/grey_90" />
+
+                            <android.support.v7.widget.AppCompatSpinner
+                                android:id="@+id/spn_category"
+                                style="@style/Base.Widget.AppCompat.Spinner.Underlined"
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/spacing_xxlarge"
+                                android:spinnerMode="dialog" />
+
+                        </LinearLayout>
+
+                        <View
+                            android:layout_width="@dimen/spacing_large"
+                            android:layout_height="0dp" />
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:padding="@dimen/spacing_medium">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="@dimen/spacing_medium"
+                                android:text="Postcode"
+                                android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+                                android:textColor="@color/grey_90" />
+
+                            <android.support.v7.widget.AppCompatSpinner
+                                android:id="@+id/spn_postcode"
+                                style="@style/Base.Widget.AppCompat.Spinner.Underlined"
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/spacing_xxlarge"
+                                android:spinnerMode="dialog" />
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+
+                </LinearLayout>
 
             </android.support.v7.widget.CardView>
 

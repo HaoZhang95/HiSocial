@@ -50,7 +50,7 @@
             </EditText>
 
             <ImageButton
-                android:id="@+id/filterBtn"
+                android:id="@+id/clearBtn"
                 android:layout_width="?attr/actionBarSize"
                 android:layout_height="?attr/actionBarSize"
                 android:background="?attr/selectableItemBackgroundBorderless"
