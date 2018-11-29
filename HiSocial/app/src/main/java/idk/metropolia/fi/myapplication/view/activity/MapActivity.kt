@@ -22,10 +22,7 @@ import com.google.android.gms.maps.CameraUpdate
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.Circle
-import com.google.android.gms.maps.model.CircleOptions
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.*
 import idk.metropolia.fi.myapplication.R
 import idk.metropolia.fi.myapplication.httpsService.Networking
 import idk.metropolia.fi.myapplication.model.SearchEventsResultObject
@@ -44,9 +41,15 @@ class MapActivity : BaseActivity() {
     private var lat: Double = LocationUtils.lat
     private var lng: Double = LocationUtils.lng
 
+    private lateinit var mDialog: ProgressDialog
     private lateinit var mBehavior: BottomSheetBehavior<View>
     private var mBottomSheetDialog: BottomSheetDialog? = null
     private lateinit var bottom_sheet: View
+
+    companion object {
+        val MARKERS_LIST =
+                mutableMapOf<LatLng, SearchEventsResultObject.SingleBeanData>()
+    }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -86,76 +89,85 @@ class MapActivity : BaseActivity() {
     }
 
     private fun initData() {
-        loadEventsByPageNumber()
+        if (MARKERS_LIST.isNotEmpty()) {
+            addMaarkersToMap(MARKERS_LIST)
+        } else {
+            loadEventsByPageNumber(0, 5)
+        }
     }
 
-    var test = mutableMapOf<Double,Double>()
-    private fun loadEventsByPageNumber() {
+    /**
+     * 使用递归的方式将for循环变相的更改为递归中的异步变同步
+     */
+    private fun loadEventsByPageNumber(index: Int, times: Int) {
+        if (index == 0) {
+            mDialog = ProgressDialog(this)
+            mDialog.setProgressStyle(0)
+            mDialog.setCancelable(false)
+            mDialog.setMessage(getString(R.string.loading))
+            mDialog.show()
+        }
+        if (index >= times) {
+            LogUtils.e("处理执行完毕, index: $index --> times: $times")
+            addMaarkersToMap(MARKERS_LIST)
+            mDialog.dismiss()
+            return
+        } else {
 
-        val mDialog = ProgressDialog(this)
-        mDialog.setProgressStyle(0)
-        mDialog.setCancelable(false)
-        mDialog.setMessage(getString(R.string.loading))
-        mDialog.show()
-
-        for (i in 0..10) {
-            Networking.service.searchEventBySize(page = (i+ 1).toString()).enqueue(object : Callback<SearchEventsResultObject> {
+            Networking.service.searchEventBySize(page = (index + 1).toString()).enqueue(object : Callback<SearchEventsResultObject> {
 
                 override fun onFailure(call: Call<SearchEventsResultObject>?, t: Throwable?) {
-                    LogUtils.e("loadEventsByKeywordType --> onFailure: ${t?.localizedMessage}")
-                    MyToast.show(this@MapActivity, getString(R.string.check_network))
+                    LogUtils.e("错误发生index: $index --> ${t?.message}")
                     mDialog.dismiss()
                 }
 
                 override fun onResponse(call: Call<SearchEventsResultObject>?, response: Response<SearchEventsResultObject>?) {
                     response?.let {
                         if (it.isSuccessful) {
-                            LogUtils.e("地图界面的获取的事件数量: ${response.body().data.size}")
-                            var count = 0
+                            for (temp in response.body().data) {
 
-
-                            val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
-                            mapFragment.getMapAsync { googleMap ->
-                                mMap = Tools.configActivityMaps(googleMap)
-
-                                for (temp in response.body().data) {
-
-                                    temp.location.position?.let {
-                                        it.coordinates?.let {
-                                            val lat = it[1]
-                                            val lng = it[0]
-
-                                            test.put(lat,lng)
-                                            // LogUtils.e("lat: $lat --> lng: $lng")
-                                            val markerOptions = MarkerOptions().position(LatLng(lat, lng)).title(temp.name?.fi ?: Tools.UN_KNOWN)
-                                            val marker = mMap!!.addMarker(markerOptions)
-                                            marker.tag = temp
-                                            count ++
-                                        }
+                                temp.location.position?.let {
+                                    it.coordinates?.let {
+                                        // LogUtils.e("lat: $lat --> lng: $lng")
+                                        MARKERS_LIST.put(LatLng(it[1], it[0]), temp)
                                     }
-                                }
-
-                                LogUtils.e("地图界面的marker数量: ${count}")
-                                LogUtils.e("地图界面的test数量: ${test.size}")
-                                mMap!!.animateCamera(zoomingLocation(lat, lng))        // 默认显示helsinki church
-                                mMap!!.setOnMarkerClickListener {
-                                    try {
-                                        // mMap!!.animateCamera(zoomingLocation(lat, lng))
-                                        LogUtils.e("marker点击了")
-                                        showBottomSheetDialog(it.tag as SearchEventsResultObject.SingleBeanData)
-                                    } catch (e: Exception) {
-                                    }
-                                    true
                                 }
                             }
                         }
 
-                        mDialog.dismiss()
+                        LogUtils.e("业务执行index: $index")
+                        loadEventsByPageNumber(index + 1, times)
                     }
                 }
             })
-        }
 
+        }
+    }
+
+    private fun addMaarkersToMap(markersMap: MutableMap<LatLng, SearchEventsResultObject.SingleBeanData>) {
+        LogUtils.e("MARKERS_LIST.size: ${markersMap.size}")
+        var count = 0
+        val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
+        mapFragment.getMapAsync { googleMap ->
+            mMap = Tools.configActivityMaps(googleMap)
+
+            markersMap.forEach {
+                val marker = mMap!!.addMarker(MarkerOptions().position(it.key))
+                marker.tag = it.value
+            }
+
+            mMap!!.animateCamera(zoomingLocation(lat, lng))        // 默认显示helsinki church
+            mMap!!.setOnMarkerClickListener {
+                try {
+                    // mMap!!.animateCamera(zoomingLocation(lat, lng))
+                    LogUtils.e("marker点击了")
+                    it.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
+                    showBottomSheetDialog(it.tag as SearchEventsResultObject.SingleBeanData, it)
+                } catch (e: Exception) {
+                }
+                true
+            }
+        }
     }
 
     private fun initComponents() {
@@ -167,7 +179,7 @@ class MapActivity : BaseActivity() {
         return CameraUpdateFactory.newLatLngZoom(LatLng(lat, lng), level)
     }
 
-    private fun showBottomSheetDialog(obj: SearchEventsResultObject.SingleBeanData) {
+    private fun showBottomSheetDialog(obj: SearchEventsResultObject.SingleBeanData, marker: Marker) {
         if (mBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
             mBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
         }
@@ -189,7 +201,7 @@ class MapActivity : BaseActivity() {
         }
 
         view.findViewById<ImageButton>(R.id.bt_close).setOnClickListener {
-            mBottomSheetDialog?.hide()
+            mBottomSheetDialog?.dismiss()
         }
 
         view.findViewById<AppCompatButton>(R.id.submit_rating).setOnClickListener {
@@ -206,13 +218,16 @@ class MapActivity : BaseActivity() {
         // set background transparent
         (view.parent as View).setBackgroundColor(resources.getColor(android.R.color.transparent))
         mBottomSheetDialog?.show()
-        mBottomSheetDialog?.setOnDismissListener { mBottomSheetDialog = null }
+        mBottomSheetDialog?.setOnDismissListener {
+            marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))
+            mBottomSheetDialog = null
+        }
     }
 
     private val requestPermissionsList = arrayOf(
             Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.ACCESS_COARSE_LOCATION)
-    private var myLocation:Location? = null
+    private var myLocation: Location? = null
     private fun initListeners() {
 
         fabInMap.setOnClickListener {
@@ -248,10 +263,10 @@ class MapActivity : BaseActivity() {
     }
 
     private val raidusList = arrayOf(1000.0,
-            3000.0, 5000.0, 7000.0, 10000.0,getString(R.string.remove_radius))
-    private val raidusString = arrayOf(getString(R.string.one_k_meters),
-            getString(R.string.three_k_meters),
-            getString(R.string.five_k_meters), getString(R.string.seven_k_meters), getString(R.string.ten_k_meters),getString(R.string.remove_radius))
+            3000.0, 5000.0, 7000.0, 10000.0, "Remove Radius?")
+    private val raidusString = arrayOf("1K meters",
+            "3K meters",
+            "5K meters", "7K meters", "10K meters", "Remove Radius?")
     private var selectedIndex = 2
     private fun showRadiusChoiceDialog() {
         val builder = AlertDialog.Builder(this)
@@ -266,7 +281,7 @@ class MapActivity : BaseActivity() {
         builder.show()
     }
 
-    private var circle:Circle? = null
+    private var circle: Circle? = null
     private fun updateCircle() {
         myLocation?.let {
             circle?.remove()
@@ -282,7 +297,7 @@ class MapActivity : BaseActivity() {
                 circle?.radius = raidusList[selectedIndex] as Double
             }
 
-            mMap!!.animateCamera(zoomingLocation(it.latitude, it.longitude, 10f))        // 应当移动到用户的
+            mMap?.animateCamera(zoomingLocation(it.latitude, it.longitude, 10f))        // 应当移动到用户的
         }
     }
 }

@@ -34,11 +34,11 @@ import idk.metropolia.fi.myapplication.utils.PhotoUtils.hasSdcard
 import idk.metropolia.fi.myapplication.utils.Tools
 import idk.metropolia.fi.myapplication.utils.ViewAnimationUtils
 import kotlinx.android.synthetic.main.fragment_new_event.*
+import java.io.File
+import java.util.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.io.File
-import java.util.*
 import kotlin.collections.ArrayList
 
 /**
@@ -86,6 +86,7 @@ class NewEventFragment : BaseFragment() {
     private fun initComponents(view: View) {
         // populate layout field
 
+        view_list.clear()
         view_list.add(view.findViewById(R.id.lyt_title))
         view_list.add(view.findViewById(R.id.lyt_description))
         view_list.add(view.findViewById(R.id.lyt_time))
@@ -94,6 +95,7 @@ class NewEventFragment : BaseFragment() {
         view_list.add(view.findViewById(R.id.lyt_confirmation))
 
         // populate view step (circle in left)
+        step_view_list.clear()
         step_view_list.add(view.findViewById(R.id.step_title) as RelativeLayout)
         step_view_list.add(view.findViewById(R.id.step_description) as RelativeLayout)
         step_view_list.add(view.findViewById(R.id.step_time) as RelativeLayout)
@@ -103,6 +105,7 @@ class NewEventFragment : BaseFragment() {
 
         bottom_sheet = view.findViewById(R.id.bottom_sheet_list)
         mBehavior = BottomSheetBehavior.from(bottom_sheet)
+
         for (v in view_list) {
             v.visibility = View.GONE
         }
@@ -119,6 +122,8 @@ class NewEventFragment : BaseFragment() {
                 Snackbar.make(parent_view, getString(R.string.title_empty), Snackbar.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
+
+            tv_label_title.text = (view!!.findViewById(R.id.et_title) as EditText).text.toString().trim()
             collapseAndContinue(0)
         }
 
@@ -128,6 +133,8 @@ class NewEventFragment : BaseFragment() {
                 Snackbar.make(parent_view, getString(R.string.desc_empy), Snackbar.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
+
+            tv_label_description.text = (view!!.findViewById(R.id.et_description) as EditText).text.toString().trim()
             collapseAndContinue(1)
         }
 
@@ -137,6 +144,8 @@ class NewEventFragment : BaseFragment() {
                 Snackbar.make(parent_view, getString(R.string.time_empy), Snackbar.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
+
+            tv_label_time.text = "${startTime} - ${endTime}"
             collapseAndContinue(2)
         }
 
@@ -146,6 +155,7 @@ class NewEventFragment : BaseFragment() {
                 Snackbar.make(parent_view, getString(R.string.date_empty), Snackbar.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
+            tv_label_date.text = tv_date.text
             collapseAndContinue(3)
         }
 
@@ -154,6 +164,8 @@ class NewEventFragment : BaseFragment() {
                 Snackbar.make(parent_view, getString(R.string.location_empy), Snackbar.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
+
+            tv_label_location.text = selectedLocation
             collapseAndContinue(4)
         }
 
@@ -167,6 +179,8 @@ class NewEventFragment : BaseFragment() {
                 current_step = 0
                 collapseAll()
                 ViewAnimationUtils.expand(view_list[0])
+
+                tv_label_title.text = getString(R.string.title)
             }
         }
 
@@ -175,6 +189,8 @@ class NewEventFragment : BaseFragment() {
                 current_step = 1
                 collapseAll()
                 ViewAnimationUtils.expand(view_list[1])
+
+                tv_label_description.text = getString(R.string.desc)
             }
         }
 
@@ -183,6 +199,8 @@ class NewEventFragment : BaseFragment() {
                 current_step = 2
                 collapseAll()
                 ViewAnimationUtils.expand(view_list[2])
+
+                tv_label_time.text = getString(R.string.start_end_time)
             }
         }
 
@@ -191,6 +209,8 @@ class NewEventFragment : BaseFragment() {
                 current_step = 3
                 collapseAll()
                 ViewAnimationUtils.expand(view_list[3])
+
+                tv_label_time.text = getString(R.string.date)
             }
         }
 
@@ -199,6 +219,8 @@ class NewEventFragment : BaseFragment() {
                 current_step = 4
                 collapseAll()
                 ViewAnimationUtils.expand(view_list[4])
+
+                tv_label_location.text = getString(R.string.location)
             }
         }
 
@@ -221,6 +243,28 @@ class NewEventFragment : BaseFragment() {
         btn_locationA.setOnClickListener { selectLocation(it as Button) }
         btn_locationB.setOnClickListener { selectLocation(it as Button) }
         btn_locationC.setOnClickListener { selectLocation(it as Button) }
+    }
+
+    private fun resetContent() {
+
+        val ft = fragmentManager!!.beginTransaction();
+        ft.detach(this).attach(this).commit();
+
+        current_step = 0
+        success_step = 0
+        date = null
+        dateStr = null
+        startTime = null
+        endTime = null
+        selectedLocation = null
+        hasImage = false
+
+        et_title.text.clear()
+        et_description.text.clear()
+        tv_start_time.text = "00:00"
+        tv_end_time.text = "00:00"
+        tv_date.text = "01 Jan 2000"
+        iv_event.setImageResource(R.drawable.ic_add_a_photo)
     }
 
     private fun createMyEvent() {
@@ -248,6 +292,7 @@ class NewEventFragment : BaseFragment() {
 
         LogUtils.e(Gson().toJson(ev).toString())
 
+
         val mDialog = ProgressDialog(context)
         mDialog.setProgressStyle(0)
         mDialog.setCancelable(false)
@@ -265,6 +310,8 @@ class NewEventFragment : BaseFragment() {
                     LogUtils.e(res.toString())
                     MyToast.show(context!!, getString(R.string.create_event_okay))
                     mDialog.dismiss()
+
+                    resetContent()
                 } else {
                     MyToast.show(context!!, getString(R.string.create_event_failed))
                     mDialog.dismiss()

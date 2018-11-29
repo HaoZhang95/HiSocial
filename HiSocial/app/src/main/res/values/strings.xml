@@ -37,12 +37,6 @@
     <string name="no_short_desc">No Short Description</string>
     <string name="free">Free</string>
     <string name="permission_missing_message">Location permission acquisition failed, normal function is affected！</string>
-    <string name="three_k_meters">3K meters</string>
-    <string name="five_k_meters">5k meters</string>
-    <string name="seven_k_meters">7K meters</string>
-    <string name="ten_k_meters">10K meters</string>
-    <string name="remove_radius">Remove Radius?</string>
-    <string name="one_k_meters">1K meters</string>
     <string name="radius_settings">Radius Settings</string>
     <string name="reset_done">Reset successfully</string>
     <string name="title_empty">Title cannot empty</string>

@@ -54,6 +54,6 @@
         android:focusable="true"
         app:fabSize="normal"
         app:rippleColor="@color/colorPrimary"
-        app:srcCompat="@drawable/ic_map_icon24" />
+        app:srcCompat="@drawable/ic_google_map_logo" />
 
 </android.support.design.widget.CoordinatorLayout>

@@ -194,4 +194,5 @@ class MainActivity : AppCompatActivity(), HomeFragment.MyOnScrollChangeListener,
         }
         return super.onKeyDown(keyCode, event)
     }
+
 }

@@ -13,7 +13,7 @@ import java.util.ArrayList
  */
 class MyViewPagerAdapter(manager: FragmentManager) : FragmentPagerAdapter(manager) {
 
-    private val mFragmentList = ArrayList<Fragment>()
+    public val mFragmentList = ArrayList<Fragment>()
     private val mFragmentTitleList = ArrayList<String>()
 
     override fun getItem(position: Int): Fragment {

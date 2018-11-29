@@ -212,19 +212,19 @@ class DetailsMapActivity : AppCompatActivity(), RouteFragment.OnItemClickListene
         return CameraUpdateFactory.newLatLngZoom(LatLng(lat, lng), 13f)
     }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.menu_details_map, menu)
-        return true
-    }
+//    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+//        menuInflater.inflate(R.menu.menu_details_map, menu)
+//        return true
+//    }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == android.R.id.home) {
-            finish()
-        } else {
-            Toast.makeText(applicationContext, item.title, Toast.LENGTH_SHORT).show()
-        }
-        return super.onOptionsItemSelected(item)
-    }
+//    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+//        if (item.itemId == android.R.id.home) {
+//            finish()
+//        } else {
+//            Toast.makeText(applicationContext, item.title, Toast.LENGTH_SHORT).show()
+//        }
+//        return super.onOptionsItemSelected(item)
+//    }
 
     /**
      * 这里有一个坑, 必须在这里传递onActivityResult给newEventFragment否则

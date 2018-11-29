@@ -143,6 +143,8 @@ class DetailsActivity : AppCompatActivity(), OnMapReadyCallback {
             true
         }
 
+        gmap?.setOnMapClickListener { goToMapDetailsActivity() }
+
         if (obj.location.id != null) {
             loadPlaceById(obj.location.id!!, gmap)
         }
@@ -176,8 +178,8 @@ class DetailsActivity : AppCompatActivity(), OnMapReadyCallback {
                         lat = it.position.coordinates.get(1)
 
                         tv_location.text = it.addressLocality?.fi ?: Tools.UN_KNOWN
-                        tv_location_info.text = "${it.addressLocality?.fi
-                                ?: Tools.UN_KNOWN}.${it.streetAddress?.fi}"
+                        tv_location_info.text = "${it.streetAddress?.fi} ${it.addressLocality?.fi
+                                ?: Tools.UN_KNOWN}"
                         tv_phone.text = it.telephone?.fi ?: Tools.UN_KNOWN
 
                         val markerOptions = MarkerOptions().position(LatLng(lat, lng))
