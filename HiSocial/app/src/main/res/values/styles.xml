@@ -10,6 +10,8 @@
         <item name="android:windowSharedElementEnterTransition">@android:transition/move</item>
         <item name="android:windowSharedElementExitTransition">@android:transition/move</item>
         <item name="android:navigationBarColor">@color/blue_500</item>
+        <!-- language changing -->
+        <item name="android:windowDisablePreview">true</item>
     </style>
 
     <style name="BaseTheme" parent="Theme.AppCompat.Light.NoActionBar">

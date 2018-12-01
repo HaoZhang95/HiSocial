@@ -7,7 +7,6 @@
         AIzaSyA-wqktBtLyF5RWV6PT4MzNpm7CXlz8C4g
     </string>
 
-
     <string name="search_general_keyword">Try to input a more general keyword</string>
     <string name="search_no_result">No result</string>
     <string name="permission_request">Permission Request</string>
@@ -47,7 +46,7 @@
     <string name="my_location_failed">My Location ❌</string>
     <string name="my_location_okay">My Location √</string>
     <string name="google_service_error">Google Play Services is not available:</string>
-    <string name="home">Home</string>
+    <string name="home">Koti</string>
     <string name="ongoing_event">Ongoing Event</string>
     <string name="add_event">Add Event</string>
     <string name="preference">Preference</string>
@@ -109,10 +108,10 @@
     <string name="code_2">00610 Käpylä</string>
     <string name="code_4">00550 Mäkelänrinne</string>
 
-    <string name="about_us">About us</string>
-    <string name="privacy_policy">Privacy Policy</string>
-    <string name="color_theme">Color Theme</string>
-    <string name="select_language">Select Language</string>
+    <string name="about_us">xxxxx</string>
+    <string name="privacy_policy">yyyyy</string>
+    <string name="color_theme">zzzzz</string>
+    <string name="select_language">mmmmmm</string>
     <string name="english_us">English, US</string>
     <string name="innovation_project_for_metropolia_uas">Innovation Project for Metropolia UAS</string>
     <string name="team_idk">Team IDK</string>

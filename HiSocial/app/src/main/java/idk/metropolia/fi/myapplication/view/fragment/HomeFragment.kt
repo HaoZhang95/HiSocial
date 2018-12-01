@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.GridLayout
+import android.widget.TextView
 import com.example.ahao9.socialevent.utils.LogUtils
 import idk.metropolia.fi.myapplication.R
 import idk.metropolia.fi.myapplication.adapter.MyRecyclerViewAdapter
@@ -52,7 +53,7 @@ class HomeFragment : Fragment() {
         initStaggerAdapterV()
 
         // 属性的初始化方法一定要在设置监听器之前
-        initComponent()
+        initComponent(view)
         initListeners()
     }
 
@@ -175,7 +176,12 @@ class HomeFragment : Fragment() {
         rvFamily.setHasFixedSize(true)
     }
 
-    private fun initComponent() {
+    private lateinit var tv_single_title: TextView
+    private lateinit var tv_single_date: TextView
+    private fun initComponent(view: View) {
+
+        tv_single_title = view.findViewById(R.id.tv_single_title)
+        tv_single_date = view.findViewById(R.id.tv_single_date)
 
     }
 }

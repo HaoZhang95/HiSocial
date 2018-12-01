@@ -15,8 +15,11 @@ import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import com.example.ahao9.socialevent.utils.LogUtils
 import com.example.ahao9.socialevent.utils.MyToast
 import idk.metropolia.fi.myapplication.adapter.MyViewPagerAdapter
+import idk.metropolia.fi.myapplication.utils.LocaleManager
+import idk.metropolia.fi.myapplication.utils.PrefManager
 import idk.metropolia.fi.myapplication.utils.Tools
 import idk.metropolia.fi.myapplication.utils.ViewAnimationUtils
 import idk.metropolia.fi.myapplication.view.activity.MapActivity
@@ -24,7 +27,24 @@ import idk.metropolia.fi.myapplication.view.activity.SearchActivity
 import idk.metropolia.fi.myapplication.view.fragment.*
 import org.jetbrains.anko.startActivity
 
-class MainActivity : AppCompatActivity(), HomeFragment.MyOnScrollChangeListener, NearByFragment.MyOnScrollChangeListener {
+class MainActivity : AppCompatActivity(),
+        HomeFragment.MyOnScrollChangeListener, NearByFragment.MyOnScrollChangeListener,
+        ProfileFragment.MyClickListener{
+
+    override fun changeLanguage(index: Int) {
+        LogUtils.e("mainactivity开始改变语言 :$index")
+        if (PrefManager(this).getLocale() == "us") {
+
+            LogUtils.e("fi")
+            LocaleManager(this).changeLocale("fi")
+            this.recreate()
+        } else {
+            LogUtils.e("us")
+            LocaleManager(this).changeLocale("us")
+            this.recreate()
+        }
+    }
+
     private lateinit var view_pager: ViewPager
     private lateinit var viewPagerAdapter: MyViewPagerAdapter
     private lateinit var tab_layout: TabLayout
@@ -41,6 +61,8 @@ class MainActivity : AppCompatActivity(), HomeFragment.MyOnScrollChangeListener,
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        LocaleManager(this).getLocale()
         setContentView(R.layout.activity_main)
 
         initToolbar()
@@ -87,6 +109,7 @@ class MainActivity : AppCompatActivity(), HomeFragment.MyOnScrollChangeListener,
     private fun initListeners() {
 
         homeFragment.setOnScrollChangeListener(this)
+        profileFragment.setOnMyClickListener(this)
 
         tab_layout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) {
