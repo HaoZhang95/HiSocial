@@ -104,11 +104,13 @@
     <string name="category_fishing">Fishing</string>
 
 
-    <string name="code_3">00120</string>
-    <string name="code_5">00190</string>
-    <string name="code_6">00970</string>
-    <string name="code_1">02610</string>
-    <string name="code_2">02260</string>
-    <string name="code_4">04600</string>
+    <string name="code_3">00280 Ruskeasuo</string>
+    <string name="code_5">00230 Pasila</string>
+    <string name="code_7">00240 Pasila</string>
+    <string name="code_8">00520 Pasila</string>
+    <string name="code_6">00510 Alppila</string>
+    <string name="code_1">00550 Vallila</string>
+    <string name="code_2">00610 Käpylä</string>
+    <string name="code_4">00550 Mäkelänrinne</string>
 
 </resources>

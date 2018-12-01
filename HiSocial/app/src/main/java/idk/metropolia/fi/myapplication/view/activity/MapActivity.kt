@@ -126,7 +126,7 @@ class MapActivity : BaseActivity() {
                         if (it.isSuccessful) {
                             for (temp in response.body().data) {
 
-                                temp.location.position?.let {
+                                temp.location?.position?.let {
                                     it.coordinates?.let {
                                         // LogUtils.e("lat: $lat --> lng: $lng")
                                         MARKERS_LIST.put(LatLng(it[1], it[0]), temp)

@@ -5,13 +5,12 @@ import android.content.Context
 import android.os.Bundle
 import android.support.v4.widget.NestedScrollView
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.StaggeredGridLayoutManager
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageButton
-import android.widget.LinearLayout
 import com.example.ahao9.socialevent.utils.LogUtils
 import com.example.ahao9.socialevent.utils.MyToast
 import idk.metropolia.fi.myapplication.R
@@ -33,6 +32,9 @@ class ListOfEventActivity : AppCompatActivity() {
     private var mListAdapter: MySearchResultAdapter? = null
     private val mDatas = ArrayList<SearchEventsResultObject.SingleBeanData>()
 
+    private var nextPageUrl: String? = null
+    private val item_per_display = 20
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_card_basic)
@@ -45,7 +47,7 @@ class ListOfEventActivity : AppCompatActivity() {
 
         loadSearchResultByKeyword(text, startDate?: "today", endDate, location)
 
-        initComponent()
+        initComponent(text)
         initData()
         initListAdapterV()
         initListeners()
@@ -63,6 +65,8 @@ class ListOfEventActivity : AppCompatActivity() {
             }
             return@setOnEditorActionListener false
         }
+
+
     }
 
     private fun searchAction() {
@@ -77,15 +81,20 @@ class ListOfEventActivity : AppCompatActivity() {
         val view = this.currentFocus
         if (view != null) {
             val imm = this.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
-            imm!!.hideSoftInputFromWindow(view.getWindowToken(), 0)
+            imm!!.hideSoftInputFromWindow(view.windowToken, 0)
         }
     }
 
     private fun initData() {
         mListAdapter = MySearchResultAdapter(this, mDatas)
-        mListAdapter?.setOnItemClickListener { view, postion ->
-            startActivity<DetailsActivity>("obj" to (mDatas[postion] as Serializable))
-        }
+
+        mListAdapter?.setOnItemClickListener(object : MySearchResultAdapter.MyItemClickListener {
+
+            override fun onItemClick(view: View, postion: Int) {
+                startActivity<DetailsActivity>("obj" to (mDatas[postion] as Serializable))
+            }
+
+        })
     }
 
     // page: String, page_size: String, type: String, input: String, start: String
@@ -133,12 +142,15 @@ class ListOfEventActivity : AppCompatActivity() {
                 if (response.isSuccessful) {
                     val dataList = response.body().data
 
+                    nextPageUrl = response.body().meta.next
+
                     mDatas.clear()
                     mDatas.addAll(dataList)
                     mListAdapter?.notifyDataSetChanged()
 
                     mDialog.dismiss()
                     LogUtils.e("size: --> ${dataList.size}")
+
                 } else {
                     MyToast.show(this@ListOfEventActivity, getString(R.string.check_network))
                     mDialog.dismiss()
@@ -157,16 +169,23 @@ class ListOfEventActivity : AppCompatActivity() {
 
     //纵向列表布局
     private fun initListAdapterV() {
-        val layoutManger = LinearLayoutManager(this, LinearLayout.VERTICAL, false)
-        rvListOfEvents.layoutManager = layoutManger
+//        val layoutManger = LinearLayoutManager(this, LinearLayout.VERTICAL, false)
+//        rvListOfEvents.layoutManager = layoutManger
+//        rvListOfEvents.adapter = mListAdapter
+
+
+        val layoutManager = StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL)
+        rvListOfEvents.layoutManager = layoutManager
         rvListOfEvents.adapter = mListAdapter
+        rvListOfEvents.setHasFixedSize(true)
     }
 
-    private fun initComponent() {
+    private fun initComponent(text: String) {
         search_bar = findViewById(R.id.search_bar)
         backButotn = search_bar.findViewById(R.id.bt_back)
         searchButton = search_bar.findViewById(R.id.clearBtn)
         searchET = search_bar.findViewById(R.id.et_search)
+        searchET.setText(text)
 
         nested_scroll_view.setOnScrollChangeListener { v: NestedScrollView?, scrollX: Int, scrollY: Int, oldScrollX: Int, oldScrollY: Int ->
             if (scrollY < oldScrollY) { // up

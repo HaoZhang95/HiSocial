@@ -145,8 +145,8 @@ class DetailsActivity : AppCompatActivity(), OnMapReadyCallback {
 
         gmap?.setOnMapClickListener { goToMapDetailsActivity() }
 
-        if (obj.location.id != null) {
-            loadPlaceById(obj.location.id!!, gmap)
+        if (obj.location?.id != null) {
+            loadPlaceById(obj.location?.id!!, gmap)
         }
     }
 

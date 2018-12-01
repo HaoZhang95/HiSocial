@@ -88,6 +88,8 @@ object Networking {
                         @Query("include") include: String = "location",
                         @Query("text") keyword: String,
                         @Query("location") location: String,
+                        @Query("page") page: String = "1",
+                        @Query("page_size") page_size: String = "80",
                         @Query("start") start: String = "today",
                         @Query("end") end: String
         ): Call<SearchEventsResultObject>
@@ -96,6 +98,8 @@ object Networking {
         fun searchEvent(@Query("format") format: String = "json",
                         @Query("include") include: String = "location",
                         @Query("text") keyword: String,
+                        @Query("page") page: String = "1",
+                        @Query("page_size") page_size: String = "80",
                         @Query("start") start: String = "today",
                         @Query("end") end: String
         ): Call<SearchEventsResultObject>
@@ -104,6 +108,8 @@ object Networking {
         fun searchEvent(
                 @Query("include") include: String = "location",
                 @Query("text") keyword: String,
+                @Query("page") page: String = "1",
+                @Query("page_size") page_size: String = "80",
                 @Query("start") start: String = "today",
                 @Query("location") location: String
         ): Call<SearchEventsResultObject>
@@ -112,6 +118,8 @@ object Networking {
         fun searchEvent(
                 @Query("include") include: String = "location",
                 @Query("text") keyword: String,
+                @Query("page") page: String = "1",
+                @Query("page_size") page_size: String = "80",
                 @Query("start") start: String = "today"
         ): Call<SearchEventsResultObject>
 

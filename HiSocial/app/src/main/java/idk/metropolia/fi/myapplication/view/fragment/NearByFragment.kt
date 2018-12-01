@@ -53,7 +53,7 @@ class NearByFragment : Fragment() {
         nearByAdapter = MyNearByRVAdapter(context, NEARBY_DATA_LIST)
     }
 
-    private fun loadEventsByPageNumber(page: String = "1", page_size: String = "20", start: String = "today", end: String = "today") {
+    private fun loadEventsByPageNumber(page: String = "1", page_size: String = "80", start: String = "today", end: String = "today") {
 
         Networking.service.loadEventsByPageNumber(page = page, page_size = page_size,
                 start = start, end = end).enqueue(object : Callback<SearchEventsResultObject> {

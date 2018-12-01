@@ -17,40 +17,41 @@ data class SearchEventsResultObject(
 ) {
     data class Meta(
             @SerializedName("count") val count: Int = 0, // 3
-            @SerializedName("next") val next: Any? = Any(), // null
+            @SerializedName("next") val next: String? = null, // null
             @SerializedName("previous") val previous: Any? = Any() // null
     )
 
     data class SingleBeanData(
-            @SerializedName("id") val id: String, // espoo:146665
-            @SerializedName("location") val location: Location,
-            @SerializedName("keywords") val keywords: List<Keyword>,
-            @SerializedName("super_event") val superEvent: Any, // null
-            @SerializedName("event_status") val eventStatus: String, // EventScheduled
-            @SerializedName("external_links") val externalLinks: List<Any>,
+            @SerializedName("id") val id: String ="", // espoo:146665
+            @SerializedName("location") val location: Location? = null,
+            @SerializedName("keywords") val keywords: List<Keyword> = listOf(),
+            @SerializedName("super_event") val superEvent: Any ="", // null
+            @SerializedName("event_status") val eventStatus: String ="", // EventScheduled
+            @SerializedName("external_links") val externalLinks: List<Any> = listOf(),
             @SerializedName("offers") val offers: List<Offer> = listOf(),
-            @SerializedName("data_source") val dataSource: String, // espoo
+            @SerializedName("data_source") val dataSource: String="", // espoo
             @SerializedName("publisher") val publisher: String? = null, // espoo:kaupunki
-            @SerializedName("sub_events") val subEvents: List<Any>,
-            @SerializedName("in_language") val inLanguage: List<Any>,
-            @SerializedName("audience") val audience: List<Any>,
-            @SerializedName("created_time") val createdTime: String, // 2018-10-02T14:16:36.868885Z
-            @SerializedName("last_modified_time") val lastModifiedTime: String, // 2018-10-02T14:16:36.945943Z
-            @SerializedName("date_published") val datePublished: String, // 2018-10-02T09:00:00Z
-            @SerializedName("start_time") val startTime: String, // 2018-10-23T14:30:00Z
+            @SerializedName("sub_events") val subEvents: List<Any> = listOf() ,
+            @SerializedName("in_language") val inLanguage: List<Any> = listOf(),
+            @SerializedName("audience") val audience: List<Any> = listOf(),
+            @SerializedName("created_time") val createdTime: String ="", // 2018-10-02T14:16:36.868885Z
+            @SerializedName("last_modified_time") val lastModifiedTime: String = "", // 2018-10-02T14:16:36.945943Z
+            @SerializedName("date_published") val datePublished: String ="", // 2018-10-02T09:00:00Z
+            @SerializedName("start_time") val startTime: String = "", // 2018-10-23T14:30:00Z
             @SerializedName("end_time") val endTime: String? = null, // 2018-10-23T16:30:00Z
-            @SerializedName("custom_data") val customData: Any, // null
-            @SerializedName("super_event_type") val superEventType: Any, // null
+            @SerializedName("custom_data") val customData: Any = "", // null
+            @SerializedName("super_event_type") val superEventType: Any ="", // null
             @SerializedName("name") val name: Name? = null,
-            @SerializedName("location_extra_info") val locationExtraInfo: LocationExtraInfo,
+            @SerializedName("location_extra_info") val locationExtraInfo: LocationExtraInfo? = null,
             @SerializedName("provider") val provider: Provider? = null,
             @SerializedName("short_description") val shortDescription: ShortDescription? = null,
             @SerializedName("description") val description: Description? = null,
             @SerializedName("info_url") val infoUrl: InfoUrl? = null,
-            @SerializedName("@id") val web_id: String, // https://api.hel.fi/linkedevents/v1/event/espoo:146665/
-            @SerializedName("@context") val context: String, // http://schema.org
-            @SerializedName("@type") val type: String, // Event/LinkedEvent
-            @SerializedName("images") val images: List<Image>
+            @SerializedName("@id") val web_id: String ="", // https://api.hel.fi/linkedevents/v1/event/espoo:146665/
+            @SerializedName("@context") val context: String ="", // http://schema.org
+            @SerializedName("@type") val type: String ="", // Event/LinkedEvent
+            @SerializedName("@progress") var progress: Boolean = false, // Event/LinkedEvent
+            @SerializedName("images") val images: List<Image> = listOf()
     ) : Serializable {
         data class Location(
                 @SerializedName("id") val id: String? = null, // tprek:15490
