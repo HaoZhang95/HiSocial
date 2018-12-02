@@ -5,12 +5,11 @@ import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import com.example.ahao9.socialevent.utils.LogUtils
 import com.example.ahao9.socialevent.utils.MyToast
 import idk.metropolia.fi.myapplication.R
+import idk.metropolia.fi.myapplication.view.activity.MyPostActivity
 import kotlinx.android.synthetic.main.fragment_profile.*
+import org.jetbrains.anko.support.v4.startActivity
 
 /**
  * @ Author     ：Hao Zhang.
@@ -19,12 +18,9 @@ import kotlinx.android.synthetic.main.fragment_profile.*
  */
 class ProfileFragment : Fragment() {
 
-    private var single_choice_selected: String? = null
     private lateinit var languageArr: Array<String>
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-
-        // LocaleManager(context!!).getLocale()
         return inflater.inflate(R.layout.fragment_profile, container, false)
     }
 
@@ -37,28 +33,11 @@ class ProfileFragment : Fragment() {
 
     private fun initComponents() {
         languageArr = arrayOf(getString(R.string.finnish), getString(R.string.english_us))
-
-        val languages = resources.getStringArray(R.array.language)
-        val languagesArray = ArrayAdapter(context, R.layout.simple_spinner_item, languages)
-        languagesArray.setDropDownViewResource(R.layout.simple_spinner_dropdown_item)
-        spn_language.adapter = languagesArray
-        spn_language.setSelection(0)
     }
 
     private fun initListeners() {
 
-        spn_language.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onNothingSelected(p0: AdapterView<*>?) {}
-
-            override fun onItemSelected(adapterView: AdapterView<*>?, p1: View?, position: Int, p3: Long) {
-                val str = adapterView?.getItemAtPosition(position).toString();
-
-                LogUtils.e("position : $position --> $str")
-                myOnClickListener?.changeLanguage(position)
-            }
-        };
-
-
+        lyt_my_post.setOnClickListener { startActivity<MyPostActivity>() }
 
         lyt_theme.setOnClickListener {
             MyToast.show(context!!, "theme")

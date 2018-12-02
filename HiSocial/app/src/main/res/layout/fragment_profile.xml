@@ -58,7 +58,7 @@
             android:layout_height="@dimen/spacing_large" />
 
         <LinearLayout
-            android:id="@+id/lyt_language"
+            android:id="@+id/lyt_my_post"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="?attr/selectableItemBackground"
@@ -74,19 +74,20 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:fontFamily="sans-serif-light"
-                android:text="@string/select_language"
+                android:text="@string/my_event"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                 android:textColor="@color/grey_80" />
 
             <View
-                android:layout_width="@dimen/spacing_middle"
+                android:layout_width="@dimen/spacing_large"
                 android:layout_height="wrap_content" />
 
-            <android.support.v7.widget.AppCompatSpinner
-                android:id="@+id/spn_language"
-                android:layout_width="wrap_content"
-                android:layout_height="@dimen/spacing_xxlarge"
-                android:spinnerMode="dialog" />
+            <ImageButton
+                android:layout_width="@dimen/spacing_xmlarge"
+                android:layout_height="@dimen/spacing_xmlarge"
+                android:background="@android:color/transparent"
+                android:tint="@color/grey_60"
+                app:srcCompat="@drawable/ic_keyboard_arrow_right" />
 
 
         </LinearLayout>

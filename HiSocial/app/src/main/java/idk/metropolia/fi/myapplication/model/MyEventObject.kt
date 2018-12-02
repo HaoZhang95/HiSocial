@@ -22,11 +22,11 @@ data class MyEventObject(
     )
 
     data class ShortDescription(
-            @SerializedName("en") var en: String = "" // no short description
+            @SerializedName("en") var fi: String = "" // no short description
     )
 
     data class Name(
-            @SerializedName("en") var en: String = "" // Test Event
+            @SerializedName("en") var fi: String = "" // Test Event
     )
 
     data class Offer(
@@ -34,7 +34,7 @@ data class MyEventObject(
     )
 
     data class Description(
-            @SerializedName("en") var en: String = "" // Sample.......
+            @SerializedName("en") var fi: String = "" // Sample.......
     )
 }
 

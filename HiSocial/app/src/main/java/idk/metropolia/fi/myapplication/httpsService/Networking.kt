@@ -34,6 +34,14 @@ object Networking {
         @Headers("ApiKey:14OGbx613yeIIoUm2sF6")
         @POST("event/")
         fun postNewEvent(@Body eventObj: MyEventObject): Call<JsonObject>
+
+
+        // https://linkedcourses-api.test.hel.ninja/linkedcourses-test/v1/event/?data_source=metropolia_team_idk&include=location
+        @GET("event/")
+        fun getMyPostEvent(@Query("format") format: String = "json",
+                        @Query("data_source") data_source: String = "metropolia_team_idk",
+                        @Query("include") include: String = "location"
+        ): Call<SearchEventsResultObject>
     }
 
     interface NetworkServices {
