@@ -111,12 +111,23 @@
 
     <string name="about_us">About us</string>
     <string name="privacy_policy">Privacy Policy</string>
-    <string name="color_theme">Color Theme</string>
+    <string name="color_theme">Dark Theme</string>
     <string name="my_event">My Event</string>
     <string name="english_us">English, US</string>
     <string name="innovation_project_for_metropolia_uas">Innovation Project for Metropolia UAS</string>
     <string name="team_idk">Team IDK</string>
     <string name="finnish">Finnish</string>
     <string name="application_language">Application Language</string>
+    <string name="our_team">Our Team</string>
+    <string name="business_analyst">Business Analyst</string>
+    <string name="mobile_developer">Mobile Developer</string>
+    <string name="web_developer">Web Developer</string>
+    <string name="mission">Mission</string>
+    <string name="mission_details">sport app where families can find a different kind of hobbies in the selected area and they have also possible to see all the sports clubs and the fields/halls in that area (provided that there is exist). For example. Family\'s dad wants to know how many basketball clubs are in the Töölö area. At the same time he will see all the basketball fields/halls, camps, and their locations.</string>
+    <string name="slogan">Know the activities in your area</string>
+    <string name="data_provider">Data Provider</string>
+    <string name="policy_info">Application is made for Innovation Project of Metropolia UAS and City of Helsinki provides data services for this product. Please ask the company for specific data usage rights.</string>
+    <string name="about_metropolia">About Metropolia UAS</string>
+    <string name="about_city_of_helsinki">About City of Helsinki</string>
 
 </resources>

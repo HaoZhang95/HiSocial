@@ -143,7 +143,8 @@
                                     android:minWidth="0dp"
                                     android:textAllCaps="false"
                                     android:text="@string/continue_step"
-                                    android:theme="@style/Button.Primary" />
+                                    android:textColor="@color/white_transparency"
+                                    android:backgroundTint="@color/colorPrimary"/>
 
                             </LinearLayout>
 
@@ -232,7 +233,8 @@
                                     android:minWidth="0dp"
                                     android:textAllCaps="false"
                                     android:text="@string/continue_step"
-                                    android:theme="@style/Button.Primary"  />
+                                    android:textColor="@color/white_transparency"
+                                    android:backgroundTint="@color/colorPrimary" />
 
                             </LinearLayout>
 
@@ -344,7 +346,8 @@
                                     android:minWidth="0dp"
                                     android:textAllCaps="false"
                                     android:text="@string/continue_step"
-                                    android:theme="@style/Button.Primary" />
+                                    android:textColor="@color/white_transparency"
+                                    android:backgroundTint="@color/colorPrimary" />
 
                             </LinearLayout>
 
@@ -434,7 +437,8 @@
                                     android:minWidth="0dp"
                                     android:textAllCaps="false"
                                     android:text="@string/continue_step"
-                                    android:theme="@style/Button.Primary"  />
+                                    android:textColor="@color/white_transparency"
+                                    android:backgroundTint="@color/colorPrimary" />
 
                             </LinearLayout>
 
@@ -555,7 +559,8 @@
                                     android:minWidth="0dp"
                                     android:textAllCaps="false"
                                     android:text="@string/continue_step"
-                                    android:theme="@style/Button.Primary"  />
+                                    android:textColor="@color/white_transparency"
+                                    android:backgroundTint="@color/colorPrimary" />
 
                             </LinearLayout>
 
@@ -636,7 +641,8 @@
                                     android:minWidth="0dp"
                                     android:textAllCaps="false"
                                     android:text="@string/add_event"
-                                    android:theme="@style/Button.Primary" />
+                                    android:textColor="@color/white_transparency"
+                                    android:backgroundTint="@color/colorPrimary" />
                             </LinearLayout>
 
                         </LinearLayout>

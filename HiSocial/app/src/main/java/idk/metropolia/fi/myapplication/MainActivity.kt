@@ -26,6 +26,8 @@ import idk.metropolia.fi.myapplication.view.activity.MapActivity
 import idk.metropolia.fi.myapplication.view.activity.SearchActivity
 import idk.metropolia.fi.myapplication.view.fragment.*
 import org.jetbrains.anko.startActivity
+import skin.support.SkinCompatManager
+import skin.support.SkinCompatManager.SKIN_LOADER_STRATEGY_ASSETS
 
 class MainActivity : AppCompatActivity(),
         HomeFragment.MyOnScrollChangeListener, NearByFragment.MyOnScrollChangeListener,
@@ -196,6 +198,7 @@ class MainActivity : AppCompatActivity(),
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+
         startActivity<SearchActivity>()
         return super.onOptionsItemSelected(item)
     }
