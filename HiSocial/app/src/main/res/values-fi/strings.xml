@@ -15,15 +15,7 @@
     <string name="code_1">00550 Vallila</string>
     <string name="code_2">00610 Käpylä</string>
     <string name="code_4">00550 Mäkelänrinne</string>
-
-
-    <!-- Translation starts from Here-->
-    <!-- 1: Pay attention to the capitalization of letters-->
-    <!-- 2: The length of the translation, the shorter the better-->
-
-    <!-- Example : Replace "No result" with "Ei Tulosta"-->
     <string name="search_no_result">Ei tulosta</string>
-
     <string name="search_general_keyword">Yritä syöttää yksinkertaisempi avainsana</string>
     <string name="permission_request">Lupapyyntö</string>
     <string name="permission_request_message_part_one">Tarvitset seuraavan luvan: </string>
@@ -62,7 +54,6 @@
     <string name="my_location_failed">Sijaintini ❌</string>
     <string name="my_location_okay">Sijaintini √</string>
     <string name="google_service_error">Google Play -palvelu ei saatavilla</string>
-    <string name="home">Koti</string>
     <string name="ongoing_event">Nykyiset tapahtumat</string>
     <string name="add_event">Lisää tapahtuma</string>
     <string name="preference">Asetukset</string>
@@ -135,6 +126,7 @@
     <string name="about_metropolia">Tietoja Metropolia ammattikorkeakoulusta</string>
     <string name="about_city_of_helsinki">Tietoja Helsingin kaupungista</string>
     <string name="slogan_title">Slogan</string>
+    <string name="home">Koti</string>
 
     <!-- Tranlation ends Here-->
 </resources>

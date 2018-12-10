@@ -3,7 +3,7 @@
     <string name="titleStr">Here is the title</string>
     <string name="subTitleStr">This is the sub title</string>
 
-    <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">
+    <string name="google_maps_key" templateMergeStrategy="preserve">
         AIzaSyA-wqktBtLyF5RWV6PT4MzNpm7CXlz8C4g
     </string>
 
@@ -129,5 +129,6 @@
     <string name="policy_info">Application is made for Innovation Project of Metropolia UAS and City of Helsinki provides data services for this product. Please ask the company for specific data usage rights.</string>
     <string name="about_metropolia">About Metropolia UAS</string>
     <string name="about_city_of_helsinki">About City of Helsinki</string>
+    <string name="slogan_title">Slogan</string>
 
 </resources>

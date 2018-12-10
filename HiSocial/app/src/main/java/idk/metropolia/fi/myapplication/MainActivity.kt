@@ -34,17 +34,17 @@ class MainActivity : AppCompatActivity(),
         ProfileFragment.MyClickListener{
 
     override fun changeLanguage(index: Int) {
-        LogUtils.e("mainactivity开始改变语言 :$index")
-        if (PrefManager(this).getLocale() == "us") {
-
-            LogUtils.e("fi")
-            LocaleManager(this).changeLocale("fi")
-            this.recreate()
-        } else {
-            LogUtils.e("us")
-            LocaleManager(this).changeLocale("us")
-            this.recreate()
-        }
+//        LogUtils.e("mainactivity开始改变语言 :$index")
+//        if (PrefManager(this).getLocale() == "us") {
+//
+//            LogUtils.e("fi")
+//            LocaleManager(this).changeLocale("fi")
+//            this.recreate()
+//        } else {
+//            LogUtils.e("us")
+//            LocaleManager(this).changeLocale("us")
+//            this.recreate()
+//        }
     }
 
     private lateinit var view_pager: ViewPager

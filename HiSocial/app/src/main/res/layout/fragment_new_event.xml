@@ -144,7 +144,7 @@
                                     android:textAllCaps="false"
                                     android:text="@string/continue_step"
                                     android:textColor="@color/white_transparency"
-                                    android:backgroundTint="@color/colorPrimary"/>
+                                    android:backgroundTint="?attr/colorPrimary"/>
 
                             </LinearLayout>
 
@@ -642,7 +642,7 @@
                                     android:textAllCaps="false"
                                     android:text="@string/add_event"
                                     android:textColor="@color/white_transparency"
-                                    android:backgroundTint="@color/colorPrimary" />
+                                    android:backgroundTint="?attr/colorPrimary" />
                             </LinearLayout>
 
                         </LinearLayout>
