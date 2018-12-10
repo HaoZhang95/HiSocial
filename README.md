@@ -1,6 +1,6 @@
 # HiSocial
 
-This application is kind of linke a sport app where families can find a different kind of hobbies in the selected area and they have also possibility to see all the sports clubs and the fields/halls in that area (provided that there is exist). For example. Family's dad wants to know how many basketball clubs are in the Helsinki area. At the same time he will see all the basketball fields/halls, camps, and their locations. 
+Our core idea is provide information about different kinds of events & activities to the people of Helsinki. Our solution is a mobile-based hobby-finder application, which aims to provide information about different kinds of activities to the users. Additionally, we want to provide a route map for users so they can easily find a way to the place where the hobby event is. The main target group is kids (age 10-17) and their families but others will be free to use it as well. We have also created a web-based application where the user can find all the same information what is in the mobile version. 
 
 Application Author: Hao Zhang
 
@@ -9,11 +9,11 @@ Application Author: Hao Zhang
 - Android Studio
 
 ## View demo video to help you understand code
-[![Demo video](https://i.imgur.com/IPYnKJj.png)](https://youtu.be/qKfWnml2-UQx)
+[![Demo video](https://i.imgur.com/O7ZHJcd.png)
 
 
 ## Cautions and Project Structure
-It requires GPS and Network permissions, the former one is used to locate yourself while running, the latter one is used to upload your running data to web database. And you need a Google Maps API key and paste your key into [google_maps_api.xml] (app/src/debug/res/values/google_maps_api.xml)
+It requires Read external storage and Network permissions, the former one is used to add cover image while posting new event, the latter one is used to load data from the remote. And you need a Google Maps API key and paste your key into [google_maps_api.xml] (app/src/debug/res/values/google_maps_api.xml)
 ![Route](https://i.imgur.com/y9e5Pyx.png)
 
 ## Features covered
@@ -31,15 +31,6 @@ It requires GPS and Network permissions, the former one is used to locate yourse
 - [x] Transportation Itinerary data provided by *helsinki transporation data center*
 
 
-## Features
-- GPS location, measure distance
-- Draw real-time path on the map while running
-- Lock screen using proximity internal sensor
-- Upload data to web database
-- data persistence using roomDatabase and LiveData
-- Beautiful UI design
-- And more...
-
 ## Screenshots
 |                    Home                     |                  Map               |                  About us               |   
 | ------------------------------------------- |--------------------------------------------|--------------------------------------------|
@@ -50,8 +41,6 @@ It requires GPS and Network permissions, the former one is used to locate yourse
 | ------------------------------------------- |--------------------------------------------|-----------------------------------------|-----------------------------------------|
 |![Home](https://i.imgur.com/Gh6xGhc.gif)     |![Details](https://i.imgur.com/yBqkMmT.gif) |![DarkHome](https://i.imgur.com/8nXmxOH.gif)|![DarkDetails](https://i.imgur.com/r5lhPPo.gif)|
 
-## UI Documentation
-More details can be found in [Here](https://drive.google.com/drive/u/1/folders/1Pis_Fp-WW-sY4XwzR1-8VR4oKVCQva-k?usp=sharingx)
 
 ## Test
 This app was tested successfully on Huawei cell phone (version 6.0) using Android Studio 3.1.1
