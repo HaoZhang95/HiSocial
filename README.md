@@ -7,6 +7,9 @@ Application Author: Hao Zhang
 ## Requirement
 - Android Phone (version 6.0 or higher)
 - Android Studio
+- Scan the following QR code to download this applciation, or click [Here](https://drive.google.com/file/d/1LnwpXpSZHdh8TokpKyc5GbjrDIA2wjny/view?usp=sharing) to download
+- Notice: If you intall this app, map part maybe not work, beacuse of the google map key, if you want it work perfect, please run the code on Android Studio and replace the old key with your own map key. Instruction for changing map api key is below.
+![Route](https://i.imgur.com/vvCOgg3.png)
 
 ## View demo video to help you understand code
 [![Demo video](https://i.imgur.com/O7ZHJcd.png)](https://youtu.be/NJ68TX6HA5Q?list=UU81qa4UW7JBl0wKYlsCR08w)
@@ -41,6 +44,10 @@ It requires Read external storage and Network permissions, the former one is use
 | ------------------------------------------- |--------------------------------------------|-----------------------------------------|-----------------------------------------|
 |![Home](https://i.imgur.com/Gh6xGhc.gif)     |![Details](https://i.imgur.com/yBqkMmT.gif) |![DarkHome](https://i.imgur.com/8nXmxOH.gif)|![DarkDetails](https://i.imgur.com/r5lhPPo.gif)|
 
+## Further Development from here maybe:
+- Dark Theme
+- Login && Signup for post event
+- or add your own logic
 
 ## Test
 This app was tested successfully on Huawei cell phone (version 6.0) using Android Studio 3.1.1
