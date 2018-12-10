@@ -9,7 +9,7 @@ Application Author: Hao Zhang
 - Android Studio
 
 ## View demo video to help you understand code
-[![Demo video](https://i.imgur.com/O7ZHJcd.png)
+[![Demo video](https://youtu.be/NJ68TX6HA5Q?list=UU81qa4UW7JBl0wKYlsCR08w&t=3)
 
 
 ## Cautions and Project Structure
