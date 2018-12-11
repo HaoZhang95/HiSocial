@@ -15,9 +15,20 @@ Application Author: Hao Zhang
 [![Demo video](https://i.imgur.com/O7ZHJcd.png)](https://youtu.be/NJ68TX6HA5Q?list=UU81qa4UW7JBl0wKYlsCR08w)
 
 
-## Cautions and Project Structure
+## Cautions and Project Structure (Click Picture to view more clear version)
 It requires Read external storage and Network permissions, the former one is used to add cover image while posting new event, the latter one is used to load data from the remote. And you need a Google Maps API key and paste your key into [google_maps_api.xml] (app/src/debug/res/values/google_maps_api.xml)
-![Route](https://i.imgur.com/y9e5Pyx.png)
+![Route](https://i.imgur.com/x3ASGTG.png)
+
+## Application Structure
+![Route](https://i.imgur.com/k1pbWPl.png)
+
++ -- idk.metropolia.fi.myapplication  // parent package
++ -- + adapter                        // Adapter class for list or grid
++ -- + extension                      // Extension for RecyclerView Item 
++ -- + httpService                    // Handle Network Request
++ -- + Model                          // A Bunch of Bean Class
++ -- + utils                          // Snippets code and support method
++ -- + views                          // Activity, Fragment and Widgets 
 
 ## Features covered
 - [x] Search By event date
